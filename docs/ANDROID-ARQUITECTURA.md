@@ -2,6 +2,8 @@
 
 Fecha de revisión: 15 de septiembre de 2026. Estado: decisión de prototipo, sujeta a pruebas en teléfonos reales.
 
+Decisión de alcance: la implementación Android completamente nativa queda pendiente como candidata para la versión 2.0. Esta entrega conserva WebView con recursos incorporados. La adaptación y compilación para iPhone también quedan [documentadas como trabajo posterior](IOS-PENDIENTE.md).
+
 ## Qué significa «independiente»
 
 Una APK es un formato de instalación; no determina cómo se dibuja o ejecuta una aplicación. Sendero 0.1.1 empaqueta su código, actividades e ilustraciones, y usa Android System WebView para presentar la interfaz. No abre el navegador predeterminado ni descarga la web al iniciarse. Sin embargo, no es una implementación completamente nativa: necesita un proveedor WebView funcional y compatible. En determinadas versiones de Android, Chrome puede actuar como proveedor; esto es distinto de elegir Chrome como navegador predeterminado. [Arquitectura de Android WebView](https://www.chromium.org/developers/androidwebview/).

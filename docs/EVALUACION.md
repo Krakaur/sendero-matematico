@@ -1,4 +1,4 @@
-# Evaluación de Sendero 0.1.0
+# Evaluación de Sendero: ciclos 0.1.0 y actualización 0.1.1
 
 Estado: tres ciclos de revisión técnica y heurística completados. Prototipo funcional; pendiente de evaluación con población destinataria. Las pruebas de software no equivalen a una evaluación con niñas, niños o docentes, ni a validación de eficacia educativa.
 
@@ -30,7 +30,17 @@ Cambios finales: menor tipografía en 320 píxeles, control de sonido sin compre
 
 Diez pruebas automatizadas pasan. Incluyen 12 000 ejercicios generados con semilla reproducible para comprobar aritmética, opciones únicas, valores no negativos y rangos por dificultad; reglas de aumento y reducción de nivel; límites de la adaptación; diferencias entre precisión, independencia, pistas y corrección al segundo intento; ausencia de observaciones; transferencia de informes; rechazo de registros inválidos; deduplicación y conservación tras serializar.
 
-Se verificó la sintaxis de los módulos y se compiló la edición Windows x64 con las dependencias fijadas. Los hashes de los archivos distribuidos acompañan la publicación. La interacción se evaluó en Chrome sobre la base compartida; no se ha realizado una sesión completa de pruebas de interfaz dentro del ejecutable Windows ni una matriz de versiones de Windows. El ejecutable carece de firma digital comercial. No se distribuye APK.
+Se verificó la sintaxis de los módulos y se compiló la edición Windows x64 con las dependencias fijadas. Los hashes de los archivos distribuidos acompañan la publicación. La interacción se evaluó en Chrome sobre la base compartida; no se ha realizado una sesión completa de pruebas de interfaz dentro del ejecutable Windows ni una matriz de versiones de Windows. El ejecutable carece de firma digital comercial. La publicación 0.1.0 no incluyó APK; la incorporación Android se registra a continuación.
+
+## Actualización 0.1.1: corrección visible y Android
+
+Después de un error, la solución aparece centrada dentro de un recuadro amarillo con borde, tipografía prominente y signos de exclamación. Se muestra una explicación de la operación y se destaca la opción correcta. La revisión visual a 390 × 844 confirmó el ejemplo «¡3 + 3 = 6!» y la respuesta seleccionable resaltada. El intento incorrecto se conserva; la respuesta posterior no pasa a considerarse independiente. Se registra `solutionShown` para distinguir la exposición a la solución.
+
+La suite de lógica pasó 11 pruebas, incluida una regresión que conserva el error y la solución mostrada durante serialización y no cuenta la respuesta posterior como independiente. La edición Windows se recompiló y se cotejaron los archivos incorporados con las fuentes. No se añaden pruebas físicas de Windows a las declaradas anteriormente.
+
+La APK de release mide 175641 bytes y el AAB 186359 bytes. La firma Android se verificó con los esquemas v1 y v2. La APK incluye los recursos web exactos de su commit de origen, no contiene bibliotecas nativas empaquetadas ni declara permisos. Android Lint concluyó con cero errores y cuatro avisos de versiones de dependencias más recientes. Se mantuvieron versiones fijas; actualizar dependencias requiere revisar compatibilidad mínima. El peso no incluye WebView del sistema ni representa memoria de ejecución.
+
+Las verificaciones de compilación, firma y correspondencia de recursos proceden del flujo [Android package](https://github.com/Krakaur/sendero-matematico/actions/workflows/android.yml). Los resultados de integración Android se conservarán con la ejecución concreta. No se atribuyen al emulador resultados de pruebas en teléfonos físicos, ni se afirma validación en toda la gama baja.
 
 ## Límites de esta evaluación
 

@@ -4,11 +4,11 @@
 
 Abre [Sendero](https://krakaur.github.io/sendero-matematico/) con conexión y espera que aparezca «Lista sin conexión». En Android con Chrome puedes utilizar la opción Instalar aplicación o Añadir a pantalla de inicio del menú. En laptop, Chrome y Edge pueden ofrecer instalación desde su barra o menú. Si no aparece, la versión web sigue siendo utilizable. La disponibilidad de instalación depende del navegador.
 
-Antes de salir de un punto de conectividad, cierra y vuelve a abrir el juego sin internet para comprobar su disponibilidad en ese dispositivo. No basta con haber visto la portada una vez si la preparación no terminó. La primera carga siempre necesita conexión; la edición Windows incluye los recursos desde la descarga.
+Antes de salir de un punto de conectividad, cierra y vuelve a abrir el juego sin internet para comprobar su disponibilidad en ese dispositivo. No basta con haber visto la portada una vez si la preparación no terminó. La primera carga siempre necesita conexión; las ediciones Windows y APK Android incluyen los recursos desde la descarga.
 
 ## Edición descargable Windows
 
-Descarga `Sendero-0.1.0-Windows-x64.exe` desde la [publicación oficial del repositorio](https://github.com/Krakaur/sendero-matematico/releases/latest). Guarda el archivo en una carpeta y ábrelo. Es una edición portátil: no requiere asistente de instalación ni cuenta. Los resultados se conservan en los datos locales de la aplicación del usuario de Windows; no viajan dentro del ejecutable al copiarlo a otro equipo.
+Descarga `Sendero-0.1.1-Windows-x64.exe` desde la [publicación oficial del repositorio](https://github.com/Krakaur/sendero-matematico/releases/latest). Guarda el archivo en una carpeta y ábrelo. Es una edición portátil: no requiere asistente de instalación ni cuenta. Los resultados se conservan en los datos locales de la aplicación del usuario de Windows; no viajan dentro del ejecutable al copiarlo a otro equipo.
 
 Esta compilación no tiene firma digital comercial. Windows o las políticas de un centro educativo pueden advertir sobre un editor desconocido o impedir su ejecución. No cambies las protecciones del equipo para usarla: la alternativa es la web instalable o la revisión por el administrador del centro. El archivo de sumas SHA-256 de la publicación permite comprobar integridad; no equivale a un certificado de seguridad ni a una validación pedagógica.
 
@@ -41,3 +41,7 @@ La duración se estima durante la interacción, se pausa al ocultar la app y des
 Exporta copias periódicas. El almacenamiento privado, la falta de espacio, el borrado de datos o un cambio de equipo pueden causar pérdida. El juego avisa si no puede guardar. El botón para solicitar almacenamiento persistente no garantiza que el navegador lo conceda.
 
 Los informes tienen códigos persistentes y fechas, por lo que no son datos anónimos. No se solicitan nombres, correo ni escuela; no hay analítica incorporada. Una investigación futura requiere propósito, revisión ética, consentimiento y medidas de protección específicas antes de su activación.
+
+## APK Android
+
+Consulta las instrucciones, compatibilidad, firma y límites en la [guía de distribución Android](ANDROID-DISTRIBUCION.md). La APK incluye las actividades y utiliza WebView del sistema. No necesita Chrome como navegador predeterminado ni configuraciones para ejecutar archivos locales. La primera instalación y la comprobación sin conexión corresponden a una persona adulta. En esta versión hay un perfil por instalación/usuario Android.

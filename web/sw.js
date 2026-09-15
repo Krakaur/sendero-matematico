@@ -12,7 +12,12 @@ const FILES = [
   "./manifest.webmanifest",
 ];
 self.addEventListener("install", (event) =>
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES))),
+  event.waitUntil(
+    caches.open(CACHE).then((c) =>
+      // A new app cache must not inherit older files from the browser HTTP cache.
+      c.addAll(FILES.map((file) => new Request(file, { cache: "reload" }))),
+    ),
+  ),
 );
 self.addEventListener("activate", (event) =>
   event.waitUntil(
@@ -44,4 +49,3 @@ self.addEventListener("fetch", (event) => {
     })(),
   );
 });
-

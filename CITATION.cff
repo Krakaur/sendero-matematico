@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "Si utilizas este software, cita la versión concreta."
 type: software
 title: "Sendero: práctica matemática con funcionamiento sin conexión"
-version: 0.1.0
+version: 0.1.1
 date-released: 2026-09-15
 authors:
   - family-names: "Krakaur Floranes"

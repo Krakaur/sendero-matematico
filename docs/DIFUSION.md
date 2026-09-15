@@ -24,7 +24,7 @@ Podría evaluarse su inclusión en repositorios de recursos educativos abiertos,
 
 ## Movilización con conectividad escasa
 
-El ejecutable Windows puede viajar en una memoria USB o carpeta de distribución del centro, acompañado de versión, licencia, guía y suma de comprobación. En celulares se puede organizar una preparación inicial de la web instalable durante una visita al centro; no basta con compartir un enlace si el dispositivo nunca descargó los recursos. Un cartel con instrucciones breves y QR podría acompañar esa preparación. La disponibilidad de una APK requeriría un paquete específico, firma y pruebas Android; esta entrega no incluye APK.
+El ejecutable Windows puede viajar en una memoria USB o carpeta de distribución del centro, acompañado de versión, licencia, guía y suma de comprobación. En celulares se puede organizar una preparación inicial de la web instalable durante una visita al centro; no basta con compartir un enlace si el dispositivo nunca descargó los recursos. Un cartel con instrucciones breves y QR podría acompañar esa preparación. La APK puede distribuirse por un medio local autorizado, junto con versión, guía y suma de comprobación. La instalación debe acompañarla una persona adulta y comprobar la compatibilidad de WebView antes de regresar a una zona sin conexión. Una instalación correcta no demuestra por sí sola que el juego se abra y conserve los resultados. La publicación en una tienda es un trámite posterior, no realizado en esta entrega.
 
 ## Colaboración académica
 
