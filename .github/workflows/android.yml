@@ -16,6 +16,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
+      - uses: android-actions/setup-android@v3
       - run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
       - name: Build and inspect signed packages
         env:
@@ -51,10 +52,10 @@ jobs:
       - name: Android integration tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: 35
           arch: x86_64
-          target: default
-          ram-size: 1536M
+          target: google_apis
+          ram-size: 2048M
           heap-size: 128M
           disable-animations: true
           script: gradle -p android --no-daemon connectedDebugAndroidTest
