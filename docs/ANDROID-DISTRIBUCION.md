@@ -1,5 +1,7 @@
 # Compilación y distribución Android
 
+La nueva edición **Sendero Nativo 0.2.0**, con perfiles locales y sin WebView, se compila desde `native-android/`. Declara Android 14 como mínimo y Android 16 como objetivo. Su identificador es `org.krakaur.sendero.nativo`. Consultar [su guía](ANDROID-NATIVO.md) y [evaluación](EVALUACION-NATIVA.md). La sección siguiente corresponde a la edición híbrida anterior y conserva su identidad de actualización.
+
 Sendero 0.1.1 tiene un proyecto Android con identificador `org.krakaur.sendero`, `versionCode=2`, `minSdk=23`, `targetSdk=36` y `compileSdk=36`. El mínimo de instalación no demuestra compatibilidad con todas las versiones de WebView: véase la [evaluación de arquitectura](ANDROID-ARQUITECTURA.md).
 
 ## Paquetes y firma

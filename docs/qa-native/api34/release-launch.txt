@@ -1,0 +1,7 @@
+Starting: Intent { cmp=org.krakaur.sendero.nativo/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: org.krakaur.sendero.nativo/.MainActivity
+TotalTime: 1346
+WaitTime: 1349
+Complete

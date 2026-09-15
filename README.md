@@ -2,13 +2,15 @@
 
 ## Matemáticas que van contigo
 
-[Abrir el juego](https://krakaur.github.io/sendero-matematico/) · [Descargas Android y Windows](https://github.com/Krakaur/sendero-matematico/releases/latest) · [Guía de uso](docs/GUIA.md) · [Evaluación](docs/EVALUACION.md)
+[Abrir el juego](https://krakaur.github.io/sendero-matematico/) · [Android 14–16: APK nativa](https://github.com/Krakaur/sendero-matematico/releases/download/v0.2.0/Sendero-Nativo-0.2.0.apk) · [Windows](https://github.com/Krakaur/sendero-matematico/releases/download/v0.1.1/Sendero-0.1.1-Windows-x64.exe) · [Guía de uso](docs/GUIA.md) · [Evaluación](docs/EVALUACION.md)
 
 ![Luma explora un sendero entre montañas](web/social.png)
 
 Sendero es un juego gratuito de práctica matemática, desarrollado por Dirk Hans Krakaur Floranes. Está orientado a primaria, con navegación móvil y funcionamiento en laptop. Las aventuras de ocho ejercicios ofrecen sumas, restas y multiplicación, pistas visuales y cuatro niveles de dificultad adaptativa. El juego no impone un límite de tiempo ni penaliza la solicitud de ayuda. Después de un error, muestra la solución correcta centrada y destacada, con una explicación breve; conserva ese intento como práctica apoyada.
 
 ## Estado de la versión 0.1.1
+
+**Nueva edición Android nativa 0.2.0:** desarrollo independiente de navegador y WebView, con perfiles locales protegidos por contraseña, almacenamiento SQLite e informes separados. La [guía nativa](docs/ANDROID-NATIVO.md) explica la arquitectura, compatibilidad y límites. Las comprobaciones y el estado de distribución se documentan en [evaluación nativa](docs/EVALUACION-NATIVA.md). Las características siguientes describen la edición web/Windows e híbrida 0.1.1; esas ediciones todavía no tienen perfiles con contraseña.
 
 Prototipo funcional con evaluación técnica y heurística. No es un instrumento diagnóstico validado y no se ha demostrado su eficacia educativa. No incluye cuentas, expedientes remotos, sincronización automática ni recogida de datos para investigación. La continuidad sin conexión y la entrega diferida de archivos están implementadas; la sincronización protegida entre dispositivos es trabajo futuro.
 

@@ -1,5 +1,7 @@
 # Android: independencia, compatibilidad y decisión técnica
 
+**Actualización de alcance:** la continuación 0.2.0 implementa una edición completamente nativa. Sus decisiones y límites están en [Android nativo](ANDROID-NATIVO.md); sus pruebas, en [evaluación nativa](EVALUACION-NATIVA.md). El análisis siguiente conserva la comparación que sustentó la edición híbrida 0.1.1 y su propuesta de evolución.
+
 Fecha de revisión: 15 de septiembre de 2026. Estado: decisión de prototipo, sujeta a pruebas en teléfonos reales.
 
 Decisión de alcance: la implementación Android completamente nativa queda pendiente como candidata para la versión 2.0. Esta entrega conserva WebView con recursos incorporados. La adaptación y compilación para iPhone también quedan [documentadas como trabajo posterior](IOS-PENDIENTE.md).

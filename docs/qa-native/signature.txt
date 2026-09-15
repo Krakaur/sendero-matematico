@@ -1,0 +1,17 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=Dirk Hans Krakaur Floranes, OU=Sendero, O=Independent Educational Software, C=MX
+Signer #1 certificate SHA-256 digest: 806e41e769cc31811c4e6ce325e7bf9d987b96fa8f5b75fb58aa06096d2b4c3d
+Signer #1 certificate SHA-1 digest: e1559e9e1ff1b73a9a9a77f1a8c81f174f83eb83
+Signer #1 certificate MD5 digest: 984b0a152d0b1f1fd493bed7c55802b1
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 3072
+Signer #1 public key SHA-256 digest: 062d9f4b83668b41f2a8dcb00853dd4688452418360a9d239ea4ed81e545e582
+Signer #1 public key SHA-1 digest: 41e1d33d69d65aa95e1ac6523f39da88b945beb0
+Signer #1 public key MD5 digest: eb9c1f394a105877e9e42339d11bdfca

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="org.krakaur.sendero.nativo.NativeTest" tests="2" failures="0" errors="0" skipped="0" time="42.881" timestamp="2026-09-15T20:24:16" hostname="localhost">
+  <properties>
+    <property name="device" value="emulator-5554 - 14" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="passwordsIsolationDeduplicationAndAtomicRollback" classname="org.krakaur.sendero.nativo.NativeTest" time="12.105" />
+  <testcase name="nativeGameSurvivesRecreationAndHasVisibleCorrection" classname="org.krakaur.sendero.nativo.NativeTest" time="28.401" />
+</testsuite>

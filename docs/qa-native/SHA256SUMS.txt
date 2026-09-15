@@ -1,0 +1,2 @@
+c787dbe8d6e5a9c38cd868bcf23c396a79b7f110ffdb8d63a709fc9202447248  Sendero-Nativo-0.2.0.apk
+03abeeefce4c4a8f60b51505d5e0fb490815849d9f2a1c8a58c9bc101cf0cc0f  Sendero-Nativo-0.2.0.aab

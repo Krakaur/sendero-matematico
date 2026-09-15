@@ -4,7 +4,7 @@ Estado: planificación técnica para una versión posterior. No existe todavía 
 
 ## Alcance propuesto
 
-La edición Android sin WebView queda como candidata para una versión 2.0. La adaptación iOS puede evaluarse en esa misma etapa, según demanda y disponibilidad de dispositivos. No se incorpora ahora una segunda implementación móvil.
+La edición Android sin WebView se implementó en la continuación 0.2.0, descrita en `ANDROID-NATIVO.md`. La adaptación iOS permanece pendiente, según demanda y disponibilidad de dispositivos. No se incorpora ahora una implementación iOS.
 
 Para iOS deben compararse dos alternativas: reutilizar los recursos web en una aplicación con WKWebView o implementar las pantallas y el almacenamiento con componentes nativos de Apple. La primera conserva código, pero mantiene dependencia del motor web asociado al sistema; la segunda exige rehacer interfaz e integración. La independencia del navegador elegido por la familia no equivale a independencia de un motor web interno. Las reglas matemáticas, los indicadores y el esquema de informes deben permanecer equivalentes entre versiones y verificarse mediante casos compartidos.
 

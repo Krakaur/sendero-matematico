@@ -1,5 +1,11 @@
 # Estado de continuidad
 
+## Continuación: Android nativo 0.2.0
+
+La decisión posterior amplía el alcance: `native-android/` implementa una edición sin WebView, con ocho perfiles locales protegidos por contraseña y SQLite. El paquete es `org.krakaur.sendero.nativo`; no sustituye ni migra automáticamente la edición híbrida. Leer `ANDROID-NATIVO.md` y `EVALUACION-NATIVA.md` para conocer sus límites y resultados efectivos. La instrucción histórica de posponer la implementación nativa, conservada abajo, queda superada por esta continuación. iOS continúa pendiente.
+
+No hay backend ni investigación activa. Las contraseñas controlan el acceso local, pero no cifran toda la base ni los informes exportados. La recuperación remota de claves, copia integral protegida, identidad docente y entrega con confirmación siguen pendientes. Los informes recibidos se mantienen separados de la práctica propia.
+
 ## Versión 0.1.1
 
 Fuentes, juego, documentación y pruebas en `main`. La publicación web utiliza `gh-pages`. Windows, APK y AAB se distribuyen en la publicación de versión. No hay backend, credenciales de estudiantes, analítica ni canal de investigación activo. La APK usa WebView del sistema, con recursos incorporados y sin permiso de internet; no es una edición completamente nativa.

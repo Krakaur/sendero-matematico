@@ -4,6 +4,8 @@ Versión del aviso: 15 de septiembre de 2026. Desarrollo: Dirk Hans Krakaur Flor
 
 ## Datos dentro del dispositivo
 
+La edición **Sendero Nativo 0.2.0** añade hasta ocho alias locales y credenciales derivadas con sal para separar usuarios del teléfono. Guarda sus datos en SQLite; no transmite alias ni contraseñas y no los incluye en informes. Cada perfil conserva por separado su práctica y los informes que recibe. No hay recuperación remota de contraseña. Esta protección de acceso no cifra toda la base ni los archivos exportados. Las características de sonido y navegador descritas para la edición anterior no corresponden a la interfaz nativa. Detalles y límites en [Android nativo](ANDROID-NATIVO.md).
+
 Sendero guarda un código de perfil generado localmente, ejercicios, respuestas, errores, pistas solicitadas, solución mostrada, dificultad, fechas, estimaciones de tiempo de interacción y avance. También conserva las preferencias de sonido y los informes que un adulto importe en la sección docente. No solicita nombre, correo, escuela, ubicación, cámara, micrófono ni identificadores publicitarios.
 
 Estos registros sirven para continuar la práctica y producir informes locales. El desarrollo no recibe automáticamente respuestas ni informes, no integra publicidad ni analítica y no lleva a cabo investigación con datos infantiles. La APK Android no declara permiso de internet. Los datos se conservan en el dispositivo hasta que se borren, se eliminen los datos de la aplicación o se desinstale; la conservación también depende del sistema y del espacio disponible.
