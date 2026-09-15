@@ -1,32 +1,102 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#163e35">
-  <meta name="description" content="Una pequeña aventura de matemáticas. Practica a tu ritmo, incluso sin conexión, y comparte tus resultados con tu docente.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
-  <title>Sendero · Matemáticas que van contigo</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" type="image/svg+xml" href="./icon.svg">
-  <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-  <a class="skip" href="#main">Ir al contenido</a>
-  <header class="topbar">
-    <a class="brand" href="#explorar" aria-label="Sendero, inicio"><img src="./icon.svg" width="38" height="38" alt=""><span>sendero<span class="brand-dot">.</span></span></a>
-    <div class="top-actions"><span id="offline-badge" class="status">Preparando…</span><button id="sound" class="icon-button" aria-label="Activar sonidos" aria-pressed="false">♪</button></div>
-  </header>
-  <div id="storage-alert" class="storage-alert" hidden></div>
-  <main id="main" tabindex="-1"></main>
-  <nav class="bottom-nav" aria-label="Navegación principal">
-    <a href="#explorar" data-nav="explorar"><span aria-hidden="true">◇</span>Explorar</a>
-    <a href="#progreso" data-nav="progreso"><span aria-hidden="true">▥</span>Mi progreso</a>
-    <a href="#docentes" data-nav="docentes"><span aria-hidden="true">▤</span>Docentes</a>
-    <a href="#acerca" data-nav="acerca"><span aria-hidden="true">ⓘ</span>Acerca de</a>
-  </nav>
-  <div id="announce" class="sr-only" role="status" aria-live="polite"></div>
-  <script type="module" src="./app.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#163e35" />
+    <meta
+      name="description"
+      content="Una pequeña aventura de matemáticas. Practica a tu ritmo, incluso sin conexión, y comparte tus resultados con tu docente."
+    />
+    <link
+      rel="canonical"
+      href="https://krakaur.github.io/sendero-matematico/"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_LA" />
+    <meta property="og:title" content="Sendero · Matemáticas que van contigo" />
+    <meta
+      property="og:description"
+      content="Sumas, restas y multiplicación adaptativa. Un juego gratuito para explorar a tu ritmo, incluso sin conexión."
+    />
+    <meta
+      property="og:url"
+      content="https://krakaur.github.io/sendero-matematico/"
+    />
+    <meta
+      property="og:image"
+      content="https://krakaur.github.io/sendero-matematico/social.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"
+    />
+    <title>Sendero · Matemáticas que van contigo</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Ir al contenido</a>
+    <header class="topbar">
+      <a class="brand" href="#explorar" aria-label="Sendero, inicio"
+        ><img src="./icon.svg" width="38" height="38" alt="" /><span
+          >sendero<span class="brand-dot">.</span></span
+        ></a
+      >
+      <div class="top-actions">
+        <span id="offline-badge" class="status">Preparando…</span
+        ><button
+          id="sound"
+          class="icon-button"
+          aria-label="Activar sonidos"
+          aria-pressed="false"
+        >
+          ♪
+        </button>
+      </div>
+    </header>
+    <div id="storage-alert" class="storage-alert" hidden></div>
+    <main id="main" tabindex="-1"></main>
+    <noscript
+      ><section style="padding: 30px">
+        <h1>Sendero: juego gratuito de matemáticas sin conexión</h1>
+        <p>
+          Practica sumas, restas y multiplicación con dificultad adaptativa y
+          pistas visuales. El juego necesita JavaScript para funcionar.
+        </p>
+        <p>
+          <a href="https://github.com/Krakaur/sendero-matematico"
+            >Documentación y código de Sendero</a
+          >
+          ·
+          <a
+            href="https://github.com/Krakaur/sendero-matematico/releases/latest"
+            >Descargar para Windows</a
+          >
+        </p>
+      </section></noscript
+    >
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <a href="#explorar" data-nav="explorar"
+        ><span aria-hidden="true">◇</span>Explorar</a
+      >
+      <a href="#progreso" data-nav="progreso"
+        ><span aria-hidden="true">▥</span>Mi progreso</a
+      >
+      <a href="#docentes" data-nav="docentes"
+        ><span aria-hidden="true">▤</span>Docentes</a
+      >
+      <a href="#acerca" data-nav="acerca"
+        ><span aria-hidden="true">ⓘ</span>Acerca de</a
+      >
+    </nav>
+    <div id="announce" class="sr-only" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
 </html>
