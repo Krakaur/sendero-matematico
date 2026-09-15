@@ -1,20 +1,20 @@
 {
-  "version": "0.1.0",
-  "sourceCommit": "12911bf3e483a14d2dc750c07dc804ad5fd3ed46",
+  "version": "0.1.1",
+  "sourceCommit": "779f2a76964f5f633617f8ab4130a1e9a8ab3df4",
   "hashScope": "sha256: build workspace bytes; gitBlobSha256: committed bytes, which may use different line endings",
-  "generatedAt": "2026-09-15T18:51:37.373Z",
+  "generatedAt": "2026-09-15T19:37:30.875Z",
   "files": [
     {
       "path": "web/app.js",
-      "bytes": 32786,
-      "sha256": "34edd17e067efe0d1a56f67fba35a926c6e2939df80561c4e20ae3f4fa67cc7f",
-      "gitBlobSha256": "34edd17e067efe0d1a56f67fba35a926c6e2939df80561c4e20ae3f4fa67cc7f"
+      "bytes": 35342,
+      "sha256": "79ac32d7fcfed4a4a8bb7d3a7f462e3ca89afe234343acdcfc16503f1f956d1b",
+      "gitBlobSha256": "79ac32d7fcfed4a4a8bb7d3a7f462e3ca89afe234343acdcfc16503f1f956d1b"
     },
     {
       "path": "web/core.js",
-      "bytes": 5921,
-      "sha256": "f3df9495f65410f6b41ebd23006e914a518047e9503d06167b4bce69b13b82c2",
-      "gitBlobSha256": "f3df9495f65410f6b41ebd23006e914a518047e9503d06167b4bce69b13b82c2"
+      "bytes": 6361,
+      "sha256": "d8c11b0f96e0ecb568135f169a75dd01974c9aa6bc9e69576c0bf3ccb91e8d65",
+      "gitBlobSha256": "d8c11b0f96e0ecb568135f169a75dd01974c9aa6bc9e69576c0bf3ccb91e8d65"
     },
     {
       "path": "web/icon-192.png",
@@ -66,15 +66,15 @@
     },
     {
       "path": "web/style.css",
-      "bytes": 19269,
-      "sha256": "727d9a20e9d45397a7859334ed53a9bb0035f1b1cb0995728ab8c78a3d91e3a2",
-      "gitBlobSha256": "727d9a20e9d45397a7859334ed53a9bb0035f1b1cb0995728ab8c78a3d91e3a2"
+      "bytes": 20036,
+      "sha256": "49158add5357088332ac87de96c282f395b08e841b0d4802706bdfd8a2f54187",
+      "gitBlobSha256": "49158add5357088332ac87de96c282f395b08e841b0d4802706bdfd8a2f54187"
     },
     {
       "path": "web/sw.js",
-      "bytes": 1145,
-      "sha256": "c49784fc449a582b7685d83e315e085e6fef1c43e1675b64782076574a56dda8",
-      "gitBlobSha256": "c49784fc449a582b7685d83e315e085e6fef1c43e1675b64782076574a56dda8"
+      "bytes": 1303,
+      "sha256": "f020d6a38c3bf159b6d50a640281cfdbc943db5ac0a40dfa7bef7449b86881e0",
+      "gitBlobSha256": "f020d6a38c3bf159b6d50a640281cfdbc943db5ac0a40dfa7bef7449b86881e0"
     },
     {
       "path": "desktop/main.cjs",
@@ -85,27 +85,123 @@
     {
       "path": "package.json",
       "bytes": 962,
-      "sha256": "6666318775a200e28c5409f8f7076e787e7164be3587529ada5f0f4dcecbef9c",
-      "gitBlobSha256": "6666318775a200e28c5409f8f7076e787e7164be3587529ada5f0f4dcecbef9c"
+      "sha256": "4b064b8e7019b58dccfd255835c61fb7bdf8245250cc97bd14d933285be498a4",
+      "gitBlobSha256": "4b064b8e7019b58dccfd255835c61fb7bdf8245250cc97bd14d933285be498a4"
     },
     {
       "path": "package-lock.json",
       "bytes": 128056,
-      "sha256": "5d751edc0ea108539256179210151d1f35e23e129ae96107da29e6096a8706f3",
-      "gitBlobSha256": "5d751edc0ea108539256179210151d1f35e23e129ae96107da29e6096a8706f3"
+      "sha256": "facd6578ecb34e2bf57777f075fcde4ca2961fe0c76ccf6086ef6331015a1193",
+      "gitBlobSha256": "facd6578ecb34e2bf57777f075fcde4ca2961fe0c76ccf6086ef6331015a1193"
     },
     {
       "path": "tests/core.test.js",
-      "bytes": 4719,
-      "sha256": "759eb32358f2271527ca1b4e3384800cea74ef12f5a5f1fad12a57dcda65b3c1",
-      "gitBlobSha256": "759eb32358f2271527ca1b4e3384800cea74ef12f5a5f1fad12a57dcda65b3c1"
+      "bytes": 5363,
+      "sha256": "0b68d5b70b78664805816bd93fdd2d23b6025b7a80020945d8b51bf7043e5a87",
+      "gitBlobSha256": "0b68d5b70b78664805816bd93fdd2d23b6025b7a80020945d8b51bf7043e5a87"
+    },
+    {
+      "path": ".github/workflows/android.yml",
+      "bytes": 3279,
+      "sha256": "7505f2fd78552ebc3fd800422e6bec686fbae56bae3c8a2e16dc42a0debadaaf",
+      "gitBlobSha256": "7505f2fd78552ebc3fd800422e6bec686fbae56bae3c8a2e16dc42a0debadaaf"
+    },
+    {
+      "path": "android/app/build.gradle",
+      "bytes": 1435,
+      "sha256": "040d2b003120ba09135dab35e03cfc85bfc5a0e1330834f5b08562254c210a7a",
+      "gitBlobSha256": "040d2b003120ba09135dab35e03cfc85bfc5a0e1330834f5b08562254c210a7a"
+    },
+    {
+      "path": "android/app/proguard-rules.pro",
+      "bytes": 81,
+      "sha256": "b76c8779ff0b6d4705be284c12d4c373e5c855016ff66eecb06957e91370fad3",
+      "gitBlobSha256": "b76c8779ff0b6d4705be284c12d4c373e5c855016ff66eecb06957e91370fad3"
+    },
+    {
+      "path": "android/app/src/androidTest/java/org/krakaur/sendero/OfflineGameTest.java",
+      "bytes": 4752,
+      "sha256": "082c3b19a6a3d077bf30b4d9790f5532bd21409fe871b497844f4ced3edc84e0",
+      "gitBlobSha256": "082c3b19a6a3d077bf30b4d9790f5532bd21409fe871b497844f4ced3edc84e0"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "bytes": 1062,
+      "sha256": "f0c7a59a0c975bfc74110d513da74400c8b024c5ebcb0dd473372f523d0f9726",
+      "gitBlobSha256": "f0c7a59a0c975bfc74110d513da74400c8b024c5ebcb0dd473372f523d0f9726"
+    },
+    {
+      "path": "android/app/src/main/java/org/krakaur/sendero/MainActivity.java",
+      "bytes": 11732,
+      "sha256": "917ad8542eb243a4b467a61cca49c28680ff2e9eb0558c31373d76c1bf14ad56",
+      "gitBlobSha256": "917ad8542eb243a4b467a61cca49c28680ff2e9eb0558c31373d76c1bf14ad56"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/ic_launcher.xml",
+      "bytes": 634,
+      "sha256": "38dcfc18b2fd6c74d031b72230d153ceffd90eeffe8d286ca60cc6b3fcbcf7e0",
+      "gitBlobSha256": "38dcfc18b2fd6c74d031b72230d153ceffd90eeffe8d286ca60cc6b3fcbcf7e0"
+    },
+    {
+      "path": "android/app/src/main/res/values/styles.xml",
+      "bytes": 540,
+      "sha256": "f0cbb82216ceceed0ea1f3863fc8a8f3c25cc4e07753ccabffb2670102fc3698",
+      "gitBlobSha256": "f0cbb82216ceceed0ea1f3863fc8a8f3c25cc4e07753ccabffb2670102fc3698"
+    },
+    {
+      "path": "android/app/src/main/res/xml/data_extraction_rules.xml",
+      "bytes": 520,
+      "sha256": "11e4ae73a114606dea6f218f32d5228cef7d71b0caeea4e15383508021f91458",
+      "gitBlobSha256": "11e4ae73a114606dea6f218f32d5228cef7d71b0caeea4e15383508021f91458"
+    },
+    {
+      "path": "android/build.gradle",
+      "bytes": 70,
+      "sha256": "fa8654897462695cc83d668175dd91938d1fe532a10018dbe78d13732d907d1a",
+      "gitBlobSha256": "fa8654897462695cc83d668175dd91938d1fe532a10018dbe78d13732d907d1a"
+    },
+    {
+      "path": "android/gradle.properties",
+      "bytes": 106,
+      "sha256": "b331e3e3df27b8f664de897cdc2856e0e73a1a41a1c5741e018423dc167927c0",
+      "gitBlobSha256": "b331e3e3df27b8f664de897cdc2856e0e73a1a41a1c5741e018423dc167927c0"
+    },
+    {
+      "path": "android/settings.gradle",
+      "bytes": 275,
+      "sha256": "2c68004d05e9dc37baeb5e410a4f9a1c30752c2f525bc1a5c1d044fe95925859",
+      "gitBlobSha256": "2c68004d05e9dc37baeb5e410a4f9a1c30752c2f525bc1a5c1d044fe95925859"
+    },
+    {
+      "path": "scripts/verify-android.py",
+      "bytes": 1074,
+      "sha256": "3af871392fd31617f1636789f626f75465caca2b578207a0a671136359f40143",
+      "gitBlobSha256": "3af871392fd31617f1636789f626f75465caca2b578207a0a671136359f40143"
     }
   ],
   "windows": {
-    "artifact": "Sendero-0.1.0-Windows-x64.exe",
-    "bytes": 100251428,
-    "sha256": "c955717f25af57ab9b35c360313ed47f45c00df531c3bdef00ea9fafd20e13cd",
+    "artifact": "Sendero-0.1.1-Windows-x64.exe",
+    "bytes": 100252590,
+    "sha256": "02e5cbcba481eb3d1f605235eba1c45eeaa091d501ed8274d53689ee69dea2cd",
     "signature": "unsigned",
     "packagedSourceMatches": true
+  },
+  "android": {
+    "sourceCommit": "779f2a76964f5f633617f8ab4130a1e9a8ab3df4",
+    "signatureVerification": "Verifies\nVerified using v1 scheme (JAR signing): true\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): false\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: CN=Dirk Hans Krakaur Floranes, OU=Sendero, O=Independent Educational Software, C=MX\nSigner #1 certificate SHA-256 digest: 806e41e769cc31811c4e6ce325e7bf9d987b96fa8f5b75fb58aa06096d2b4c3d\nSigner #1 certificate SHA-1 digest: e1559e9e1ff1b73a9a9a77f1a8c81f174f83eb83\nSigner #1 certificate MD5 digest: 984b0a152d0b1f1fd493bed7c55802b1\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 3072\nSigner #1 public key SHA-256 digest: 062d9f4b83668b41f2a8dcb00853dd4688452418360a9d239ea4ed81e545e582\nSigner #1 public key SHA-1 digest: 41e1d33d69d65aa95e1ac6523f39da88b945beb0\nSigner #1 public key MD5 digest: eb9c1f394a105877e9e42339d11bdfca\nWARNING: META-INF/com/android/build/gradle/app-metadata.properties not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.\nWARNING: META-INF/version-control-info.textproto not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.\nWARNING: META-INF/androidx.annotation_annotation-experimental.version not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.\nWARNING: META-INF/androidx.core_core.version not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.\nWARNING: META-INF/androidx.lifecycle_lifecycle-runtime.version not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.\nWARNING: META-INF/androidx.versionedparcelable_versionedparcelable.version not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.\nWARNING: META-INF/androidx.webkit_webkit.version not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.\nWARNING: META-INF/versions/9/OSGI-INF/MANIFEST.MF not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+    "permissions": "package: org.krakaur.sendero",
+    "packagedSourceMatchesGit": true,
+    "artifacts": [
+      {
+        "artifact": "Sendero-0.1.1-Android.apk",
+        "bytes": 175716,
+        "sha256": "95a009d4c07506bae3972a7ea7b035c52dc08d51e260b349691c2e54d141bb08"
+      },
+      {
+        "artifact": "Sendero-0.1.1-Android.aab",
+        "bytes": 186443,
+        "sha256": "8b03f672bd587878b36723715a190b97a5a9bfc7fc2ef5447b520e9e55acb926"
+      }
+    ]
   }
 }
