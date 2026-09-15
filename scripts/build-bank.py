@@ -97,7 +97,7 @@ Un libro tiene {product} páginas. Leo una de {a} partes iguales. ¿Cuántas pá
 Tenemos {product} pesos. Gastamos una de {a} partes iguales. ¿Cuántos pesos gastamos?
 Un depósito tiene {product} litros. Sacamos una de {a} partes iguales. ¿Cuántos litros sacamos?
 En un álbum de {product} estampas completas una de {a} partes iguales. ¿Cuántas estampas colocaste?''')
-family('datos', [1,2,3,4], 'Interpretar datos', 'Lee solo las categorías que pide la pregunta. No siempre se usan todos los datos.', '{a} + {b} = {answer}. La tercera categoría no se incluye en la pregunta.', '''Registro de frutas: peras {a}, manzanas {b}, limones {other}. ¿Cuántas peras y manzanas hay juntas?
+family('datos', [1,2,3,4], 'Interpretar datos', 'Lee solo las categorías que pide la pregunta. No siempre se usan todos los datos.', '{a} + {b} = {answer}. La categoría que no se pregunta queda fuera del cálculo.', '''Registro de frutas: peras {a}, manzanas {b}, limones {other}. ¿Cuántas peras y manzanas hay juntas?
 Conteo de transporte: bicicletas {a}, motos {other}, autobuses {b}. ¿Cuántas bicicletas y autobuses se contaron?
 Préstamos de libros: cuentos {a}, poesía {b}, ciencia {other}. ¿Cuántos cuentos y libros de poesía se prestaron?
 Resultados de una encuesta: prefieren dibujar {a}, cantar {b}, correr {other}. ¿Cuántos prefieren dibujar o cantar?
@@ -160,6 +160,7 @@ def build():
         for ti,text in enumerate(f['texts']):
             template_count+=1
             for level in f['levels']:
+                if key=='representar' and ti in (4,5) and level==1: continue
                 made=0
                 for attempt in range(4000):
                     v=make_values(key,level,rng); prompt=text.format(**v)

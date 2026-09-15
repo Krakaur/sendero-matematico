@@ -12,14 +12,19 @@ def tap(node):
 def text(label):
     for _ in range(12):
         for n in nodes():
-            if n.attrib.get('text')==label: tap(n);return
+            if n.attrib.get('text','').casefold()==label.casefold(): tap(n);return
+        width,height=map(int,re.findall(r'\d+',adb('shell','wm','size'))[-2:])
+        adb('shell','input','swipe',str(width//2),str(int(height*.70)),str(width//2),str(int(height*.4)),'250')
         time.sleep(.5)
     raise AssertionError('UI text not found: '+label)
 def enter(fields):
     edits=[n for n in nodes() if n.attrib.get('class')=='android.widget.EditText']
     assert len(edits)==len(fields)
-    for n,value in zip(edits,fields):
-        tap(n);adb('shell','input','text',value);adb('shell','input','keyevent','111')
+    tap(edits[0])
+    for index,value in enumerate(fields):
+        adb('shell','input','text',value)
+        if index<len(fields)-1: adb('shell','input','keyevent','61')
+    adb('shell','input','keyevent','4');time.sleep(1)
 def start():
     adb('shell','am','start','-W','-n','org.krakaur.sendero.nativo/.MainActivity');time.sleep(1)
 

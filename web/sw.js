@@ -1,4 +1,4 @@
-const CACHE = "sendero-0.3.0-bank-final";
+const CACHE = "sendero-0.3.0-bank-release";
 const FILES = [
   "./",
   "./index.html",

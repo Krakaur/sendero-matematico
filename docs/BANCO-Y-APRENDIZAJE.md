@@ -2,7 +2,7 @@
 
 ## Alcance y estado editorial
 
-Esta versión incorpora 6 296 enunciados distintos, procedentes de 128 situaciones originales y 16 familias matemáticas. Hay 4 722 ejercicios de práctica y 1 574 reservados. Las cantidades se generan durante la construcción con restricciones y semilla fija. La aplicación utiliza el banco terminado; no contiene ni descarga modelos de IA, no consulta servicios generativos y no requiere internet para seleccionar actividades.
+Esta versión incorpora 6 270 enunciados distintos, procedentes de 128 situaciones originales y 16 familias matemáticas. Hay 4 696 ejercicios de práctica y 1 574 reservados. Las cantidades se generan durante la construcción con restricciones y semilla fija. La aplicación utiliza el banco terminado; no contiene ni descarga modelos de IA, no consulta servicios generativos y no requiere internet para seleccionar actividades.
 
 Las situaciones fueron elaboradas con asistencia de IA durante el desarrollo y revisadas internamente en su redacción, aritmética y coherencia. Se examinó el conjunto de 128 situaciones fuente; las comprobaciones automáticas recorren todas las variantes. Esta revisión no sustituye una revisión independiente de especialistas, un pilotaje con niños ni la validación psicométrica. No hay aval de la SEP.
 
