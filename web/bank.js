@@ -9,7 +9,7 @@ export function bankQuestion(profile, level, transfer=false, rng=Math.random) {
   const used=history[key]??={seen:{},cycle:0};
   let eligible=pools.get(key).filter(q=>!used.seen[q.id]);
   if(!eligible.length){used.seen={};used.cycle++;eligible=pools.get(key);}
-  const recent=history.recent??=[],families=history.families??=[];
+  const recent=history.recent??=[],families=history.families??=[],contexts=history.contexts??=[];
   const score=q=>(recent.includes(q.template)?0:8)+(contexts.includes(q.context)?0:4)+(families.includes(q.family)?0:2);
   const best=Math.max(...eligible.map(score));eligible=eligible.filter(q=>score(q)===best);
   const item=eligible[Math.floor(rng()*eligible.length)];used.seen[item.id]=true;
