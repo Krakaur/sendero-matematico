@@ -1,5 +1,21 @@
 # Sendero
 
+## Nueva versión 0.3.0
+
+[Juego actualizado](https://krakaur.github.io/sendero-matematico/) · [APK nativa Android 14–16](https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.0/Sendero-Nativo-0.3.0.apk) · [Windows x64](https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.0/Sendero-0.3.0-Windows-x64.exe)
+
+La versión 0.3.0 incorpora **6 270 enunciados distintos, 128 situaciones fuente y 16 familias matemáticas**. El banco se produce antes de distribuir la app: no hay IA en el teléfono ni llamadas a servicios generativos. Las variantes numéricas tienen restricciones y soluciones comprobadas; el teléfono selecciona contenido ya incluido.
+
+Cálculo y razonamiento mantienen progresiones distintas. Hay revisión programada de operaciones y tablas ampliadas opcionales con ambos factores del 1 al 20. El historial evita repetir un problema antes de agotar su conjunto y favorece redacciones y contextos diferentes de los recientes. Se reservan 1 574 problemas para situaciones no practicadas; al agotar un conjunto, las repeticiones se identifican como repaso.
+
+Los informes incorporan barras por dimensiones de actividad e identificadores del banco. El formato nuevo es `sendero.report.v2`; se siguen importando informes v1. Para recibir informes nuevos hay que actualizar el receptor. Los colores describen las respuestas y no acreditan dominio, razonamiento general ni eficacia educativa.
+
+Android conserva sus ocho perfiles con contraseña, SQLite y funcionamiento sin navegador ni WebView. Actualiza instalando la APK sobre la edición nativa 0.2.0, sin borrar los datos. Web y Windows conservan un perfil por instalación, sin las contraseñas de Android. La entrega de informes sigue siendo manual.
+
+El contenido tiene revisión matemática y editorial interna; la revisión docente independiente y las pruebas con niños siguen pendientes. La cobertura curricular SEP es parcial. Para niños que aún no leen se necesita acompañamiento en la lectura; no hay narración de voz. Consulta el [banco y sus límites](docs/BANCO-Y-APRENDIZAJE.md) y la [evaluación de 0.3.0](docs/EVALUACION-0.3.0.md).
+
+Para reconstruir el contenido: `python scripts/build-bank.py`. Para verificarlo: `npm test`. Los hashes y cantidades están en `docs/BANK-MANIFEST.json`. Los apartados siguientes conservan la descripción histórica de las versiones anteriores; prevalecen las condiciones y enlaces de esta sección para 0.3.0.
+
 ## Matemáticas que van contigo
 
 [Abrir el juego](https://krakaur.github.io/sendero-matematico/) · [Android 14–16: APK nativa](https://github.com/Krakaur/sendero-matematico/releases/download/v0.2.0/Sendero-Nativo-0.2.0.apk) · [Windows](https://github.com/Krakaur/sendero-matematico/releases/download/v0.1.1/Sendero-0.1.1-Windows-x64.exe) · [Guía de uso](docs/GUIA.md) · [Evaluación](docs/EVALUACION.md)

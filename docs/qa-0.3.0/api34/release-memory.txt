@@ -1,0 +1,59 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 211726 Realtime: 211726
+
+** MEMINFO in pid 6822 [org.krakaur.sendero.nativo] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap    12237    12212        4       61    13212    21876    16439     1028
+  Dalvik Heap      606      580        8      212     1524     4408     2204     2204
+ Dalvik Other      444      440        0       10      752                           
+        Stack      380      380        0        0      384                           
+       Ashmem        9        0        0        0      548                           
+    Other dev       21        4       16        0      256                           
+     .so mmap     2388      248        4        3    33380                           
+    .jar mmap      688        0        4        0    23720                           
+    .apk mmap      140       52        4        0     1448                           
+    .ttf mmap      242        0      124        0      692                           
+    .dex mmap       26        4       16        0      692                           
+    .oat mmap      429        0        0        0    12224                           
+    .art mmap      691      352       24      112    19000                           
+   Other mmap       89        8       28        0     1156                           
+      Unknown      502      500        0        0      868                           
+        TOTAL    19290    14780      232      398   109856    26284    18643     3232
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:      956                          20524
+         Native Heap:    12212                          13212
+                Code:      472                          72172
+               Stack:      380                            384
+            Graphics:        0                              0
+       Private Other:      992
+              System:     4278
+             Unknown:                                    3564
+ 
+           TOTAL PSS:    19290            TOTAL RSS:   109856       TOTAL SWAP PSS:      398
+ 
+ Objects
+               Views:       17         ViewRootImpl:        1
+         AppContexts:        6           Activities:        1
+              Assets:       19        AssetManagers:        0
+       Local Binders:       14        Proxy Binders:       35
+       Parcel memory:        4         Parcel count:       18
+    Death Recipients:        0             WebViews:        0
+ 
+ SQL
+         MEMORY_USED:      141
+  PAGECACHE_OVERFLOW:       25          MALLOC_SIZE:       46
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     3808              8     0     2     0  /data/user/0/org.krakaur.sendero.nativo/files/bank-0.3.0.db
+         4       40             26     1    16     2  /data/user/0/org.krakaur.sendero.nativo/databases/sendero-native.db
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+              0             3             3  /data/user/0/org.krakaur.sendero.nativo/files/bank-0.3.0.db
+              1            17            18  /data/user/0/org.krakaur.sendero.nativo/databases/sendero-native.db

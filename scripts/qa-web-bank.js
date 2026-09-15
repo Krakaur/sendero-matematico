@@ -1,7 +1,12 @@
 async (page) => {
   const errors=[];page.on('pageerror',e=>errors.push(String(e)));
   await page.context().setOffline(false);
-  await page.evaluate(async()=>{localStorage.clear();for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();for(const k of await caches.keys())await caches.delete(k);});
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('http://127.0.0.1:4173/#acerca');
+  await page.getByText('Borrar los datos de este dispositivo',{exact:true}).click();
+  await page.evaluate(()=>{window.confirm=()=>true;});
+  await page.getByRole('button',{name:'Borrar datos locales…',exact:true}).click();
+  await page.evaluate(async()=>{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();for(const k of await caches.keys())await caches.delete(k);});
   await page.goto('http://127.0.0.1:4173/');
   await page.getByText('Lista sin conexión',{exact:true}).waitFor();
   await page.reload();

@@ -1,5 +1,17 @@
 # Estado de continuidad
 
+## Versión 0.3.0: banco sin IA en el dispositivo
+
+La versión 0.3.0 incorpora un banco de 6 270 enunciados, 128 situaciones y 16 familias, con 1 574 problemas reservados. Android, web y Windows incluyen el mismo contenido, selección sin reemplazo y preferencia por redacciones y contextos recientes diferentes. Cálculo y razonamiento tienen estados independientes; las tablas ampliadas llegan al 20 y el cálculo incorpora revisión programada. No se incorpora IA offline ni un servicio generativo.
+
+El banco se construye con `scripts/build-bank.py`. La base SQLite de contenido está separada de los perfiles; no cambiar el contenido de una versión publicada. Una ampliación futura debe preservar identificadores y soportar informes de bancos anteriores. Leer `BANCO-Y-APRENDIZAJE.md`, `EVALUACION-0.3.0.md`, `BANK-MANIFEST.json` y `RELEASE-0.3.0.json`. La cobertura SEP sigue siendo parcial; no presentar la revisión interna como revisión docente independiente ni validación educativa.
+
+Android conserva paquete y firma de 0.2.0, ahora con versionCode 2. Workflow aprobado `35027880412`, fuente compilada `d38c3ce`. APK 386 882 bytes, sin permiso de internet ni WebView. Pasaron 18 pruebas Node, cinco pruebas Java y cuatro pruebas instrumentadas por API 34/35/36. Se comprobó actualizar desde la APK pública 0.2.0 manteniendo perfil, contraseña y respuesta pendiente. Se comprobó una aventura web offline y apertura del banco en Windows empaquetado. Pruebas físicas y con niños siguen pendientes.
+
+Informes nuevos: `sendero.report.v2`; se admite v1 al importar. Los receptores anteriores deben actualizarse para recibir v2. Android tiene perfiles con contraseña; web y Windows conservan un perfil por instalación. Sin backend ni investigación activa. El catálogo CSV de revisión está disponible como `Banco-Sendero-0.3.0.zip` en Releases; no es un paquete importable por la app.
+
+Los apartados siguientes son históricos y no sustituyen estas decisiones.
+
 ## Continuación: Android nativo 0.2.0
 
 Publicación experimental disponible en `https://github.com/Krakaur/sendero-matematico/releases/tag/v0.2.0`. APK: 50 848 bytes; Android mínimo 14/API 34, objetivo 16/API 36. Workflow aprobado: `35018784587`, fuente compilada `39878e2c0c4814d4bbc7b9eaa1ddfbf0a648bbc6`. La web ofrece esta APK y conserva Windows 0.1.1. El SHA-256 de la descarga pública coincide con el del paquete de CI. Pruebas físicas pendientes.

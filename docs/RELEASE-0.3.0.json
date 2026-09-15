@@ -1,0 +1,133 @@
+{
+  "version": "0.3.0",
+  "status": "experimental-physical-and-independent-pedagogical-review-pending",
+  "generatedAt": "2026-09-15T21:58:42.921368+00:00",
+  "sourceCommit": "d38c3ceb6c2f915a140d989f64e58a5f677754b5",
+  "nativeBuildSource": "d38c3ceb6c2f915a140d989f64e58a5f677754b5",
+  "workflow": "https://github.com/Krakaur/sendero-matematico/actions/runs/35027880412",
+  "artifacts": [
+    {
+      "name": "Banco-Sendero-0.3.0.zip",
+      "bytes": 101857,
+      "sha256": "29a6ad3d2c04e0ee5872f1dda35b5904cc08ee7e28c939666eb3706d273dddcd"
+    },
+    {
+      "name": "Sendero-0.3.0-Windows-x64.exe",
+      "bytes": 100369550,
+      "sha256": "81b5391b11ac91c6ca385b723546561fd94c404f708f066777c8c3a632786e92"
+    },
+    {
+      "name": "Sendero-Nativo-0.3.0.aab",
+      "bytes": 373293,
+      "sha256": "2d4109d9ba1987ecc4c73492b7fd25e4e98fc2e93d28f0d5d4b6d0f42ff08f1a"
+    },
+    {
+      "name": "Sendero-Nativo-0.3.0.apk",
+      "bytes": 386882,
+      "sha256": "e4cfa836fc8f678872d0613a58817f5241e649d7637c1b07870e3cbf9c2c1794"
+    }
+  ],
+  "bank": {
+    "version": "0.3.0",
+    "authorship": "Original AI-assisted editorial content, generated before distribution. No runtime AI.",
+    "review": "Internal mathematical and editorial review; independent teacher review pending.",
+    "templates": 128,
+    "items": 6270,
+    "families": 16,
+    "uniquePrompts": 6270,
+    "counts": {
+      "L1-practice": 580,
+      "L1-transfer": 202,
+      "L2-practice": 1212,
+      "L2-transfer": 404,
+      "L3-practice": 1512,
+      "L3-transfer": 504,
+      "L4-practice": 1392,
+      "L4-transfer": 464
+    },
+    "sha256": "fde81c0161261f13df19ec0c46eed484212674d21b51498ed369336d52fcd995",
+    "databaseBytes": 3899392
+  },
+  "devices": [
+    {
+      "api": 34,
+      "ramMiB": 2048,
+      "tests": {
+        "name": "org.krakaur.sendero.nativo.NativeTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "69.486",
+        "timestamp": "2026-09-15T21:56:13",
+        "hostname": "localhost"
+      },
+      "upgrade": {
+        "from": "0.2.0",
+        "to": "0.3.0",
+        "samePackageAndSignature": true,
+        "profileAndPasswordPreserved": true,
+        "pendingAnswerPreserved": true
+      },
+      "releasePssKiB": 19290
+    },
+    {
+      "api": 35,
+      "ramMiB": 2048,
+      "tests": {
+        "name": "org.krakaur.sendero.nativo.NativeTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "72.436",
+        "timestamp": "2026-09-15T21:56:23",
+        "hostname": "localhost"
+      },
+      "upgrade": {
+        "from": "0.2.0",
+        "to": "0.3.0",
+        "samePackageAndSignature": true,
+        "profileAndPasswordPreserved": true,
+        "pendingAnswerPreserved": true
+      },
+      "releasePssKiB": 15742
+    },
+    {
+      "api": 36,
+      "ramMiB": 2048,
+      "tests": {
+        "name": "org.krakaur.sendero.nativo.NativeTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "70.044",
+        "timestamp": "2026-09-15T21:56:28",
+        "hostname": "localhost"
+      },
+      "upgrade": {
+        "from": "0.2.0",
+        "to": "0.3.0",
+        "samePackageAndSignature": true,
+        "profileAndPasswordPreserved": true,
+        "pendingAnswerPreserved": true
+      },
+      "releasePssKiB": 19430
+    }
+  ],
+  "web": {
+    "nodeTests": 18,
+    "offlineReloadAndCompletion": true,
+    "widths": [
+      320,
+      390,
+      1280
+    ]
+  },
+  "windows": {
+    "packagedSourcesMatch": true,
+    "bankSmokeTest": true,
+    "commercialSignature": false
+  }
+}
