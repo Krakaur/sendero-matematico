@@ -1,0 +1,41 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'org.krakaur.sendero.nativo'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'org.krakaur.sendero.nativo'
+        minSdk 23
+        targetSdk 36
+        versionCode 1
+        versionName '0.2.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    signingConfigs {
+        release {
+            if (System.getenv('SENDERO_KEYSTORE')) {
+                storeFile file(System.getenv('SENDERO_KEYSTORE'))
+                storePassword System.getenv('SENDERO_STORE_PASSWORD')
+                keyAlias 'sendero'
+                keyPassword System.getenv('SENDERO_STORE_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    lint { abortOnError true }
+}
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20240303'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test:rules:1.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}
