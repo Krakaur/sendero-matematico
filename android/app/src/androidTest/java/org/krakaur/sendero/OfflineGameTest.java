@@ -48,14 +48,23 @@ public class OfflineGameTest {
         } while (System.currentTimeMillis() < deadline);
         fail("Condition not reached: " + condition);
     }
+    private void act(String script) {
+        // Navigation can discard the callback of the script that triggered it.
+        // Dispatch the action once, then assert its visible result with until().
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            WebView web = findWeb(rule.getActivity().getWindow().getDecorView());
+            assertNotNull(web);
+            web.evaluateJavascript(script, null);
+        });
+    }
     @Test public void bundledGameKeepsProgressAndTeachesAfterAnError() throws Exception {
         // The production manifest has no INTERNET permission: first load is necessarily local.
         until("document.querySelector('#offline-badge')?.textContent === 'Incluida sin conexión'");
         assertEquals("true", js("document.querySelector('#main').textContent.includes('El bosque de las sumas')"));
-        js("document.querySelector('[data-trail=\"suma\"]').click()");
+        act("document.querySelector('[data-trail=\"suma\"]').click()");
         until("!!document.querySelector('.answer')");
         // Choose a wrong option from the visible exercise; then follow the revealed solution.
-        js("(()=>{const text=document.querySelector('.equation').textContent; const ns=text.match(/\\d+/g).map(Number); const correct=ns[0]+ns[1]; [...document.querySelectorAll('.answer')].find(x=>Number(x.textContent)!==correct).click();})()");
+        act("(()=>{const text=document.querySelector('.equation').textContent; const ns=text.match(/\\d+/g).map(Number); const correct=ns[0]+ns[1]; [...document.querySelectorAll('.answer')].find(x=>Number(x.textContent)!==correct).click();})()");
         until("!!document.querySelector('.solution-callout')");
         assertEquals("true", js("/^¡.*=!?.*!$/.test(document.querySelector('.solution-callout strong').textContent)"));
         assertEquals("true", js("document.documentElement.scrollWidth <= window.innerWidth"));
@@ -64,7 +73,7 @@ public class OfflineGameTest {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> findWeb(rule.getActivity().getWindow().getDecorView()).reload());
         until("!window.__senderoTestOldDocument && document.readyState === 'complete' && !!document.querySelector('.solution-callout')");
         assertEquals(solution, js("document.querySelector('.solution-callout strong').textContent"));
-        js("(()=>{const answer=document.querySelector('.solution-callout strong').textContent.match(/=\\s*(\\d+)/)[1]; [...document.querySelectorAll('.answer')].find(x=>x.textContent.trim()===answer).click();})()");
+        act("(()=>{const answer=document.querySelector('.solution-callout strong').textContent.match(/=\\s*(\\d+)/)[1]; [...document.querySelectorAll('.answer')].find(x=>x.textContent.trim()===answer).click();})()");
         until("document.querySelector('.solution-callout').textContent.includes('Ya puedes continuar')");
         assertEquals("true", js("JSON.parse(localStorage.getItem('sendero.state.v1')).current.questions[0].solutionShown === true"));
         assertEquals("2", js("JSON.parse(localStorage.getItem('sendero.state.v1')).current.questions[0].attempts.length"));
