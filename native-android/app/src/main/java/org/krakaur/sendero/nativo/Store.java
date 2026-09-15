@@ -27,7 +27,7 @@ public final class Store extends SQLiteOpenHelper {
     }
     private static String derive(char[] password,byte[] salt)throws GeneralSecurityException{
         PBEKeySpec spec=new PBEKeySpec(password,salt,210000,256);
-        try{return Base64.encodeToString(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(spec).getEncoded(),Base64.NO_WRAP);}finally{spec.clearPassword();}
+        try{return Base64.encodeToString(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).getEncoded(),Base64.NO_WRAP);}finally{spec.clearPassword();}
     }
     public JSONObject create(String alias,char[] password)throws Exception{
         alias=alias.trim();if(alias.length()<2||alias.length()>24||password.length<6||password.length>128)throw new Exception("Usa un alias de 2 a 24 caracteres y una contraseña de 6 a 128 caracteres.");

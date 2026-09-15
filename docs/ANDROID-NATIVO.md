@@ -8,7 +8,7 @@ Se distribuye con identificador `org.krakaur.sendero.nativo`, diferente de la ed
 
 ## Compatibilidad hacia equipos antiguos y recientes
 
-La configuración establece Android 6/API 23 como mínimo y Android 16/API 36 como objetivo, sin versión máxima. El mínimo define dónde se permite instalar; el objetivo declara el comportamiento moderno que debe respetar la aplicación. Un objetivo reciente no exige que todos los usuarios tengan esa versión del sistema. Esta distinción está descrita en la documentación de [uses-sdk](https://developer.android.com/guide/topics/manifest/uses-sdk-element) y en los [requisitos de API objetivo](https://developer.android.com/google/play/requirements/target-sdk).
+La configuración establece Android 14/API 34 como mínimo y Android 16/API 36 como objetivo, sin versión máxima. El mínimo define dónde se permite instalar; el objetivo declara el comportamiento moderno que debe respetar la aplicación. Un objetivo reciente no exige que todos los usuarios tengan esa versión del sistema. Esta distinción está descrita en la documentación de [uses-sdk](https://developer.android.com/guide/topics/manifest/uses-sdk-element) y en los [requisitos de API objetivo](https://developer.android.com/google/play/requirements/target-sdk).
 
 La aplicación no contiene bibliotecas nativas dependientes de una arquitectura de procesador. Los controles emplean tamaños independientes de densidad y texto escalable; el contenido se desplaza, admite orientación horizontal y respeta las áreas ocupadas por las barras del sistema. No hay límite máximo de versión, bloqueo de orientación ni descarga de fuentes o imágenes. Esto reduce barreras previsibles, pero no constituye una garantía para todos los fabricantes, tamaños o versiones futuras.
 
@@ -29,7 +29,7 @@ SQLite directo es una decisión acotada, no una recomendación general contra Ro
 
 ## Perfiles en teléfonos compartidos
 
-Hasta ocho perfiles locales mantienen alias, contraseña, dificultad, partida actual, sesiones completas e informes recibidos separados. No se solicitan nombres reales, correo ni matrícula. Las contraseñas tienen entre 6 y 128 caracteres; se conserva una derivación PBKDF2-HMAC-SHA1 de 256 bits con sal aleatoria de 128 bits y 210 000 iteraciones, nunca el texto de la contraseña. La selección de esta primitiva conserva compatibilidad con API 23. La derivación se ejecuta fuera del hilo de interfaz. Después de cinco intentos fallidos se aplica una espera local de un minuto.
+Hasta ocho perfiles locales mantienen alias, contraseña, dificultad, partida actual, sesiones completas e informes recibidos separados. No se solicitan nombres reales, correo ni matrícula. Las contraseñas tienen entre 6 y 128 caracteres; se conserva una derivación PBKDF2-HMAC-SHA256 de 256 bits con sal aleatoria de 128 bits y 210 000 iteraciones, nunca el texto de la contraseña. La primitiva está disponible en todo el rango Android 14–16. La derivación se ejecuta fuera del hilo de interfaz. Después de cinco intentos fallidos se aplica una espera local de un minuto.
 
 La aplicación bloquea el acceso al pasar a segundo plano y al reiniciarse; la rotación conserva la sesión abierta. Cada usuario puede cambiar su contraseña conociendo la anterior. No existe recuperación remota: una persona adulta debe custodiar la clave si el niño necesita ayuda. Antes de extender su uso deben observarse la carga de recordar contraseñas y las demoras de derivación en teléfonos reales. Una futura cuenta de tutor con recuperación requiere diseño explícito, no una contraseña universal.
 

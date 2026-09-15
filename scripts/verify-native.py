@@ -11,7 +11,7 @@ assert apk.stat().st_size < 1024 * 1024, 'APK exceeds 1 MiB budget'
 permissions = (folder / 'permissions.txt').read_text()
 assert 'uses-permission' not in permissions, permissions
 metadata = (folder / 'metadata.txt').read_text()
-assert "sdkVersion:'23'" in metadata and "targetSdkVersion:'36'" in metadata
+assert "sdkVersion:'34'" in metadata and "targetSdkVersion:'36'" in metadata
 assert 'maxSdkVersion' not in metadata
-(folder / 'verification.json').write_text(json.dumps({'apkBytes': apk.stat().st_size, 'webViewReference': False, 'webAssets': False, 'nativeLibraries': False, 'requestedPermissions': [], 'minSdk': 23, 'targetSdk': 36}, indent=2))
+(folder / 'verification.json').write_text(json.dumps({'apkBytes': apk.stat().st_size, 'webViewReference': False, 'webAssets': False, 'nativeLibraries': False, 'requestedPermissions': [], 'minSdk': 34, 'targetSdk': 36}, indent=2))
 print((folder / 'verification.json').read_text())
