@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  recordAttempt,
   makeQuestion,
   newSession,
   adapt,
@@ -10,6 +11,19 @@ import {
   mergeSessions,
   SCHEMA,
 } from "../web/core.js";
+test("An error reveals the solution and a subsequent correct answer is not independent", () => {
+  const q = makeQuestion("suma", 1, seeded());
+  assert.equal(q.solutionShown, false);
+  const wrong = q.options.find((n) => n !== q.answer);
+  assert.equal(recordAttempt(q, wrong), true);
+  assert.equal(q.solutionShown, true);
+  assert.equal(q.done, undefined);
+  assert.equal(recordAttempt(q, q.answer), true);
+  assert.equal(q.done, true);
+  assert.equal(dimensions([{ questions: [q] }]).independent, 0);
+  assert.equal(JSON.parse(JSON.stringify(q)).solutionShown, true);
+  assert.equal(recordAttempt(q, q.answer), false);
+});
 const seeded = () => {
   let x = 12345;
   return () => (x = (Math.imul(x, 1664525) + 1013904223) >>> 0) / 4294967296;

@@ -1,19 +1,74 @@
-import {readFile,writeFile,readdir,stat} from 'node:fs/promises';
-import {createHash} from 'node:crypto';
-import {execFileSync} from 'node:child_process';
-import {extractFile} from '@electron/asar';
-const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
-const files=[];
-for(const name of await readdir('web')){const path=`web/${name}`;if((await stat(path)).isFile()){const bytes=await readFile(path);files.push({path,bytes:bytes.length,sha256:sha(bytes)});}}
-for(const path of ['desktop/main.cjs','package.json','package-lock.json','tests/core.test.js']){const bytes=await readFile(path);files.push({path,bytes:bytes.length,sha256:sha(bytes)});}
-for(const path of ['web/app.js','web/core.js','web/style.css','web/index.html','desktop/main.cjs']){
- const packed=extractFile('dist/win-unpacked/resources/app.asar',path);
- if(sha(packed)!==sha(await readFile(path)))throw Error(`Packaged source mismatch: ${path}`);
+import { readFile, writeFile, readdir, stat } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
+import { extractFile } from "@electron/asar";
+const sha = (bytes) => createHash("sha256").update(bytes).digest("hex");
+const files = [];
+for (const name of await readdir("web")) {
+  const path = `web/${name}`;
+  if ((await stat(path)).isFile()) {
+    const bytes = await readFile(path);
+    files.push({ path, bytes: bytes.length, sha256: sha(bytes) });
+  }
 }
-const artifact='Sendero-0.1.0-Windows-x64.exe';
-const bytes=await readFile(`dist/${artifact}`);
-for(const entry of files) entry.gitBlobSha256=sha(execFileSync('git',['show',`HEAD:${entry.path}`],{encoding:'buffer'}));
-const release={version:'0.1.0',sourceCommit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),hashScope:'sha256: build workspace bytes; gitBlobSha256: committed bytes, which may use different line endings',generatedAt:new Date().toISOString(),files,windows:{artifact,bytes:bytes.length,sha256:sha(bytes),signature:'unsigned',packagedSourceMatches:true}};
-await writeFile('docs/BUILD_MANIFEST.json',JSON.stringify(release,null,2)+'\n');
-await writeFile('dist/SHA256SUMS.txt',`${sha(bytes)}  ${artifact}\n`);
-console.log(JSON.stringify({webBytes:files.filter(f=>f.path.startsWith('web/')).reduce((n,f)=>n+f.bytes,0),windows:release.windows},null,2));
+for (const path of [
+  "desktop/main.cjs",
+  "package.json",
+  "package-lock.json",
+  "tests/core.test.js",
+]) {
+  const bytes = await readFile(path);
+  files.push({ path, bytes: bytes.length, sha256: sha(bytes) });
+}
+for (const path of [
+  "web/app.js",
+  "web/core.js",
+  "web/style.css",
+  "web/index.html",
+  "desktop/main.cjs",
+]) {
+  const packed = extractFile("dist/win-unpacked/resources/app.asar", path);
+  if (sha(packed) !== sha(await readFile(path)))
+    throw Error(`Packaged source mismatch: ${path}`);
+}
+const version = JSON.parse(await readFile("package.json", "utf8")).version;
+const artifact = `Sendero-${version}-Windows-x64.exe`;
+const bytes = await readFile(`dist/${artifact}`);
+for (const entry of files)
+  entry.gitBlobSha256 = sha(
+    execFileSync("git", ["show", `HEAD:${entry.path}`], { encoding: "buffer" }),
+  );
+const release = {
+  version,
+  sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], {
+    encoding: "utf8",
+  }).trim(),
+  hashScope:
+    "sha256: build workspace bytes; gitBlobSha256: committed bytes, which may use different line endings",
+  generatedAt: new Date().toISOString(),
+  files,
+  windows: {
+    artifact,
+    bytes: bytes.length,
+    sha256: sha(bytes),
+    signature: "unsigned",
+    packagedSourceMatches: true,
+  },
+};
+await writeFile(
+  "docs/BUILD_MANIFEST.json",
+  JSON.stringify(release, null, 2) + "\n",
+);
+await writeFile("dist/SHA256SUMS.txt", `${sha(bytes)}  ${artifact}\n`);
+console.log(
+  JSON.stringify(
+    {
+      webBytes: files
+        .filter((f) => f.path.startsWith("web/"))
+        .reduce((n, f) => n + f.bytes, 0),
+      windows: release.windows,
+    },
+    null,
+    2,
+  ),
+);

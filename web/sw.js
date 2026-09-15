@@ -1,4 +1,4 @@
-const CACHE = "sendero-0.1.0-release";
+const CACHE = "sendero-0.1.1-release";
 const FILES = [
   "./",
   "./index.html",
@@ -44,3 +44,4 @@ self.addEventListener("fetch", (event) => {
     })(),
   );
 });
+

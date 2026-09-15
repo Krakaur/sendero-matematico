@@ -1,6 +1,6 @@
 {
   "name": "sendero-matematico",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Exploración matemática con práctica sin conexión y registro docente local",
   "private": true,
   "type": "module",

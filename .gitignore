@@ -3,3 +3,9 @@ dist/
 *.log
 .DS_Store
 qa-private/
+
+android/.gradle/
+android/**/build/
+android/local.properties
+*.jks
+*.keystore

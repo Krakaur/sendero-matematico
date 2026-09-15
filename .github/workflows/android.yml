@@ -1,0 +1,68 @@
+name: Android package
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - name: Build and inspect signed packages
+        env:
+          KEYSTORE_BASE64: ${{ secrets.SENDERO_KEYSTORE_BASE64 }}
+          SENDERO_STORE_PASSWORD: ${{ secrets.SENDERO_STORE_PASSWORD }}
+        run: |
+          test -n "$KEYSTORE_BASE64"
+          export SENDERO_KEYSTORE="$RUNNER_TEMP/sendero.jks"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$SENDERO_KEYSTORE"
+          trap 'rm -f "$SENDERO_KEYSTORE"' EXIT
+          gradle -p android --no-daemon assembleRelease bundleRelease lintRelease
+          mkdir -p android-artifacts
+          cp android/app/build/outputs/apk/release/app-release.apk android-artifacts/Sendero-0.1.1-Android.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab android-artifacts/Sendero-0.1.1-Android.aab
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs android-artifacts/*.apk > android-artifacts/apk-signature.txt
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging android-artifacts/*.apk > android-artifacts/apk-metadata.txt
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump permissions android-artifacts/*.apk > android-artifacts/apk-permissions.txt
+          jarsigner -verify android-artifacts/*.aab > android-artifacts/aab-signature.txt
+          cp android/app/build/reports/lint-results-release.txt android-artifacts/
+          python3 scripts/verify-android.py
+          git rev-parse HEAD > android-artifacts/source-commit.txt
+          (cd android-artifacts && sha256sum *.apk *.aab > SHA256SUMS-Android.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sendero-android
+          path: android-artifacts/
+          retention-days: 30
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Android integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          arch: x86_64
+          target: default
+          ram-size: 1536M
+          heap-size: 128M
+          disable-animations: true
+          script: gradle -p android --no-daemon connectedDebugAndroidTest
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-test-results
+          path: |
+            android/app/build/reports/androidTests/
+            android/app/build/outputs/androidTest-results/
+          retention-days: 30
