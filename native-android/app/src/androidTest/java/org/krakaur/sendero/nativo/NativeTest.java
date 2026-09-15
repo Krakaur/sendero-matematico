@@ -19,7 +19,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 
 @RunWith(AndroidJUnit4.class) public class NativeTest {
     private Context context;private Store store;
-    @Before public void setup(){context=InstrumentationRegistry.getInstrumentation().getTargetContext();context.deleteDatabase("sendero-native.db");store=new Store(context);}
+    @Before public void setup(){context=InstrumentationRegistry.getInstrumentation().getTargetContext();context.deleteDatabase("sendero-native.db");store=new Store(context);Bank.init(context);}
     @After public void close(){store.close();}
     private JSONObject completed(String id)throws Exception{JSONObject p=Engine.profile("Test");p.put("id",id);p.put("current",Engine.session("suma",1,id));JSONObject out=null;for(int i=0;i<8;i++){JSONObject q=Engine.currentQuestion(p.getJSONObject("current"));Engine.answer(q,q.getInt("answer"));out=Engine.advance(p);}return out;}
     @Test public void passwordsIsolationDeduplicationAndAtomicRollback()throws Exception{
@@ -34,6 +34,22 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
         store.changePassword(aid,"clave-a".toCharArray(),"nueva-clave".toCharArray());assertEquals(aid,store.login(aid,"nueva-clave".toCharArray()).getString("id"));
         store.close();store=new Store(context);assertEquals(1,store.sessions(aid,false).length());
         assertFalse(r.toString().contains("clave"));assertFalse(r.toString().contains("Colibrí"));
+    }
+    @Test public void bankHistorySurvivesAndNewReportsRoundTrip()throws Exception {
+        JSONObject p=store.create("Ideas","clave-ideas".toCharArray()),other=store.create("Otro","clave-otro".toCharArray());Engine.start(p,"razonar");java.util.Set<String> ids=new java.util.HashSet<>();JSONObject complete=null;
+        for(int i=0;i<8;i++){JSONObject q=Engine.currentQuestion(p.getJSONObject("current"));assertTrue(ids.add(q.getString("bankId")));assertEquals(i==7?"transfer":"practice",q.getString("pool"));assertTrue(Bank.valid(q));Engine.answer(q,q.getInt("answer"));complete=Engine.advance(p);store.save(p,complete);}
+        assertNotNull(complete);assertFalse(other.has("bankHistory"));JSONObject loaded=store.login(p.getString("id"),"clave-ideas".toCharArray());assertEquals(p.getJSONObject("bankHistory").toString(),loaded.getJSONObject("bankHistory").toString());
+        JSONObject report=Engine.report(p.getString("id"),new JSONArray().put(complete));Engine.validate(report);assertEquals(1,store.receive(other.getString("id"),report));assertEquals(0,store.receive(other.getString("id"),report));
+        complete.getJSONArray("questions").getJSONObject(0).put("prompt","Texto manipulado");try{Engine.validate(report);fail("Changed content accepted");}catch(JSONException expected){}
+    }
+    @Test public void nativeReasoningCorrectionAndLabelsAreUsable()throws Exception {
+        JSONObject p=store.create("Ideas","clave-ideas".toCharArray());
+        try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)){
+            waitReady(scenario);onView(withText("Ideas")).perform(scrollTo(),click());onView(withHint("Contraseña")).perform(typeText("clave-ideas"),closeSoftKeyboard());onView(withText("Entrar")).perform(click());waitReady(scenario);
+            onView(withText("?  El taller de las ideas")).perform(scrollTo(),click());waitReady(scenario);screenshot(scenario,"06-reasoning");
+            for(int i=0;i<8;i++) {JSONObject q=Engine.currentQuestion(current(scenario).getJSONObject("current"));if(i==0){int wrong=0;while(q.getJSONArray("options").getInt(wrong)==q.getInt("answer"))wrong++;onView(withId(MainActivity.ANSWER_BASE+wrong)).perform(scrollTo(),click());waitReady(scenario);onView(withId(MainActivity.SOLUTION)).perform(scrollTo()).check(matches(withText("¡"+q.getString("solution")+"!")));screenshot(scenario,"07-reasoning-correction");scenario.recreate();waitReady(scenario);}int answer=0;while(q.getJSONArray("options").getInt(answer)!=q.getInt("answer"))answer++;onView(withId(MainActivity.ANSWER_BASE+answer)).perform(scrollTo(),click());waitReady(scenario);onView(withId(MainActivity.NEXT)).perform(scrollTo(),click());waitReady(scenario);}
+            screenshot(scenario,"08-reasoning-progress");assertEquals(1,store.sessions(p.getString("id"),false).length());
+        }
     }
     private void waitReady(ActivityScenario<MainActivity> scenario)throws Exception{
         for(int i=0;i<150;i++){AtomicBoolean ready=new AtomicBoolean();scenario.onActivity(a->{try{Field f=MainActivity.class.getDeclaredField("busy");f.setAccessible(true);ready.set(!f.getBoolean(a));}catch(Exception e){throw new RuntimeException(e);}});if(ready.get()){InstrumentationRegistry.getInstrumentation().waitForIdleSync();return;}Thread.sleep(100);}fail("Activity remained busy");

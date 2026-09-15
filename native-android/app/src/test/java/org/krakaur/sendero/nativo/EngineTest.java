@@ -5,7 +5,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 public class EngineTest {
     @Test public void twelveThousandExercisesAreCoherent()throws Exception{
-        Random rng=new Random(42);for(String t:Engine.TRAILS)for(int l=1;l<=4;l++)for(int n=0;n<1000;n++){
+        Random rng=new Random(42);for(String t:new String[]{"suma","resta","multi","tablas20"})for(int l=1;l<=4;l++)for(int n=0;n<1000;n++){
             JSONObject q=Engine.question(t,l,rng);int a=q.getInt("a"),b=q.getInt("b"),answer=q.getInt("answer");assertEquals(t.equals("suma")?a+b:t.equals("resta")?a-b:a*b,answer);assertTrue(answer>=0);Set<Integer> values=new HashSet<>();for(int j=0;j<4;j++)values.add(q.getJSONArray("options").getInt(j));assertEquals(4,values.size());assertTrue(values.contains(answer));
         }
     }

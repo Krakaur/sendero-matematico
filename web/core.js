@@ -1,5 +1,6 @@
-export const VERSION = "0.1.1";
-export const SCHEMA = "sendero.report.v1";
+import { validBankQuestion } from "./bank.js";
+export const VERSION = "0.3.0";
+export const SCHEMA = "sendero.report.v2";
 export const TRAILS = {
   suma: {
     name: "El bosque de las sumas",
@@ -26,6 +27,10 @@ export const TRAILS = {
     skill: "Grupos iguales",
   },
 };
+Object.assign(TRAILS, {
+  tablas20: {name:"Tablas hasta el 20",short:"Tablas ampliadas",symbol:"×",color:"orange",description:"Practica y repasa productos del 1 al 20. Ampliación opcional.",skill:"Fluidez de cálculo"},
+  razonar: {name:"El taller de las ideas",short:"Razonamiento",symbol:"?",color:"blue",description:"Interpreta situaciones, compara y encuentra lo que falta.",skill:"Problemas y representaciones"}
+});
 export function uid() {
   return crypto.randomUUID();
 }
@@ -54,7 +59,7 @@ export function adapt(state, question) {
   ) {
     next.streak++;
     next.support = 0;
-    if (next.streak >= 3) {
+    if (next.streak >= (question.bankId ? 6 : 3)) {
       next.level = Math.min(4, next.level + 1);
       next.streak = 0;
     }
@@ -71,9 +76,9 @@ export function adapt(state, question) {
 export function makeQuestion(trail, level, rng = Math.random) {
   const int = (min, max) => min + Math.floor(rng() * (max - min + 1));
   let a, b, answer;
-  if (trail === "multi") {
-    a = int(2, [3, 5, 8, 10][level - 1]);
-    b = int(2, [3, 5, 8, 10][level - 1]);
+  if (trail === "multi" || trail === "tablas20") {
+    a = int(1, (trail === "tablas20" ? [10,12,15,20] : [3,5,8,10])[level - 1]);
+    b = int(1, (trail === "tablas20" ? [10,12,15,20] : [3,5,8,10])[level - 1]);
     answer = a * b;
   } else {
     const max = [5, 10, 20, 50][level - 1];
@@ -155,7 +160,7 @@ export function dimensions(sessions) {
 export function validateReport(data) {
   if (
     !data ||
-    data.schema !== SCHEMA ||
+    ![SCHEMA,"sendero.report.v1"].includes(data.schema) ||
     typeof data.profile !== "string" ||
     !/^[a-zA-Z0-9-]{1,60}$/.test(data.profile) ||
     !Array.isArray(data.sessions) ||
@@ -207,7 +212,7 @@ export function validateReport(data) {
           : s.trail === "resta"
             ? q.a - q.b
             : q.a * q.b;
-      if (q.answer !== expected)
+      if (s.trail === "razonar" ? !validBankQuestion(q) : q.answer !== expected)
         throw new Error("Los resultados no coinciden con los ejercicios.");
     }
   }

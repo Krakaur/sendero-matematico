@@ -1225,3 +1225,7 @@ th {
   backdrop-filter: none;
   background: #faf8f0;
 }
+
+.word-problem { font-size: clamp(1.3rem,4.6vw,1.8rem); line-height:1.45; text-align:left; max-width:36em; margin:1rem auto 1.5rem; }
+.word-answers .answer {font-size:clamp(1rem,3.5vw,1.35rem);line-height:1.35;min-height:76px;padding:12px;overflow-wrap:anywhere;}
+.reasoning .solution-callout strong {font-size:clamp(1.4rem,5vw,2rem);}

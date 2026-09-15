@@ -3,11 +3,12 @@ folder = pathlib.Path('native-artifacts')
 apk = next(folder.glob('*.apk'))
 with zipfile.ZipFile(apk) as z:
     names = z.namelist()
-    assert not any(n.startswith(('assets/', 'lib/')) for n in names), 'Unexpected runtime or web assets'
+    assert [n for n in names if n.startswith('assets/')] == ['assets/bank-0.3.0.db'], 'Unexpected assets'
+    assert not any(n.startswith('lib/') for n in names), 'Unexpected native libraries'
     for name in names:
         if name.endswith('.dex'):
             assert b'Landroid/webkit/WebView;' not in z.read(name), 'WebView reference'
-assert apk.stat().st_size < 1024 * 1024, 'APK exceeds 1 MiB budget'
+assert apk.stat().st_size < 2 * 1024 * 1024, 'APK exceeds 2 MiB budget'
 permissions = (folder / 'permissions.txt').read_text()
 assert 'uses-permission' not in permissions, permissions
 metadata = (folder / 'metadata.txt').read_text()

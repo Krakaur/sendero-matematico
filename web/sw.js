@@ -1,10 +1,12 @@
-const CACHE = "sendero-0.1.1-native-download";
+const CACHE = "sendero-0.3.0-bank";
 const FILES = [
   "./",
   "./index.html",
   "./style.css",
   "./app.js",
   "./core.js",
+  "./bank.js",
+  "./bank-data.js",
   "./icon.svg",
   "./landscape.svg",
   "./icon-192.png",

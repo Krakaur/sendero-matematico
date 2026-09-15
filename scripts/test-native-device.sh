@@ -25,7 +25,7 @@ adb logcat -d -s AndroidRuntime > native-evidence/crashes.txt
 adb logcat -d > native-evidence/logcat.txt
 if [ "$result" -eq 0 ]; then
   adb uninstall org.krakaur.sendero.nativo || true
-  adb install dist-candidate/native-artifacts/Sendero-Nativo-0.2.0.apk
+  adb install dist-candidate/native-artifacts/Sendero-Nativo-0.3.0.apk
   adb shell am start -W -n org.krakaur.sendero.nativo/.MainActivity > native-evidence/release-launch.txt
   sleep 2
   adb shell uiautomator dump /data/local/tmp/sendero-release.xml
