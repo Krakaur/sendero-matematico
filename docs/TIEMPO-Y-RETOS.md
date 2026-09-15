@@ -29,3 +29,21 @@ Para el objetivo original de comunicación y colaboración, una vez comprobada l
 La publicación con APK, AAB y Windows se registró a las 19:37:45 UTC del 15 de septiembre de 2026. Desde los primeros archivos transcurrieron 71 minutos y 54 segundos, aproximadamente **72 minutos**. El intervalo incluye construcción, comprobaciones y documentación desde ese punto, pero no toda la conversación ni el análisis previo. Fuente de publicación: [versión 0.1.1](https://github.com/Krakaur/sendero-matematico/releases/tag/v0.1.1).
 
 Frente a dos días naturales quedarían aproximadamente **2808 minutos**; frente a dos jornadas de ocho horas, **888 minutos**. Es una comparación de tiempo transcurrido, no de horas-persona ni de trabajo exclusivo, y no demuestra que las actividades de validación puedan completarse dentro de ese margen.
+
+## Continuación nativa 0.2.0
+
+La publicación nativa se registró el 15 de septiembre de 2026 a las **20:28:12 UTC**. Desde los primeros archivos (18:25:51 UTC) transcurrieron **2 horas, 2 minutos y 21 segundos**, aproximadamente **122 minutos**. Desde la publicación híbrida 0.1.1 transcurrieron 50 minutos y 27 segundos adicionales. Son intervalos de reloj, no horas-persona ni una medición de todo el análisis previo. Fuente: [publicación 0.2.0](https://github.com/Krakaur/sendero-matematico/releases/tag/v0.2.0).
+
+La continuación implementó independencia de WebView, perfiles con contraseña, SQLite transaccional y evaluación en Android 14–16. Esas tareas ya no deben figurar como funcionalidades completamente pendientes; permanecen pendientes sus pruebas físicas e institucionales. La comparación aritmética actualizada deja aproximadamente **2758 minutos** frente a 48 horas naturales, o **838 minutos** frente a dos jornadas de ocho horas.
+
+### Prioridad del tiempo restante
+
+Primero deben comprobarse instalación, lentitud percibida, pérdida de acceso, teclado y archivos en un teléfono Android 14–16 de gama baja. Conviene dedicar después una sesión con docentes a observar carga de lectura, interpretación de las barras y claridad de las ayudas. Son pruebas de viabilidad y comprensión; no una demostración de eficacia.
+
+La siguiente mejora técnica con mayor valor es una recuperación de acceso controlada por una persona tutora y una copia integral protegida: el JSON actual conserva sesiones completas para consulta, pero no restaura contraseñas ni partidas. La comprobación de actualizaciones firmadas y la conservación de datos también requiere una segunda versión y pruebas específicas.
+
+En contenido, corresponde diseñar tareas originales que alternen cálculo, representación y elección de operaciones, evaluadas con docentes. La investigación independiente sobre PISA orienta preguntas de diseño, pero no autoriza usar sus niveles como baremos de primaria. Deben distinguirse corrección inmediata con ayuda, retención posterior y transferencia a una situación nueva.
+
+La recepción docente automática, con identidad, confirmaciones y reintentos, requiere un protocolo y un servicio. La publicación en tiendas, recuperación institucional, revisión ética y evaluación longitudinal dependen además de personas y procesos externos. No resulta razonable tratar el saldo aritmético de dos días como garantía de completar esas etapas.
+
+La difusión puede empezar con una demostración breve y una invitación concreta a probar la APK: comunidades docentes, formadores, redes de didáctica, catálogos de software educativo, páginas universitarias y distribución local asistida. La estrategia ampliada está en `DIFUSION.md`; no se han enviado mensajes ni solicitudes a terceros.

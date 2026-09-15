@@ -2,6 +2,8 @@
 
 ## Continuación: Android nativo 0.2.0
 
+Publicación experimental disponible en `https://github.com/Krakaur/sendero-matematico/releases/tag/v0.2.0`. APK: 50 848 bytes; Android mínimo 14/API 34, objetivo 16/API 36. Workflow aprobado: `35018784587`, fuente compilada `39878e2c0c4814d4bbc7b9eaa1ddfbf0a648bbc6`. La web ofrece esta APK y conserva Windows 0.1.1. El SHA-256 de la descarga pública coincide con el del paquete de CI. Pruebas físicas pendientes.
+
 La decisión posterior amplía el alcance: `native-android/` implementa una edición sin WebView, con ocho perfiles locales protegidos por contraseña y SQLite. El paquete es `org.krakaur.sendero.nativo`; no sustituye ni migra automáticamente la edición híbrida. Leer `ANDROID-NATIVO.md` y `EVALUACION-NATIVA.md` para conocer sus límites y resultados efectivos. La instrucción histórica de posponer la implementación nativa, conservada abajo, queda superada por esta continuación. iOS continúa pendiente.
 
 No hay backend ni investigación activa. Las contraseñas controlan el acceso local, pero no cifran toda la base ni los informes exportados. La recuperación remota de claves, copia integral protegida, identidad docente y entrega con confirmación siguen pendientes. Los informes recibidos se mantienen separados de la práctica propia.

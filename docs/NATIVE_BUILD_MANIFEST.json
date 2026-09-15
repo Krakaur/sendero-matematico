@@ -81,103 +81,132 @@
   "evidence": [
     {
       "path": "docs/qa-native/api34/disabled-packages.txt",
-      "sha256": "72d6f3c67c2c5a9715fa7d26cda21089a4f5601d054499bc0b7242ce7cdc49de"
+      "sha256": "72d6f3c67c2c5a9715fa7d26cda21089a4f5601d054499bc0b7242ce7cdc49de",
+      "gitBlobSha256": "72d6f3c67c2c5a9715fa7d26cda21089a4f5601d054499bc0b7242ce7cdc49de"
     },
     {
       "path": "docs/qa-native/api34/release-launch.txt",
-      "sha256": "0c24bfe193e3f9c8a9dc1ed21b892adcc9d261f0eee2517654605514a624ed2c"
+      "sha256": "0c24bfe193e3f9c8a9dc1ed21b892adcc9d261f0eee2517654605514a624ed2c",
+      "gitBlobSha256": "0c24bfe193e3f9c8a9dc1ed21b892adcc9d261f0eee2517654605514a624ed2c"
     },
     {
       "path": "docs/qa-native/api34/release-memory.txt",
-      "sha256": "f758ff87f9071826f498f90d2ce40578a310abb7c50a22b7b7b4bd29682f9e74"
+      "sha256": "f758ff87f9071826f498f90d2ce40578a310abb7c50a22b7b7b4bd29682f9e74",
+      "gitBlobSha256": "f758ff87f9071826f498f90d2ce40578a310abb7c50a22b7b7b4bd29682f9e74"
     },
     {
       "path": "docs/qa-native/api34/tests.xml",
-      "sha256": "84f601974b1c0bf18c78f80d36039af74b4d255a979827f601f7b889f31e1a02"
+      "sha256": "84f601974b1c0bf18c78f80d36039af74b4d255a979827f601f7b889f31e1a02",
+      "gitBlobSha256": "38c688de1139e0248d3b1884c8f61224b721f1ca514d810b7e92d369104cb8d0"
     },
     {
       "path": "docs/qa-native/api34/webview-status.txt",
-      "sha256": "1153ca867326b86dd8185e9a0497e793c72cc916ef6cead88ca0a4865565ed8e"
+      "sha256": "1153ca867326b86dd8185e9a0497e793c72cc916ef6cead88ca0a4865565ed8e",
+      "gitBlobSha256": "1153ca867326b86dd8185e9a0497e793c72cc916ef6cead88ca0a4865565ed8e"
     },
     {
       "path": "docs/qa-native/api35/disabled-packages.txt",
-      "sha256": "72d6f3c67c2c5a9715fa7d26cda21089a4f5601d054499bc0b7242ce7cdc49de"
+      "sha256": "72d6f3c67c2c5a9715fa7d26cda21089a4f5601d054499bc0b7242ce7cdc49de",
+      "gitBlobSha256": "72d6f3c67c2c5a9715fa7d26cda21089a4f5601d054499bc0b7242ce7cdc49de"
     },
     {
       "path": "docs/qa-native/api35/release-launch.txt",
-      "sha256": "69dd40ead45100d03f1f2c34e2c1dfdf84b7d126541c1896ee7f1fbdd1db391a"
+      "sha256": "69dd40ead45100d03f1f2c34e2c1dfdf84b7d126541c1896ee7f1fbdd1db391a",
+      "gitBlobSha256": "69dd40ead45100d03f1f2c34e2c1dfdf84b7d126541c1896ee7f1fbdd1db391a"
     },
     {
       "path": "docs/qa-native/api35/release-memory.txt",
-      "sha256": "8bb7dc38f60f9968080822eeabac04e079d84b6b348a48957f9454177de4eb2a"
+      "sha256": "8bb7dc38f60f9968080822eeabac04e079d84b6b348a48957f9454177de4eb2a",
+      "gitBlobSha256": "8bb7dc38f60f9968080822eeabac04e079d84b6b348a48957f9454177de4eb2a"
     },
     {
       "path": "docs/qa-native/api35/tests.xml",
-      "sha256": "af317c9729ee87a2a0a8f53592834566e22715296dbc766f9904d63c0e52a615"
+      "sha256": "af317c9729ee87a2a0a8f53592834566e22715296dbc766f9904d63c0e52a615",
+      "gitBlobSha256": "f7013e1e41795ad5d888f6571ed3c1582f460fd23bdec9c406421275bc4592be"
     },
     {
       "path": "docs/qa-native/api35/webview-status.txt",
-      "sha256": "990fd3241f6abffb7761ee1ed1db1e73ad6ade00bc84bab5a4d26c81c33d1bdc"
+      "sha256": "990fd3241f6abffb7761ee1ed1db1e73ad6ade00bc84bab5a4d26c81c33d1bdc",
+      "gitBlobSha256": "990fd3241f6abffb7761ee1ed1db1e73ad6ade00bc84bab5a4d26c81c33d1bdc"
     },
     {
       "path": "docs/qa-native/api36/disabled-packages.txt",
-      "sha256": "9b286a7042c6c5c24520516ff9d7fb5c87aff217e9da3efd2b28ae7987390071"
+      "sha256": "9b286a7042c6c5c24520516ff9d7fb5c87aff217e9da3efd2b28ae7987390071",
+      "gitBlobSha256": "9b286a7042c6c5c24520516ff9d7fb5c87aff217e9da3efd2b28ae7987390071"
     },
     {
       "path": "docs/qa-native/api36/release-launch.txt",
-      "sha256": "46e7d798db9262aa4028432bec1b91f3feb6363067fbe0e0fe8620b8ad085dc9"
+      "sha256": "46e7d798db9262aa4028432bec1b91f3feb6363067fbe0e0fe8620b8ad085dc9",
+      "gitBlobSha256": "46e7d798db9262aa4028432bec1b91f3feb6363067fbe0e0fe8620b8ad085dc9"
     },
     {
       "path": "docs/qa-native/api36/release-memory.txt",
-      "sha256": "c39f10e9ed2292ceed7b1709c18c2d7ec0f64502f2400191f3877356d61a1a91"
+      "sha256": "c39f10e9ed2292ceed7b1709c18c2d7ec0f64502f2400191f3877356d61a1a91",
+      "gitBlobSha256": "c39f10e9ed2292ceed7b1709c18c2d7ec0f64502f2400191f3877356d61a1a91"
     },
     {
       "path": "docs/qa-native/api36/sendero-01-home.png",
-      "sha256": "849ec4ada190566b48441ace91c01a8a9ccd776bb1fcf56e55608be08965c930"
+      "sha256": "849ec4ada190566b48441ace91c01a8a9ccd776bb1fcf56e55608be08965c930",
+      "gitBlobSha256": "849ec4ada190566b48441ace91c01a8a9ccd776bb1fcf56e55608be08965c930"
     },
     {
       "path": "docs/qa-native/api36/sendero-02-correction.png",
-      "sha256": "3fdc90a46270c3ddebdf7eb1f3542589b9cd41bb487644a536a02a1ac9f6cfb8"
+      "sha256": "3fdc90a46270c3ddebdf7eb1f3542589b9cd41bb487644a536a02a1ac9f6cfb8",
+      "gitBlobSha256": "3fdc90a46270c3ddebdf7eb1f3542589b9cd41bb487644a536a02a1ac9f6cfb8"
     },
     {
       "path": "docs/qa-native/api36/sendero-04-landscape-correction.png",
-      "sha256": "1e9d43a186da46237e56b7a516a91d181be674e41e3edc05a46843c924311c9b"
+      "sha256": "1e9d43a186da46237e56b7a516a91d181be674e41e3edc05a46843c924311c9b",
+      "gitBlobSha256": "1e9d43a186da46237e56b7a516a91d181be674e41e3edc05a46843c924311c9b"
     },
     {
       "path": "docs/qa-native/api36/sendero-05-large-text-progress.png",
-      "sha256": "7dce283a14fdc11edeac00e7e779be8ad98465f6510ae26cc7dc9e51f9f77ab8"
+      "sha256": "7dce283a14fdc11edeac00e7e779be8ad98465f6510ae26cc7dc9e51f9f77ab8",
+      "gitBlobSha256": "7dce283a14fdc11edeac00e7e779be8ad98465f6510ae26cc7dc9e51f9f77ab8"
     },
     {
       "path": "docs/qa-native/api36/tests.xml",
-      "sha256": "dc94908c79129965e89532d0392b2a38ca16a9f33e1560386a3fa4e6350b93f8"
+      "sha256": "dc94908c79129965e89532d0392b2a38ca16a9f33e1560386a3fa4e6350b93f8",
+      "gitBlobSha256": "203589704768e8bd7cf8fad30691b695d2a347a412a51d04698a2f14dd963137"
     },
     {
       "path": "docs/qa-native/api36/webview-status.txt",
-      "sha256": "295b7617e0206df96bec3bcc66d11e755dedd7131cf4c68edea3e208ae99744e"
+      "sha256": "295b7617e0206df96bec3bcc66d11e755dedd7131cf4c68edea3e208ae99744e",
+      "gitBlobSha256": "295b7617e0206df96bec3bcc66d11e755dedd7131cf4c68edea3e208ae99744e"
     },
     {
       "path": "docs/qa-native/metadata.txt",
-      "sha256": "52cfe6dcb8e4cdc98c03604a52ca0b2207e061250fe60f87cfada5f314974fe7"
+      "sha256": "52cfe6dcb8e4cdc98c03604a52ca0b2207e061250fe60f87cfada5f314974fe7",
+      "gitBlobSha256": "52cfe6dcb8e4cdc98c03604a52ca0b2207e061250fe60f87cfada5f314974fe7"
     },
     {
       "path": "docs/qa-native/permissions.txt",
-      "sha256": "b430767c65b3e6f5b553bc66b1bdaf0a587acfd8ea72c7fe1c27418ddd995d47"
+      "sha256": "b430767c65b3e6f5b553bc66b1bdaf0a587acfd8ea72c7fe1c27418ddd995d47",
+      "gitBlobSha256": "b430767c65b3e6f5b553bc66b1bdaf0a587acfd8ea72c7fe1c27418ddd995d47"
     },
     {
       "path": "docs/qa-native/SHA256SUMS.txt",
-      "sha256": "c58f5ae905554a96e88d0a630cbb8c2872a31edd3122e759d2fda531aef59b76"
+      "sha256": "c58f5ae905554a96e88d0a630cbb8c2872a31edd3122e759d2fda531aef59b76",
+      "gitBlobSha256": "c58f5ae905554a96e88d0a630cbb8c2872a31edd3122e759d2fda531aef59b76"
     },
     {
       "path": "docs/qa-native/signature.txt",
-      "sha256": "7ff64de9d8347f0cf76e92ec0ff30683494452a41702459e9c5eb2e566403394"
+      "sha256": "7ff64de9d8347f0cf76e92ec0ff30683494452a41702459e9c5eb2e566403394",
+      "gitBlobSha256": "7ff64de9d8347f0cf76e92ec0ff30683494452a41702459e9c5eb2e566403394"
     },
     {
       "path": "docs/qa-native/source-commit.txt",
-      "sha256": "bbfaaa9021a46d1e0feeec8a91347516723f9af73048d633381bf1aa4db3203b"
+      "sha256": "bbfaaa9021a46d1e0feeec8a91347516723f9af73048d633381bf1aa4db3203b",
+      "gitBlobSha256": "bbfaaa9021a46d1e0feeec8a91347516723f9af73048d633381bf1aa4db3203b"
     },
     {
       "path": "docs/qa-native/verification.json",
-      "sha256": "9744a02345ed0fc767fc870f5b23d54dfe9c16d23b1c92bcca5592c440e90db8"
+      "sha256": "9744a02345ed0fc767fc870f5b23d54dfe9c16d23b1c92bcca5592c440e90db8",
+      "gitBlobSha256": "9744a02345ed0fc767fc870f5b23d54dfe9c16d23b1c92bcca5592c440e90db8"
     }
-  ]
+  ],
+  "evidenceHashScope": "sha256: original CI evidence bytes; gitBlobSha256: bytes committed to Git (line endings may be normalized)",
+  "releaseUrl": "https://github.com/Krakaur/sendero-matematico/releases/tag/v0.2.0",
+  "publishedAt": "2026-09-15T20:28:12Z",
+  "publicApkDownloadSha256": "c787dbe8d6e5a9c38cd868bcf23c396a79b7f110ffdb8d63a709fc9202447248"
 }
