@@ -69,4 +69,5 @@ jobs:
           path: |
             android/app/build/reports/androidTests/
             android/app/build/outputs/androidTest-results/
+            android/app/build/reports/lint-results-release.txt
           retention-days: 30

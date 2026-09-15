@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
         });
         web.loadUrl(START);
         if (Build.VERSION.SDK_INT >= 33) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-            android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::onBackPressed);
+            android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::navigateBack);
         handler.postDelayed(() -> { if (!ready && !isFinishing()) showUnavailable(); }, 20000);
     }
 
@@ -177,11 +177,16 @@ public class MainActivity extends Activity {
         }
     }
 
-    @Override public void onBackPressed() {
+    // API 33+ uses the explicitly registered OnBackInvokedCallback above.
+    @Override @SuppressLint("GestureBackNavigation") public void onBackPressed() {
+        if (Build.VERSION.SDK_INT < 33) navigateBack();
+        else super.onBackPressed();
+    }
+    private void navigateBack() {
         if (web != null) web.evaluateJavascript("location.hash === '#explorar' || !location.hash", atHome -> {
             if ("true".equals(atHome)) finish(); else web.evaluateJavascript("location.hash='#explorar'", null);
         });
-        else super.onBackPressed();
+        else finish();
     }
     @Override protected void onPause() {
         super.onPause();
