@@ -23,12 +23,12 @@ public class MainActivity extends Activity {
     static final int ANSWER_BASE=1100,NEXT=1200,SOLUTION=1201;
     private final ExecutorService io=Executors.newSingleThreadExecutor();
     private Store store; private JSONObject profile; private String route="home";
-    private LinearLayout root,content;private boolean busy,pickerOpen,stopped;private long activeAt;private int accessEpoch;
+    private LinearLayout root,content;private ProgressBar activityIndicator;private boolean busy,pickerOpen,stopped;private long activeAt;private int accessEpoch;
     private static final int EXPORT=41,IMPORT=42;
     interface Work<T>{T run()throws Exception;} interface Result<T>{void accept(T value)throws Exception;}
     private <T> void work(Work<T> task,Result<T> done){
-        if(busy)return;busy=true;int epoch=accessEpoch;if(root!=null)setEnabled(root,false);
-        io.execute(()->{try{T value=task.run();runOnUiThread(()->{busy=false;if(isDestroyed())return;if(epoch!=accessEpoch){profile=null;if(!stopped)loginScreen();return;}if(root!=null)setEnabled(root,true);try{done.accept(value);}catch(Exception e){error(e);}});}catch(Exception e){runOnUiThread(()->{busy=false;if(!isDestroyed()&&!stopped){if(root!=null)setEnabled(root,true);if(epoch!=accessEpoch)loginScreen();error(e);}});}});
+        if(busy)return;busy=true;int epoch=accessEpoch;if(root!=null)setEnabled(root,false);if(activityIndicator!=null)activityIndicator.setVisibility(View.VISIBLE);
+        io.execute(()->{try{T value=task.run();runOnUiThread(()->{busy=false;if(isDestroyed())return;if(activityIndicator!=null)activityIndicator.setVisibility(View.GONE);if(epoch!=accessEpoch){profile=null;if(!stopped)loginScreen();return;}if(root!=null)setEnabled(root,true);try{done.accept(value);}catch(Exception e){error(e);}});}catch(Exception e){runOnUiThread(()->{busy=false;if(!isDestroyed()&&!stopped){if(activityIndicator!=null)activityIndicator.setVisibility(View.GONE);if(root!=null)setEnabled(root,true);if(epoch!=accessEpoch)loginScreen();error(e);}});}});
     }
     private void error(Exception e){new AlertDialog.Builder(this).setTitle("No se completó la acción").setMessage(e.getMessage()==null?"Inténtalo de nuevo. No borres los datos de la aplicación.":e.getMessage()).setPositiveButton("Entendido",null).show();}
     private void setEnabled(View v,boolean value){v.setEnabled(value);if(v instanceof android.view.ViewGroup){android.view.ViewGroup g=(android.view.ViewGroup)v;for(int i=0;i<g.getChildCount();i++)setEnabled(g.getChildAt(i),value);}}
@@ -56,11 +56,12 @@ public class MainActivity extends Activity {
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private GradientDrawable bg(int color){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(18));return d;}
     private void shell(String subtitle){
-        root=new LinearLayout(this);root.setOrientation(1);root.setBackgroundColor(CREAM);root.setPadding(dp(16),dp(8),dp(16),dp(8));setContentView(root);
+        root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setBackgroundColor(CREAM);root.setPadding(dp(16),dp(8),dp(16),dp(8));setContentView(root);
         root.setOnApplyWindowInsetsListener((v,insets)->{if(Build.VERSION.SDK_INT>=30){Insets i=insets.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout());v.setPadding(dp(16)+i.left,dp(8)+i.top,dp(16)+i.right,dp(8)+i.bottom);}else{v.setPadding(dp(16)+insets.getSystemWindowInsetLeft(),dp(8)+insets.getSystemWindowInsetTop(),dp(16)+insets.getSystemWindowInsetRight(),dp(8)+insets.getSystemWindowInsetBottom());}return insets;});root.requestApplyInsets();
         TextView brand=text("SENDERO  /  Matemáticas",17,true);root.addView(brand);root.addView(text(subtitle,14,false));
+        activityIndicator=new ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal);activityIndicator.setIndeterminate(true);activityIndicator.setContentDescription("Guardando o abriendo datos");activityIndicator.setVisibility(View.GONE);root.addView(activityIndicator,new LinearLayout.LayoutParams(-1,dp(4)));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(false);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        content=new LinearLayout(this);content.setOrientation(1);content.setPadding(0,dp(16),0,dp(20));scroll.addView(content);
+        content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(16),0,dp(20));scroll.addView(content);
         if(profile!=null){LinearLayout nav=new LinearLayout(this);root.addView(nav);nav.addView(button("Inicio",()->navigate("home")),new LinearLayout.LayoutParams(0,-2,1));nav.addView(button("Avances",()->navigate("progress")),new LinearLayout.LayoutParams(0,-2,1));nav.addView(button("Salir",this::logout),new LinearLayout.LayoutParams(0,-2,1));}
     }
     private TextView text(String s,int size,boolean bold){TextView t=new TextView(this);t.setText(s);t.setTextColor(INK);t.setTextSize(size);t.setPadding(dp(4),dp(6),dp(4),dp(6));if(bold)t.setTypeface(null,Typeface.BOLD);return t;}
@@ -73,7 +74,7 @@ public class MainActivity extends Activity {
         if(busy)return;work(()->store.profiles(),rows->{if(profile!=null)return;for(int i=0;i<rows.length();i++){JSONObject p=rows.getJSONObject(i);addButton(p.getString("alias"),()->loginDialog(p));}addButton("Crear perfil",this::createDialog);note("Hasta 8 perfiles. Si olvidas la contraseña, no hay recuperación por correo. Conserva una copia con una persona adulta de confianza.");});
     }
     private EditText input(String hint,boolean password){EditText e=new EditText(this);e.setHint(hint);e.setTextColor(INK);e.setSingleLine(true);e.setMinHeight(dp(52));e.setInputType(password?InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD:InputType.TYPE_CLASS_TEXT);e.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(password?128:24)});return e;}
-    private LinearLayout form(){LinearLayout f=new LinearLayout(this);f.setOrientation(1);f.setPadding(dp(20),dp(8),dp(20),dp(8));return f;}
+    private LinearLayout form(){LinearLayout f=new LinearLayout(this);f.setOrientation(LinearLayout.VERTICAL);f.setPadding(dp(20),dp(8),dp(20),dp(8));return f;}
     private void loginDialog(JSONObject p){EditText pass=input("Contraseña",true);LinearLayout f=form();f.addView(pass);new AlertDialog.Builder(this).setTitle(p.optString("alias")).setView(f).setNegativeButton("Cancelar",null).setPositiveButton("Entrar",(d,w)->{char[] password=pass.getText().toString().toCharArray();pass.setText("");work(()->store.login(p.optString("id"),password),value->{profile=value;route="home";render();});}).show();}
     private void createDialog(){LinearLayout f=form();EditText alias=input("Alias (por ejemplo: Colibrí)",false),pass=input("Contraseña (mínimo 6 caracteres)",true),confirm=input("Repite la contraseña",true);f.addView(alias);f.addView(pass);f.addView(confirm);
         new AlertDialog.Builder(this).setTitle("Nuevo perfil local").setView(f).setNegativeButton("Cancelar",null).setPositiveButton("Crear",(d,w)->{if(!pass.getText().toString().equals(confirm.getText().toString())){error(new Exception("Las contraseñas no coinciden."));return;}char[] password=pass.getText().toString().toCharArray();String name=alias.getText().toString();pass.setText("");confirm.setText("");work(()->store.create(name,password),p->{profile=p;route="home";render();});}).show();
@@ -111,3 +112,4 @@ public class MainActivity extends Activity {
         @Override protected void onDraw(Canvas canvas){super.onDraw(canvas);float w=getWidth(),h=getHeight();color(0xffe7eddd);canvas.drawRoundRect(0,0,w,h,28,28,paint);color(0xfff4c65b);canvas.drawCircle(w*.78f,h*.25f,h*.13f,paint);Path p=new Path();p.moveTo(0,h);p.lineTo(w*.27f,h*.15f);p.lineTo(w*.6f,h);p.close();color(0xff9bbba1);canvas.drawPath(p,paint);p.reset();p.moveTo(w*.35f,h);p.lineTo(w*.69f,h*.28f);p.lineTo(w,h);p.close();color(0xff5e896e);canvas.drawPath(p,paint);color(0xffffe5a1);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(h*.1f);p.reset();p.moveTo(w*.45f,h);p.cubicTo(w*.7f,h*.7f,w*.42f,h*.65f,w*.58f,h*.48f);canvas.drawPath(p,paint);paint.setStyle(Paint.Style.FILL);color(0xffbf6c3b);canvas.drawCircle(w*.21f,h*.7f,h*.11f,paint);p.reset();p.moveTo(w*.21f-h*.09f,h*.64f);p.lineTo(w*.21f-h*.09f,h*.49f);p.lineTo(w*.21f,h*.61f);p.lineTo(w*.21f+h*.09f,h*.49f);p.lineTo(w*.21f+h*.09f,h*.64f);p.close();canvas.drawPath(p,paint);color(CREAM);canvas.drawCircle(w*.21f,h*.75f,h*.055f,paint);color(INK);canvas.drawCircle(w*.21f-h*.035f,h*.67f,h*.012f,paint);canvas.drawCircle(w*.21f+h*.035f,h*.67f,h*.012f,paint);}
     }
 }
+

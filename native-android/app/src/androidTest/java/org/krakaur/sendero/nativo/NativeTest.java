@@ -51,8 +51,12 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
             JSONObject q=Engine.currentQuestion(current(scenario).getJSONObject("current"));int wrong=0;if(q.getJSONArray("options").getInt(0)==q.getInt("answer"))wrong=1;
             onView(withId(MainActivity.ANSWER_BASE+wrong)).perform(scrollTo(),click());waitReady(scenario);onView(withId(MainActivity.SOLUTION)).check(matches(withText(org.hamcrest.Matchers.startsWith("¡"))));screenshot(scenario,"02-correction");
             scenario.recreate();waitReady(scenario);assertTrue(Engine.currentQuestion(current(scenario).getJSONObject("current")).getBoolean("solutionShown"));
+            scenario.onActivity(a->a.setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE));Thread.sleep(1000);waitReady(scenario);onView(withId(MainActivity.SOLUTION)).perform(scrollTo());screenshot(scenario,"04-landscape-correction");
+            scenario.onActivity(a->a.setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT));Thread.sleep(1000);waitReady(scenario);
             for(int i=0;i<8;i++){q=Engine.currentQuestion(current(scenario).getJSONObject("current"));int option=0;while(q.getJSONArray("options").getInt(option)!=q.getInt("answer"))option++;onView(withId(MainActivity.ANSWER_BASE+option)).perform(scrollTo(),click());waitReady(scenario);onView(withId(MainActivity.NEXT)).perform(scrollTo(),click());waitReady(scenario);}
             screenshot(scenario,"03-progress");assertEquals(1,store.sessions(id,false).length());assertEquals(7,Engine.metrics(store.sessions(id,false),"",0)[2]);
+            try(android.os.ParcelFileDescriptor command=InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("settings put system font_scale 1.5")){Thread.sleep(1200);}waitReady(scenario);screenshot(scenario,"05-large-text-progress");
+            try(android.os.ParcelFileDescriptor command=InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("settings put system font_scale 1.0")){Thread.sleep(1000);}waitReady(scenario);
             onView(withText("Salir")).perform(click());waitReady(scenario);onView(withText("Cada explorador, su camino")).check(matches(isDisplayed()));
         }
     }
