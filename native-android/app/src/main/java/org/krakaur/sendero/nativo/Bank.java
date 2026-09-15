@@ -41,12 +41,13 @@ public final class Bank {
         JSONObject seen=used.getJSONObject("seen");
         JSONArray recent=history.optJSONArray("recent");if(recent==null)recent=new JSONArray();
         JSONArray families=history.optJSONArray("families");if(families==null)families=new JSONArray();
+        JSONArray contexts=history.optJSONArray("contexts");if(contexts==null)contexts=new JSONArray();
         String chosen=null;int best=Integer.MIN_VALUE,ties=0;
         for(int pass=0;pass<2&&chosen==null;pass++) {
-            try(Cursor c=db.rawQuery("SELECT id,template,family FROM items WHERE level=? AND pool=? ORDER BY id",new String[]{String.valueOf(level),pool})) {
+            try(Cursor c=db.rawQuery("SELECT id,template,family,context FROM items WHERE level=? AND pool=? ORDER BY id",new String[]{String.valueOf(level),pool})) {
                 while(c.moveToNext()) {
                     if(seen.has(c.getString(0)))continue;
-                    int score=(contains(recent,c.getString(1))?0:4)+(contains(families,c.getString(2))?0:2);
+                    int score=(contains(recent,c.getString(1))?0:8)+(contains(contexts,c.getString(3))?0:4)+(contains(families,c.getString(2))?0:2);
                     if(score>best){best=score;chosen=c.getString(0);ties=1;}
                     else if(score==best&&rng.nextInt(++ties)==0)chosen=c.getString(0);
                 }
@@ -56,6 +57,7 @@ public final class Bank {
         if(chosen==null)throw new JSONException("No hay actividades para este nivel.");
         JSONObject q=item(chosen);seen.put(chosen,true);
         history.put("recent",recent(recent,q.getString("template"),8));history.put("families",recent(families,q.getString("family"),2));
+        history.put("contexts",recent(contexts,q.getString("context"),4));
         q.put("novel",used.optInt("cycle")==0);q.put("cycle",used.optInt("cycle"));
         q.put("bankVersion","0.3.0");q.put("bankId",q.getString("id"));
         List<Integer> options=new ArrayList<>();for(int i=0;i<4;i++)options.add(q.getJSONArray("options").getInt(i));Collections.shuffle(options,rng);q.put("options",new JSONArray(options));

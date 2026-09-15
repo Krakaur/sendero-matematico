@@ -1,3 +1,4 @@
+import { rememberPractice, practiceQuestion } from "./practice.js";
 import { bankQuestion, optionText, reasoningDimensions, bankCount } from "./bank.js";
 import {
   VERSION,
@@ -175,7 +176,7 @@ function home() {
     )
     .join(
       "",
-    )}</div></section><div class="notice"><span class="notice-icon" aria-hidden="true">⌁</span><p><strong>Tu aventura también va sin internet.</strong>Prepara el juego una vez y lleva tus descubrimientos contigo.</p></div><div class="download-strip"><p><strong>Lleva Sendero contigo.</strong> Descarga el juego completo para usarlo sin internet.</p><div class="button-row"><a class="soft-button" href="https://github.com/Krakaur/sendero-matematico/releases/download/v0.2.0/Sendero-Nativo-0.2.0.apk" target="_blank" rel="noopener">Android 14–16 · APK nativa ↓</a><a class="soft-button" href="https://github.com/Krakaur/sendero-matematico/releases/download/v0.1.1/Sendero-0.1.1-Windows-x64.exe" target="_blank" rel="noopener">Windows ↓</a></div></div><p class="footer-note">Explorador ${profileCode()} · Progreso guardado en este dispositivo</p>`;
+    )}</div></section><div class="notice"><span class="notice-icon" aria-hidden="true">⌁</span><p><strong>Tu aventura también va sin internet.</strong>Prepara el juego una vez y lleva tus descubrimientos contigo.</p></div><div class="download-strip"><p><strong>Lleva Sendero contigo.</strong> Descarga el juego completo para usarlo sin internet.</p><div class="button-row"><a class="soft-button" href="https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.0/Sendero-Nativo-0.3.0.apk" target="_blank" rel="noopener">Android 14–16 · APK nativa ↓</a><a class="soft-button" href="https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.0/Sendero-0.3.0-Windows-x64.exe" target="_blank" rel="noopener">Windows ↓</a></div></div><p class="footer-note">Explorador ${profileCode()} · Progreso guardado en este dispositivo</p>`;
 }
 function progress() {
   const stats = summarize(state.sessions);
@@ -245,7 +246,7 @@ function importedProfiles() {
     .join("");
 }
 function about() {
-  return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje y no quitan recompensas.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. Esta versión no sincroniza con servidores, no tiene publicidad y no realiza investigación con datos infantiles.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p>Desarrollo: Dirk Hans Krakaur Floranes. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales en SVG. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas permanecen en este dispositivo hasta que tú exportas un archivo. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
+  return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje y no quitan recompensas.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. Esta versión no sincroniza con servidores, no tiene publicidad y no realiza investigación con datos infantiles.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p>Desarrollo: Dirk Hans Krakaur Floranes. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales en SVG. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas permanecen en este dispositivo hasta que tú exportas un archivo. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
 }
 function stopTimer() {
   if (timerStart !== null && state.current) {
@@ -416,6 +417,7 @@ function begin(trail) {
   }
   const a = state.adaptive[trail] || { level: 1, streak: 0, support: 0 };
   state.current = trail === "razonar" ? {id:uid(),profile:state.profile,trail,level:a.level,version:VERSION,startedAt:new Date().toISOString(),completedAt:null,index:0,questions:[bankQuestion(state,a.level)]} : newSession(trail, a.level, state.profile);
+  if(trail !== "razonar")state.current.questions[0]=practiceQuestion(state,trail,a.level);
   state.current.adaptation = { ...a };
   save();
   goGame();
@@ -448,6 +450,7 @@ function answer(n) {
 function next() {
   const s = state.current;
   if (!s.questions[s.index].done) return;
+  rememberPractice(state,s.trail,s.questions[s.index]);
   if (s.index === 7) {
     s.completedAt = new Date().toISOString();
     state.sessions.push(s);
@@ -459,11 +462,11 @@ function next() {
     return;
   }
   s.index++;
-  s.questions[s.index] = s.trail === "razonar" ? bankQuestion(state,s.adaptation.level,s.index === 7) : makeQuestion(s.trail, s.adaptation.level);
+  s.questions[s.index] = s.trail === "razonar" ? bankQuestion(state,s.adaptation.level,s.index === 7) : practiceQuestion(state,s.trail, s.adaptation.level);
   save();
   render();
-  main.querySelector(".equation")?.setAttribute("tabindex", "-1");
-  main.querySelector(".equation")?.focus();
+  main.querySelector(".equation, .word-problem")?.setAttribute("tabindex", "-1");
+  main.querySelector(".equation, .word-problem")?.focus();
 }
 function download(name, text, type) {
   if (android) {
@@ -521,7 +524,7 @@ function exportCSV() {
       "pista",
       "solucion_mostrada",
       "interaccion_ms_estimados",
-      "version",
+      "version", "actividad", "banco", "dimension", "reserva", "nueva", "enunciado", "explicacion", "respuesta_texto",
     ],
   ];
   for (const s of state.sessions)
@@ -541,7 +544,7 @@ function exportCSV() {
         q.hint,
         q.solutionShown ?? "no registrado",
         Math.round(q.activeMs),
-        s.version,
+        s.version, q.bankId??"", q.bankVersion??"", q.dimension??"", q.pool??"", q.novel??"", q.prompt??"", q.explanation??"", optionText(q,q.answer),
       ]);
   download(
     `sendero-${profileCode()}.csv`,

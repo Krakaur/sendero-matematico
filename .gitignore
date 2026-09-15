@@ -12,3 +12,6 @@ android/local.properties
 native-android/.gradle/
 native-android/**/build/
 native-android/local.properties
+
+.playwright-cli/
+output/

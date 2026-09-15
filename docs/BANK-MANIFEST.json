@@ -3,12 +3,12 @@
   "authorship": "Original AI-assisted editorial content, generated before distribution. No runtime AI.",
   "review": "Internal mathematical and editorial review; independent teacher review pending.",
   "templates": 128,
-  "items": 6264,
+  "items": 6296,
   "families": 16,
-  "uniquePrompts": 6264,
+  "uniquePrompts": 6296,
   "counts": {
-    "L1-practice": 582,
-    "L1-transfer": 194,
+    "L1-practice": 606,
+    "L1-transfer": 202,
     "L2-practice": 1212,
     "L2-transfer": 404,
     "L3-practice": 1512,
@@ -16,6 +16,6 @@
     "L4-practice": 1392,
     "L4-transfer": 464
   },
-  "sha256": "c0d6a45b44b5e67a7a162c183ff7300ee7794061972014641e998eb9535b69d5",
+  "sha256": "b574205c57fbad89caecf5ec264d763251dac3b35c885f1a4a513e8e27df1189",
   "databaseBytes": 3919872
 }

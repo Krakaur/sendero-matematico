@@ -1,4 +1,4 @@
-const CACHE = "sendero-0.3.0-bank";
+const CACHE = "sendero-0.3.0-bank-final";
 const FILES = [
   "./",
   "./index.html",
@@ -6,6 +6,7 @@ const FILES = [
   "./app.js",
   "./core.js",
   "./bank.js",
+  "./practice.js",
   "./bank-data.js",
   "./icon.svg",
   "./landscape.svg",

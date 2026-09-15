@@ -10,10 +10,11 @@ export function bankQuestion(profile, level, transfer=false, rng=Math.random) {
   let eligible=pools.get(key).filter(q=>!used.seen[q.id]);
   if(!eligible.length){used.seen={};used.cycle++;eligible=pools.get(key);}
   const recent=history.recent??=[],families=history.families??=[];
-  const score=q=>(recent.includes(q.template)?0:4)+(families.includes(q.family)?0:2);
+  const score=q=>(recent.includes(q.template)?0:8)+(contexts.includes(q.context)?0:4)+(families.includes(q.family)?0:2);
   const best=Math.max(...eligible.map(score));eligible=eligible.filter(q=>score(q)===best);
   const item=eligible[Math.floor(rng()*eligible.length)];used.seen[item.id]=true;
   history.recent=[...recent,item.template].slice(-8);history.families=[...families,item.family].slice(-2);
+  history.contexts=[...contexts,item.context].slice(-4);
   const q=structuredClone(item);
   for(let i=q.options.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[q.options[i],q.options[j]]=[q.options[j],q.options[i]];}
   return {...q,bankId:q.id,bankVersion:BANK_VERSION,novel:used.cycle===0,cycle:used.cycle,attempts:[],hint:false,solutionShown:false,activeMs:0,done:false};

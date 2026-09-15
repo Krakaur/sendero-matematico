@@ -97,14 +97,14 @@ Un libro tiene {product} páginas. Leo una de {a} partes iguales. ¿Cuántas pá
 Tenemos {product} pesos. Gastamos una de {a} partes iguales. ¿Cuántos pesos gastamos?
 Un depósito tiene {product} litros. Sacamos una de {a} partes iguales. ¿Cuántos litros sacamos?
 En un álbum de {product} estampas completas una de {a} partes iguales. ¿Cuántas estampas colocaste?''')
-family('datos', [1,2,3,4], 'Interpretar datos', 'Lee solo las categorías que pide la pregunta. No siempre se usan todos los datos.', '{a} + {b} = {answer}. La tercera categoría no se incluye en la pregunta.', '''Registro de frutas: peras {a}, manzanas {b}, limones {total}. ¿Cuántas peras y manzanas hay juntas?
-Conteo de transporte: bicicletas {a}, motos {total}, autobuses {b}. ¿Cuántas bicicletas y autobuses se contaron?
-Préstamos de libros: cuentos {a}, poesía {b}, ciencia {total}. ¿Cuántos cuentos y libros de poesía se prestaron?
-Resultados de una encuesta: prefieren dibujar {a}, cantar {b}, correr {total}. ¿Cuántos prefieren dibujar o cantar?
-Recogida de residuos: papel {total}, botellas {a}, latas {b}. ¿Cuántas botellas y latas se recogieron?
-Vivero: árboles {a}, arbustos {total}, flores {b}. ¿Cuántos árboles y flores hay?
-Materiales: pinceles {b}, reglas {total}, lápices {a}. ¿Cuántos pinceles y lápices hay?
-Asistencia por actividad: teatro {total}, huerta {a}, lectura {b}. ¿Cuántas asistencias suman huerta y lectura?''')
+family('datos', [1,2,3,4], 'Interpretar datos', 'Lee solo las categorías que pide la pregunta. No siempre se usan todos los datos.', '{a} + {b} = {answer}. La tercera categoría no se incluye en la pregunta.', '''Registro de frutas: peras {a}, manzanas {b}, limones {other}. ¿Cuántas peras y manzanas hay juntas?
+Conteo de transporte: bicicletas {a}, motos {other}, autobuses {b}. ¿Cuántas bicicletas y autobuses se contaron?
+Préstamos de libros: cuentos {a}, poesía {b}, ciencia {other}. ¿Cuántos cuentos y libros de poesía se prestaron?
+Resultados de una encuesta: prefieren dibujar {a}, cantar {b}, correr {other}. ¿Cuántos prefieren dibujar o cantar?
+Recogida de residuos: papel {other}, botellas {a}, latas {b}. ¿Cuántas botellas y latas se recogieron?
+Vivero: árboles {a}, arbustos {other}, flores {b}. ¿Cuántos árboles y flores hay?
+Materiales: pinceles {b}, reglas {other}, lápices {a}. ¿Cuántos pinceles y lápices hay?
+Asistencia por actividad: teatro {other}, huerta {a}, lectura {b}. ¿Cuántas asistencias suman huerta y lectura?''')
 family('patron', [1,2,3,4], 'Reconocer relaciones', 'Comprueba cuánto aumenta cada número. Mantén ese mismo aumento.', 'Cada paso aumenta {a}. Después de {triple} viene {answer}.', '''Un contador aumenta siempre lo mismo: {a}, {double}, {triple}. ¿Qué número sigue?
 Marcamos distancias con el mismo salto: {a}, {double}, {triple} metros. ¿Cuál es la siguiente marca?
 Una máquina suma siempre la misma cantidad. Muestra {a}, {double}, {triple}. ¿Qué mostrará después?
@@ -147,7 +147,9 @@ def make_values(key, level, rng):
     if key=='tiempo': a,b=rng.randint(*{2:(6,8),3:(9,11),4:(12,14)}[level]),rng.randint(1,4)
     if key in ('dato_faltante','patron'): a=rng.randint(*[(2,5),(6,10),(11,20),(21,40)][level-1])
     if key=='representar' and a==b: b+=1
-    v=dict(a=a,b=b,total=a+b,product=a*b,double=2*a,triple=3*a)
+    other=rng.randint(1,hi+4)
+    while other==a+b: other=rng.randint(1,hi+4)
+    v=dict(a=a,b=b,total=a+b,product=a*b,double=2*a,triple=3*a,other=other)
     answer={'reunir':a+b,'quitar':a,'completar':b,'comparar':b,'grupos':a*b,'repartir':b,'agrupar':a,'dos_pasos':a*b-a,'perimetro':2*(a+b),'area':a*b,'fraccion':b,'datos':a+b,'patron':4*a,'tiempo':b,'representar':0,'dato_faltante':0}[key]
     return v|dict(answer=answer)
 
@@ -175,6 +177,8 @@ def build():
                         opts={v['answer']}
                         while len(opts)<4: opts.add(max(0,v['answer']+rng.randint(-5,5)))
                         q['options']=sorted(opts)
+                    for ctx,words in [('biblioteca',['libro','biblioteca','página','repisa']),('huerta',['semilla','planta','huerta','árbol','vivero']),('materiales',['lápiz','lápices','hoja','pincel','regla','estampa','álbum','tarjeta']),('recorridos',['camino','ruta','viaje','autobús','transporte','metros','cinta','cuerda']),('juego',['punto','ficha','juego','contador','máquina','tablero']),('compras',['peso','moneda','comprar','cuesta']),('agua',['agua','litro','vaso','depósito']),('comunidad',['equipo','persona','asistencia','niño','grupo'])]:
+                        if any(word in prompt.lower() for word in words): q['context']=ctx;break
                     q['solution']=q.get('labels',[str(i) for i in range(0)])[0] if 'labels' in q else str(q['answer'])
                     rows.append(q); made+=1
                     if made==20: break
