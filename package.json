@@ -1,0 +1,39 @@
+{
+  "name": "sendero-matematico",
+  "version": "0.1.0",
+  "description": "Exploración matemática con práctica sin conexión y registro docente local",
+  "private": true,
+  "type": "module",
+  "main": "desktop/main.cjs",
+  "author": "Dirk Hans Krakaur Floranes",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "start": "electron .",
+    "build:windows": "electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "org.krakaur.sendero",
+    "productName": "Sendero",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "desktop/**",
+      "web/**",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "web/icon-512.png",
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "Sendero-${version}-Windows-x64.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^44.4.0",
+    "electron-builder": "^26.15.3"
+  }
+}
