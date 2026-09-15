@@ -1,4 +1,4 @@
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.1";
 export const SCHEMA = "sendero.report.v1";
 export const TRAILS = {
   suma: {
@@ -28,6 +28,18 @@ export const TRAILS = {
 };
 export function uid() {
   return crypto.randomUUID();
+}
+export function recordAttempt(question, value) {
+  if (
+    question.done ||
+    !question.options.includes(value) ||
+    question.attempts.includes(value)
+  )
+    return false;
+  question.attempts.push(value);
+  if (value !== question.answer) question.solutionShown = true;
+  else question.done = true;
+  return true;
 }
 export function adapt(state, question) {
   const next = {
@@ -88,6 +100,7 @@ export function makeQuestion(trail, level, rng = Math.random) {
     options: values,
     attempts: [],
     hint: false,
+    solutionShown: false,
     activeMs: 0,
   };
 }
@@ -179,6 +192,8 @@ export function validateReport(data) {
         q.activeMs < 0 ||
         q.activeMs > 86400000 ||
         typeof q.hint !== "boolean" ||
+        (q.solutionShown !== undefined &&
+          typeof q.solutionShown !== "boolean") ||
         !Array.isArray(q.attempts) ||
         q.attempts.length < 1 ||
         q.attempts.length > 20 ||
