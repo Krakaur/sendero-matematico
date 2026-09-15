@@ -13,5 +13,18 @@ gradle -p native-android --no-daemon connectedDebugAndroidTest
 result=$?
 adb shell dumpsys meminfo org.krakaur.sendero.nativo > native-evidence/memory.txt
 adb pull /sdcard/Android/data/org.krakaur.sendero.nativo/files/ native-evidence/screenshots || true
+for evidence in $(adb shell ls /data/local/tmp/sendero-\*.png | tr -d '\r'); do
+  adb pull "$evidence" native-evidence/ || true
+done
 adb logcat -d -s AndroidRuntime > native-evidence/crashes.txt
+if [ "$result" -eq 0 ]; then
+  adb uninstall org.krakaur.sendero.nativo || true
+  adb install dist-candidate/native-artifacts/Sendero-Nativo-0.2.0.apk
+  adb shell am start -W -n org.krakaur.sendero.nativo/.MainActivity > native-evidence/release-launch.txt
+  sleep 2
+  adb shell uiautomator dump /data/local/tmp/sendero-release.xml
+  adb pull /data/local/tmp/sendero-release.xml native-evidence/
+  grep -q 'Cada explorador' native-evidence/sendero-release.xml || result=1
+  adb shell dumpsys meminfo org.krakaur.sendero.nativo > native-evidence/release-memory.txt
+fi
 exit "$result"

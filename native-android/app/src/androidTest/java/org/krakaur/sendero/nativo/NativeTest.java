@@ -42,6 +42,8 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
     private void screenshot(ActivityScenario<MainActivity> scenario,String name)throws Exception{
         scenario.onActivity(a->a.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE));InstrumentationRegistry.getInstrumentation().waitForIdleSync();Thread.sleep(300);
         Bitmap bitmap=InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();assertNotNull(bitmap);File out=new File(context.getExternalFilesDir(null),name+".png");try(FileOutputStream stream=new FileOutputStream(out)){bitmap.compress(Bitmap.CompressFormat.PNG,100,stream);}bitmap.recycle();
+        // Gradle removes the test application after the run. Preserve synthetic evidence first.
+        try(InputStream command=new android.os.ParcelFileDescriptor.AutoCloseInputStream(InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("cp "+out.getAbsolutePath()+" /data/local/tmp/sendero-"+name+".png"))){while(command.read()!=-1){}}
     }
     @Test public void nativeGameSurvivesRecreationAndHasVisibleCorrection()throws Exception{
         JSONObject p=store.create("Colibrí","clave-prueba".toCharArray());String id=p.getString("id");
