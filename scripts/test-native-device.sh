@@ -4,10 +4,15 @@ mkdir -p native-evidence
 adb shell getprop > native-evidence/device.txt
 adb shell pm list packages | tr -d '\r' | sed 's/^package://' | grep -E 'webview|chrome' > native-evidence/browser-packages.txt || true
 while read -r package; do
-  adb shell pm disable-user --user 0 "$package"
+  adb shell pm disable-user --user 0 "$package" </dev/null
 done < native-evidence/browser-packages.txt
 adb shell pm list packages -d > native-evidence/disabled-packages.txt
 adb shell dumpsys webviewupdate > native-evidence/webview-status.txt
+# adb shell must not consume the loop's package list through stdin.
+# Require every discovered browser/provider package to actually remain disabled.
+while read -r package; do
+  grep -Fxq "package:$package" native-evidence/disabled-packages.txt
+done < native-evidence/browser-packages.txt
 set +e
 gradle -p native-android --no-daemon connectedDebugAndroidTest
 result=$?
