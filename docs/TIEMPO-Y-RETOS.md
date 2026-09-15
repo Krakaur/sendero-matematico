@@ -23,3 +23,9 @@ Después procede una revisión breve con docentes: claridad de instrucciones, pe
 La preparación de una tienda comprende firma y continuidad de versiones, privacidad, audiencia, clasificación, capturas, requisitos de cuenta y pruebas. Su duración no depende únicamente del desarrollador. El protocolo de investigación, la revisión ética, el reclutamiento y una observación prolongada tampoco pueden comprimirse justificadamente para completar un plazo de dos días.
 
 Para el objetivo original de comunicación y colaboración, una vez comprobada la estabilidad mínima conviene publicar una demostración breve, documentación clara y una invitación concreta a docentes. La difusión debe probarse antes de interpretar el silencio como falta de interés. La ampliación del software debe responder a problemas observados o colaboración efectiva, manteniendo acotado el experimento inicial.
+
+## Cierre de la publicación 0.1.1
+
+La publicación con APK, AAB y Windows se registró a las 19:37:45 UTC del 15 de septiembre de 2026. Desde los primeros archivos transcurrieron 71 minutos y 54 segundos, aproximadamente **72 minutos**. El intervalo incluye construcción, comprobaciones y documentación desde ese punto, pero no toda la conversación ni el análisis previo. Fuente de publicación: [versión 0.1.1](https://github.com/Krakaur/sendero-matematico/releases/tag/v0.1.1).
+
+Frente a dos días naturales quedarían aproximadamente **2808 minutos**; frente a dos jornadas de ocho horas, **888 minutos**. Es una comparación de tiempo transcurrido, no de horas-persona ni de trabajo exclusivo, y no demuestra que las actividades de validación puedan completarse dentro de ese margen.
