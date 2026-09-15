@@ -60,8 +60,9 @@ public class OfflineGameTest {
         assertEquals("true", js("/^¡.*=!?.*!$/.test(document.querySelector('.solution-callout strong').textContent)"));
         assertEquals("true", js("document.documentElement.scrollWidth <= window.innerWidth"));
         String solution = js("document.querySelector('.solution-callout strong').textContent");
+        js("window.__senderoTestOldDocument = true");
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> findWeb(rule.getActivity().getWindow().getDecorView()).reload());
-        until("!!document.querySelector('.solution-callout')");
+        until("!window.__senderoTestOldDocument && document.readyState === 'complete' && !!document.querySelector('.solution-callout')");
         assertEquals(solution, js("document.querySelector('.solution-callout strong').textContent"));
         js("(()=>{const answer=document.querySelector('.solution-callout strong').textContent.match(/=\\s*(\\d+)/)[1]; [...document.querySelectorAll('.answer')].find(x=>x.textContent.trim()===answer).click();})()");
         until("document.querySelector('.solution-callout').textContent.includes('Ya puedes continuar')");
