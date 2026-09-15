@@ -43,7 +43,7 @@ La rama `main` conserva fuentes, pruebas y documentación. La rama `gh-pages` co
 
 ## Documentación y colaboración
 
-[Guía de familias y docentes](docs/GUIA.md), [diseño y límites técnicos](docs/DISENO.md), [tres ciclos de evaluación](docs/EVALUACION.md), [estrategia de difusión](docs/DIFUSION.md), [privacidad](docs/PRIVACIDAD.md), [arquitectura Android](docs/ANDROID-ARQUITECTURA.md), [iOS pendiente](docs/IOS-PENDIENTE.md), [tiempo y retos](docs/TIEMPO-Y-RETOS.md) y [citación](CITATION.cff).
+[Guía de familias y docentes](docs/GUIA.md), [diseño y límites técnicos](docs/DISENO.md), [tres ciclos de evaluación](docs/EVALUACION.md), [estrategia de difusión](docs/DIFUSION.md), [privacidad](docs/PRIVACIDAD.md), [arquitectura Android](docs/ANDROID-ARQUITECTURA.md), [iOS pendiente](docs/IOS-PENDIENTE.md), [tiempo y retos](docs/TIEMPO-Y-RETOS.md), [firma y distribución](docs/FIRMA-Y-DISTRIBUCION.md) y [citación](CITATION.cff).
 
 Las propuestas de colaboración pueden abrirse como issues en este repositorio. Interesan especialmente la revisión docente del contenido, las pruebas en dispositivos de recursos limitados y el trabajo en comunidades con conectividad intermitente. No incluyas información personal de menores en las conversaciones públicas.
 

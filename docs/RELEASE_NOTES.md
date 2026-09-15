@@ -8,7 +8,7 @@ Los informes incluyen barras y colores para precisión inicial, resolución sin 
 
 ## Descargar para Android y Windows
 
-`Sendero-0.1.1-Android.apk` ocupa 175641 bytes, aproximadamente 0,18 MB. Incluye las actividades desde la instalación y utiliza Android System WebView. No necesita abrir el navegador predeterminado, configurar Chrome ni descargar ejercicios al iniciar. Su compatibilidad depende del motor del sistema; admitir la instalación desde Android 6 no acredita funcionamiento con todos sus WebView. La instalación inicial debe acompañarla una persona adulta. Esta versión tiene un perfil por instalación/usuario del sistema.
+`Sendero-0.1.1-Android.apk` ocupa 175716 bytes, aproximadamente 0,18 MB. Incluye las actividades desde la instalación y utiliza Android System WebView. No necesita abrir el navegador predeterminado, configurar Chrome ni descargar ejercicios al iniciar. Su compatibilidad depende del motor del sistema; admitir la instalación desde Android 6 no acredita funcionamiento con todos sus WebView. La instalación inicial debe acompañarla una persona adulta. Esta versión tiene un perfil por instalación/usuario del sistema.
 
 `Sendero-0.1.1-Android.aab` es el paquete preparado para una futura publicación en Google Play. No se instala directamente ni representa aceptación de la tienda. Ambos paquetes Android están firmados con una identidad persistente; no se publica ninguna clave privada.
 

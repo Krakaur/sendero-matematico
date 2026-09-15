@@ -31,3 +31,5 @@ Para App Store de Apple se necesita una aplicación iOS y su proceso de compilac
 ## Verificación pendiente en campo
 
 La evaluación debe cubrir al menos teléfonos reales representativos del entorno: memoria limitada, almacenamiento lento o casi lleno, distintas versiones de WebView, ausencia de red desde la primera apertura, cierre forzado, cambio de orientación, texto ampliado y uso del selector de archivos. Deben medirse tamaño instalado, memoria, arranque y latencia de respuesta. El peso de descarga y las pruebas en emulador no bastan para afirmar funcionamiento satisfactorio en toda la gama baja.
+
+El análisis complementario de certificados, reputación, costes y canales está en [Firma y distribución](FIRMA-Y-DISTRIBUCION.md). La consulta es preparatoria: no se han tramitado cuentas, certificados comerciales o envíos a tiendas.

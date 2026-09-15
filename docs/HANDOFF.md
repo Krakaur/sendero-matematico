@@ -17,3 +17,5 @@ La edición Android sin WebView queda pendiente como candidata para 2.0; iOS tam
 Revisar primero la experiencia con adultos docentes y en equipos Android/Windows reales. Para una evolución institucional, sustituir el almacenamiento del prototipo por una base transaccional, diseñar vinculación e identidad, proteger expedientes y probar entrega diferida con confirmaciones y reintentos. La investigación requiere protocolo independiente. No asignar nivel TRL ni afirmar eficacia o transferencia institucional basándose solamente en la publicación.
 
 Las ideas de difusión están en `DIFUSION.md`. No se han publicado mensajes en redes ni realizado solicitudes a catálogos externos.
+
+El análisis de certificados, reputación, tiendas y alternativas de bajo coste está en `FIRMA-Y-DISTRIBUCION.md`. No hay compras, cuentas nuevas ni solicitudes de tiendas realizadas. Los tiempos verificables y prioridades están en `TIEMPO-Y-RETOS.md`.
