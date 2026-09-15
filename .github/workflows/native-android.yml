@@ -55,9 +55,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - api: 23
-            ram: 1024M
-            target: default
+          - api: 34
+            ram: 2048M
+            target: google_apis
+          - api: 35
+            ram: 2048M
+            target: google_apis
           - api: 36
             ram: 2048M
             target: google_apis

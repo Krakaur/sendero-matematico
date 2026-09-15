@@ -12,7 +12,7 @@ La configuración establece Android 6/API 23 como mínimo y Android 16/API 36 co
 
 La aplicación no contiene bibliotecas nativas dependientes de una arquitectura de procesador. Los controles emplean tamaños independientes de densidad y texto escalable; el contenido se desplaza, admite orientación horizontal y respeta las áreas ocupadas por las barras del sistema. No hay límite máximo de versión, bloqueo de orientación ni descarga de fuentes o imágenes. Esto reduce barreras previsibles, pero no constituye una garantía para todos los fabricantes, tamaños o versiones futuras.
 
-Las pruebas automatizadas incluyen un emulador API 23 con 1 GB configurado y otro API 36 con 2 GB. Un emulador acelerado en un servidor no reproduce la velocidad de un teléfono económico; esa configuración comprueba comportamiento funcional, no rendimiento físico. El protocolo y los resultados efectivos se registran en `EVALUACION-NATIVA.md`.
+El rango prioritario solicitado es **Android 14, 15 y 16**, con 2 GB configurados en los emuladores. Las exploraciones anteriores de Android 6/API 23 son evidencia complementaria; declarar un mínimo de instalación no equivale a certificar todas las versiones intermedias. Un emulador acelerado en un servidor no reproduce la velocidad de un teléfono económico; esa configuración comprueba comportamiento funcional, no rendimiento físico. El protocolo y los resultados efectivos se registran en `EVALUACION-NATIVA.md`.
 
 ## Alternativas consideradas y selección
 

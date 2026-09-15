@@ -22,6 +22,7 @@ for evidence in $(adb shell ls /data/local/tmp/sendero-\*.png | tr -d '\r'); do
   adb pull "$evidence" native-evidence/ || true
 done
 adb logcat -d -s AndroidRuntime > native-evidence/crashes.txt
+adb logcat -d > native-evidence/logcat.txt
 if [ "$result" -eq 0 ]; then
   adb uninstall org.krakaur.sendero.nativo || true
   adb install dist-candidate/native-artifacts/Sendero-Nativo-0.2.0.apk
