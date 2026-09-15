@@ -1,4 +1,4 @@
-const { app, BrowserWindow, session } = require("electron");
+const { app, BrowserWindow, session, shell } = require("electron");
 const path = require("node:path");
 app.setName("Sendero");
 app.whenReady().then(() => {
@@ -23,7 +23,14 @@ app.whenReady().then(() => {
       sandbox: true,
     },
   });
-  window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+  const openDocumentation = (url) => {
+    if (/^https:\/\/github\.com\/Krakaur\/sendero-matematico(?:\/|$)/.test(url))
+      shell.openExternal(url);
+  };
+  window.webContents.setWindowOpenHandler(({ url }) => {
+    openDocumentation(url);
+    return { action: "deny" };
+  });
   window.webContents.on("will-navigate", (event, url) => {
     if (!url.startsWith("file://")) event.preventDefault();
   });

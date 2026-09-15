@@ -101,6 +101,13 @@ test("No observations are distinct from zero performance", () => {
   assert.equal(summarize([]).accuracy, null);
   assert.equal(dimensions([]).errors, 0);
 });
+test("Correction on the second attempt excludes three or more attempts", () => {
+  const s = complete();
+  s.questions[0].attempts = [999, 998, s.questions[0].answer];
+  const d = dimensions([s]);
+  assert.equal(d.errors, 1);
+  assert.equal(d.recovered, 0);
+});
 test("Report round trip and deduplication preserve individual records", () => {
   const s = complete();
   const r = JSON.parse(

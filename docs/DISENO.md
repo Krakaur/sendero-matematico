@@ -8,7 +8,7 @@ Ofrecer práctica matemática con dificultad gradual, ayudas comprensibles y reg
 
 HTML, CSS y módulos JavaScript sin dependencias de ejecución web. Todas las imágenes son SVG o PNG locales. Un service worker instala un conjunto cerrado de recursos y los sirve desde caché. La información de práctica se conserva en `localStorage` bajo `sendero.state.v1`; una excepción de escritura muestra un aviso persistente. El tamaño de los registros es adecuado para un prototipo pequeño, pero está sujeto a cuotas del navegador. Una edición de mayor escala debe migrar a IndexedDB o SQLite con transacciones y recuperación.
 
-La edición Windows empaqueta los mismos archivos con Electron. Node está desactivado en el renderer; se habilitan aislamiento de contexto y sandbox. Se rechazan permisos y solicitudes HTTP/HTTPS desde la aplicación. Los enlaces externos no se abren en esa edición; su documentación identifica los destinos para consulta desde un navegador. No hay carga remota de código ni actualizador.
+La edición Windows empaqueta los mismos archivos con Electron. Node está desactivado en el renderer; se habilitan aislamiento de contexto y sandbox. Se rechazan permisos y solicitudes HTTP/HTTPS desde la aplicación. Los enlaces al repositorio oficial se abren en el navegador externo mediante una lista de destinos permitidos; no se habilita navegación web arbitraria dentro de la aplicación. No hay carga remota de código ni actualizador.
 
 ## Adaptación e indicadores
 

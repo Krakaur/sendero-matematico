@@ -1,0 +1,93 @@
+{
+  "version": "0.1.0",
+  "generatedAt": "2026-09-15T18:50:08.522Z",
+  "files": [
+    {
+      "path": "web/app.js",
+      "bytes": 32786,
+      "sha256": "34edd17e067efe0d1a56f67fba35a926c6e2939df80561c4e20ae3f4fa67cc7f"
+    },
+    {
+      "path": "web/core.js",
+      "bytes": 5921,
+      "sha256": "f3df9495f65410f6b41ebd23006e914a518047e9503d06167b4bce69b13b82c2"
+    },
+    {
+      "path": "web/icon-192.png",
+      "bytes": 5526,
+      "sha256": "716f9db3e48dc10cc3bbcae501bffbec6430d2339b4e37ef8319d4625b2f4631"
+    },
+    {
+      "path": "web/icon-512.png",
+      "bytes": 20357,
+      "sha256": "94f57012ece08b276048cb962220234e1764584f7674391898ba626b7f525008"
+    },
+    {
+      "path": "web/icon.svg",
+      "bytes": 351,
+      "sha256": "1fb018a3ba24fba6960d0e403ec44a5439a1740596173048f38349029f937749"
+    },
+    {
+      "path": "web/index.html",
+      "bytes": 3722,
+      "sha256": "68126559b1f3143db867c59eb2f0197e6f43afe506c8817874ce052b5b29526f"
+    },
+    {
+      "path": "web/landscape.svg",
+      "bytes": 2749,
+      "sha256": "165214ddc7f9d00a36fd5f1fb6e4a66444ba96b9dcb659bdbe6d1327bceb5467"
+    },
+    {
+      "path": "web/manifest.webmanifest",
+      "bytes": 368,
+      "sha256": "ae0dfce02d00d454fa3eb4850c10f975171803c45530face40b8f17e46274dd3"
+    },
+    {
+      "path": "web/sitemap.xml",
+      "bytes": 176,
+      "sha256": "d0ae1ee662572f362790b59ad4eccea1fe42d0b12591f0632c1b32297dfd3225"
+    },
+    {
+      "path": "web/social.png",
+      "bytes": 70180,
+      "sha256": "2937311520ff9ecdedf2638ad12e46aaae28e6fdd4095844f744469c6c8d334a"
+    },
+    {
+      "path": "web/style.css",
+      "bytes": 19269,
+      "sha256": "727d9a20e9d45397a7859334ed53a9bb0035f1b1cb0995728ab8c78a3d91e3a2"
+    },
+    {
+      "path": "web/sw.js",
+      "bytes": 1145,
+      "sha256": "c49784fc449a582b7685d83e315e085e6fef1c43e1675b64782076574a56dda8"
+    },
+    {
+      "path": "desktop/main.cjs",
+      "bytes": 1384,
+      "sha256": "c0cbfbfe821b62460bde30a21c0bf96a7e3ceeb27b79aacef7f3e608b2770fff"
+    },
+    {
+      "path": "package.json",
+      "bytes": 962,
+      "sha256": "6666318775a200e28c5409f8f7076e787e7164be3587529ada5f0f4dcecbef9c"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 128056,
+      "sha256": "5d751edc0ea108539256179210151d1f35e23e129ae96107da29e6096a8706f3"
+    },
+    {
+      "path": "tests/core.test.js",
+      "bytes": 4719,
+      "sha256": "759eb32358f2271527ca1b4e3384800cea74ef12f5a5f1fad12a57dcda65b3c1"
+    }
+  ],
+  "windows": {
+    "artifact": "Sendero-0.1.0-Windows-x64.exe",
+    "bytes": 100251428,
+    "sha256": "c955717f25af57ab9b35c360313ed47f45c00df531c3bdef00ea9fafd20e13cd",
+    "signature": "unsigned",
+    "packagedSourceMatches": true
+  }
+}
