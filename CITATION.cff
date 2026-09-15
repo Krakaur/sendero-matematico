@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "Si utilizas este software, cita la versión concreta."
+type: software
+title: "Sendero: práctica matemática con funcionamiento sin conexión"
+version: 0.1.0
+date-released: 2026-09-15
+authors:
+  - family-names: "Krakaur Floranes"
+    given-names: "Dirk Hans"
+repository-code: "https://github.com/Krakaur/sendero-matematico"
+url: "https://krakaur.github.io/sendero-matematico/"
+license: MIT
+abstract: "Prototipo de práctica matemática adaptativa, con informes locales multidimensionales. No es un instrumento diagnóstico validado."

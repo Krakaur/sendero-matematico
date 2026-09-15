@@ -26,7 +26,7 @@
     "win": {
       "target": "portable",
       "icon": "web/icon-512.png",
-      "signAndEditExecutable": false
+      "signExecutable": false
     },
     "portable": {
       "artifactName": "Sendero-${version}-Windows-x64.exe"
@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "electron": "^44.4.0",
-    "electron-builder": "^26.15.3"
+    "electron-builder": "^26.15.3",
+    "prettier": "^3.9.6"
   }
 }
