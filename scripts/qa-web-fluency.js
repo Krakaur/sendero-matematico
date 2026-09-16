@@ -47,5 +47,5 @@ async (page) => {
   await page.screenshot({path:'output/playwright/031-laptop.png'});
   await page.context().setOffline(false);
   if(errors.length)throw Error(errors.join('\n'));
-  console.log(JSON.stringify({oneTap:true,offline:true,correctionPreserved:true,interruptionExcluded:true,result,errors}));
+  return {oneTap:true,offline:true,correctionPreserved:true,interruptionExcluded:true,result,errors};
 }

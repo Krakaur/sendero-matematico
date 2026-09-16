@@ -63,6 +63,9 @@ public final class Store extends SQLiteOpenHelper {
     }
     // Key-order independent equality rejects conflicting IDs instead of silently overwriting evidence.
     private static boolean same(Object a,Object b)throws JSONException{
+        // JSON does not distinguish Integer/Long/Double storage classes. A round trip
+        // may change that class without changing the numeric value of a timestamp.
+        if(a instanceof Number&&b instanceof Number){try{return new java.math.BigDecimal(a.toString()).compareTo(new java.math.BigDecimal(b.toString()))==0;}catch(NumberFormatException e){return false;}}
         if(a instanceof JSONObject&&b instanceof JSONObject){JSONObject x=(JSONObject)a,y=(JSONObject)b;if(x.length()!=y.length())return false;Iterator<String> it=x.keys();while(it.hasNext()){String k=it.next();if(!y.has(k)||!same(x.get(k),y.get(k)))return false;}return true;}
         if(a instanceof JSONArray&&b instanceof JSONArray){JSONArray x=(JSONArray)a,y=(JSONArray)b;if(x.length()!=y.length())return false;for(int i=0;i<x.length();i++)if(!same(x.get(i),y.get(i)))return false;return true;}return Objects.equals(a,b);
     }
