@@ -13,11 +13,11 @@ public final class Bank {
     private Bank() {}
     public static synchronized void init(Context context) {
         if(db!=null) return;
-        File dest=new File(context.getFilesDir(),"bank-0.3.0.db");
+        File dest=new File(context.getFilesDir(),"bank-0.4.0.db");
         try {
             if(!dest.exists()) {
-                File temp=new File(context.getFilesDir(),"bank-0.3.0.tmp");
-                try(InputStream in=context.getAssets().open("bank-0.3.0.db");OutputStream out=new FileOutputStream(temp)) {
+                File temp=new File(context.getFilesDir(),"bank-0.4.0.tmp");
+                try(InputStream in=context.getAssets().open("bank-0.4.0.db");OutputStream out=new FileOutputStream(temp)) {
                     byte[] bytes=new byte[8192]; int n; while((n=in.read(bytes))!=-1) out.write(bytes,0,n);
                 }
                 if(!temp.renameTo(dest)) throw new IOException("No se pudo preparar el banco de actividades.");
@@ -59,14 +59,14 @@ public final class Bank {
         history.put("recent",recent(recent,q.getString("template"),8));history.put("families",recent(families,q.getString("family"),2));
         history.put("contexts",recent(contexts,q.getString("context"),4));
         q.put("novel",used.optInt("cycle")==0);q.put("cycle",used.optInt("cycle"));
-        q.put("bankVersion","0.3.0");q.put("bankId",q.getString("id"));
+        q.put("bankVersion",q.optString("contentVersion","0.3.0"));q.put("bankId",q.getString("id"));
         List<Integer> options=new ArrayList<>();for(int i=0;i<4;i++)options.add(q.getJSONArray("options").getInt(i));Collections.shuffle(options,rng);q.put("options",new JSONArray(options));
         q.put("attempts",new JSONArray());q.put("hint",false);q.put("solutionShown",false);q.put("activeMs",0);q.put("done",false);
         return q;
     }
     public static boolean valid(JSONObject q)throws JSONException {
         JSONObject original=item(q.optString("bankId"));
-        for(String field:new String[]{"bankVersion"})if(!"0.3.0".equals(q.optString(field)))return false;
+        for(String field:new String[]{"bankVersion"})if(!original.optString("contentVersion","0.3.0").equals(q.optString(field)))return false;
         for(String field:new String[]{"a","b","answer","level","prompt","explanation","solution","pool","dimension","template","family"})if(!original.get(field).equals(q.opt(field)))return false;
         if(!original.optString("labels").equals(q.optString("labels")))return false;
         JSONArray opts=q.getJSONArray("options"),base=original.getJSONArray("options");Set<Integer> values=new HashSet<>();

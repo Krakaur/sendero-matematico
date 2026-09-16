@@ -79,4 +79,25 @@ public final class Store extends SQLiteOpenHelper {
             }db.setTransactionSuccessful();return added;
         }finally{db.endTransaction();}
     }
+
+    public JSONObject snapshot(String id)throws Exception {
+        return Engine.object("profile",profile(id),"sessions",sessions(id,false),"received",sessions(id,true));
+    }
+    public JSONObject restore(JSONObject snapshot,char[] password)throws Exception {
+        JSONObject p=snapshot.getJSONObject("profile");String id=p.getString("id"),alias=p.getString("alias");
+        if(!id.matches("[a-zA-Z0-9-]{1,60}")||alias.length()<2||alias.length()>24)throw new Exception("Perfil de respaldo no válido.");
+        JSONArray completed=snapshot.getJSONArray("sessions"),received=snapshot.getJSONArray("received");Engine.validate(Engine.report(id,completed));
+        for(int i=0;i<received.length();i++){JSONObject item=received.getJSONObject(i);Engine.validate(Engine.report(item.getString("profile"),new JSONArray().put(item)));}
+        JSONObject current=p.optJSONObject("current");if(current!=null){if(!id.equals(current.optString("profile"))||current.optInt("index",-1)<0||current.optInt("index",8)>7||current.optJSONArray("questions")==null||current.getJSONArray("questions").length()>8)throw new Exception("Partida pendiente no válida.");}
+        if(password.length<6||password.length>128)throw new Exception("La nueva contraseña debe tener de 6 a 128 caracteres.");
+        byte[] salt=new byte[16];new SecureRandom().nextBytes(salt);String hash;try{hash=derive(password,salt);}finally{Arrays.fill(password,'\0');}
+        SQLiteDatabase db=getWritableDatabase();db.beginTransaction();try{
+            try(Cursor existing=db.rawQuery("SELECT id FROM profiles WHERE id=? OR alias=? COLLATE NOCASE",new String[]{id,alias})){if(existing.moveToFirst())throw new Exception("Ese perfil o alias ya existe. Restaura en una instalación sin ese perfil para no reemplazar su progreso actual.");}
+            if(profiles().length()>=8)throw new Exception("No hay espacio para otro perfil.");
+            ContentValues v=new ContentValues();v.put("id",id);v.put("alias",alias);v.put("body",p.toString());v.put("salt",Base64.encodeToString(salt,Base64.NO_WRAP));v.put("hash",hash);db.insertOrThrow("profiles",null,v);
+            for(int i=0;i<completed.length();i++){JSONObject item=completed.getJSONObject(i);v=new ContentValues();v.put("owner",id);v.put("id",item.getString("id"));v.put("body",item.toString());db.insertOrThrow("sessions",null,v);}
+            for(int i=0;i<received.length();i++){JSONObject item=received.getJSONObject(i);v=new ContentValues();v.put("owner",id);v.put("profile",item.getString("profile"));v.put("id",item.getString("id"));v.put("body",item.toString());db.insertOrThrow("received",null,v);}
+            db.setTransactionSuccessful();return p;
+        }finally{db.endTransaction();}
+    }
 }

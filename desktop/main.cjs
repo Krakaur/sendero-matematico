@@ -7,7 +7,7 @@ app.whenReady().then(() => {
   );
   session.defaultSession.webRequest.onBeforeRequest(
     { urls: ["http://*/*", "https://*/*"] },
-    (_details, callback) => callback({ cancel: true }),
+    (details, callback) => callback({ cancel: details.resourceType !== "xhr" || !details.url.startsWith("https://") }),
   );
   const window = new BrowserWindow({
     width: 1100,

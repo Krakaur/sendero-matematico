@@ -3,7 +3,7 @@ folder = pathlib.Path('native-artifacts')
 apk = next(folder.glob('*.apk'))
 with zipfile.ZipFile(apk) as z:
     names = z.namelist()
-    assert [n for n in names if n.startswith('assets/')] == ['assets/bank-0.3.0.db'], 'Unexpected assets'
+    assert [n for n in names if n.startswith('assets/')] == ['assets/bank-0.4.0.db'], 'Unexpected assets'
     assert not any(n.startswith('lib/') for n in names), 'Unexpected native libraries'
     for name in names:
         if name.endswith('.dex'):

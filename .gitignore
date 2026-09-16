@@ -15,3 +15,5 @@ native-android/local.properties
 
 .playwright-cli/
 output/
+
+server/private/

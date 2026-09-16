@@ -33,7 +33,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https: http://127.0.0.1:4180; object-src 'none'; base-uri 'self'; form-action 'none'"
     />
     <title>Sendero · Matemáticas que van contigo</title>
     <link rel="manifest" href="./manifest.webmanifest" />
@@ -61,6 +61,7 @@
         </button>
       </div>
     </header>
+    <div class="profile-bar"><a id="profile-switch" href="#perfiles">Entrar / Crear perfil</a></div>
     <div id="storage-alert" class="storage-alert" hidden></div>
     <div id="update-banner" class="update-banner" role="status" hidden>Hay una nueva versión disponible. <button id="apply-update" class="soft-button">Actualizar y conservar mi progreso</button></div>
     <main id="main" tabindex="-1"></main>

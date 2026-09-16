@@ -21,6 +21,14 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
     private Context context;private Store store;
     @Before public void setup(){context=InstrumentationRegistry.getInstrumentation().getTargetContext();context.deleteDatabase("sendero-native.db");store=new Store(context);Bank.init(context);}
     @After public void close(){store.close();}
+    @Test public void protectedBackupRecoversPendingProfile()throws Exception{
+        JSONObject p=store.create("Respaldo","clave-original".toCharArray());Engine.start(p,"suma");store.save(p,null);String id=p.getString("id"),session=p.getJSONObject("current").getString("id");
+        JSONObject encrypted=BackupCrypto.encrypt(store.snapshot(id),"respaldo-seguro".toCharArray());
+        store.close();context.deleteDatabase("sendero-native.db");store=new Store(context);
+        store.restore(BackupCrypto.decrypt(encrypted,"respaldo-seguro".toCharArray()),"clave-nueva".toCharArray());
+        JSONObject restored=store.login(id,"clave-nueva".toCharArray());assertEquals(session,restored.getJSONObject("current").getString("id"));
+        try{store.restore(BackupCrypto.decrypt(encrypted,"respaldo-seguro".toCharArray()),"clave-nueva".toCharArray());fail("Existing profile overwritten");}catch(Exception expected){assertTrue(expected.getMessage().contains("existe"));}
+    }
     private JSONObject completed(String id)throws Exception{JSONObject p=Engine.profile("Test");p.put("id",id);p.put("current",Engine.session("suma",1,id));JSONObject out=null;for(int i=0;i<8;i++){JSONObject q=Engine.currentQuestion(p.getJSONObject("current"));Engine.answer(q,q.getInt("answer"));out=Engine.advance(p);}return out;}
     @Test public void passwordsIsolationDeduplicationAndAtomicRollback()throws Exception{
         JSONObject a=store.create("Colibrí","clave-a".toCharArray()),b=store.create("Zorro","clave-b".toCharArray());String aid=a.getString("id"),bid=b.getString("id");

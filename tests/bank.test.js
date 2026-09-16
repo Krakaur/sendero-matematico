@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BANK } from '../web/bank-data.js';
-import { bankQuestion, validBankQuestion, reasoningDimensions } from '../web/bank.js';
+import { BANK_ITEMS, bankQuestion, validBankQuestion, reasoningDimensions } from '../web/bank.js';
 import { adapt, makeQuestion, recordAttempt, validateReport, SCHEMA } from '../web/core.js';
 import { rememberPractice, practiceQuestion } from '../web/practice.js';
 
@@ -22,7 +22,7 @@ test('Reserved situations have no templates in common with practice',()=>{
   for(const q of BANK.filter(q=>q.pool==='transfer'))assert(!practice.has(q.template));
 });
 test('Selection never repeats an item before exhausting its pool, survives restart and isolates profiles',()=>{
-  let p={};const other={};const ids=new Set();const count=BANK.filter(q=>q.level===1&&q.pool==='practice').length;
+  let p={};const other={};const ids=new Set();const count=BANK_ITEMS.filter(q=>q.level===1&&q.pool==='practice').length;
   for(let i=0;i<count;i++){const q=bankQuestion(p,1,false);assert(!ids.has(q.id));ids.add(q.id);assert(q.novel);if(i===100)p=JSON.parse(JSON.stringify(p));}
   assert.equal(bankQuestion(p,1,false).novel,false);assert.equal(bankQuestion(other,1,false).novel,true);
   assert.equal(bankQuestion(p,1,true).pool,'transfer');

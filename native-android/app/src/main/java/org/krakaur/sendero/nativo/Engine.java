@@ -6,7 +6,7 @@ import java.util.*;
 
 /** Platform-independent arithmetic and report contract, compatible with sendero.report.v1. */
 public final class Engine {
-    public static final String VERSION="0.3.1", SCHEMA="sendero.report.v2";
+    public static final String VERSION="0.4.0", SCHEMA="sendero.report.v2";
     public static final String[] TRAILS={"suma","resta","multi","tablas20","razonar"};
     private Engine() {}
     public static JSONObject object(Object... entries) {
@@ -80,8 +80,8 @@ public final class Engine {
     public static JSONObject advance(JSONObject p)throws JSONException{
         JSONObject s=p.getJSONObject("current"),q=currentQuestion(s);if(!q.optBoolean("done"))return null;
         String trail=s.getString("trail");remember(p,trail,q);JSONObject states=p.getJSONObject("adaptive");
-        JSONObject next=adapt(states.optJSONObject(trail)==null?object("level",q.getInt("level")):states.getJSONObject(trail),q);states.put(trail,next);
-        if(s.getInt("index")==7){s.put("completedAt",now());p.put("current",JSONObject.NULL);return s;}
+        JSONObject next=s.has("race")?object("level",s.getJSONObject("race").getInt("level")):adapt(states.optJSONObject(trail)==null?object("level",q.getInt("level")):states.getJSONObject(trail),q);states.put(trail,next);
+        if(s.getInt("index")==7){if(s.has("race"))states.put(trail,object("level",Race.level(s),"streak",0,"support",0));s.put("completedAt",now());p.put("current",JSONObject.NULL);return s;}
         s.put("index",s.getInt("index")+1);s.getJSONArray("questions").put(trail.equals("razonar")?Bank.draw(p,next.getInt("level"),s.getInt("index")==7,new Random()):practiceQuestion(p,trail,next.getInt("level"),new Random()));return null;
     }
     public static int[] metrics(JSONArray sessions,String trail,int level){

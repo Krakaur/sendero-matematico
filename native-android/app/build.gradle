@@ -6,8 +6,8 @@ android {
         applicationId 'org.krakaur.sendero.nativo'
         minSdk 34
         targetSdk 36
-        versionCode 3
-        versionName '0.3.1'
+        versionCode 4
+        versionName '0.4.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
@@ -29,6 +29,7 @@ android {
         }
     }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    androidResources { ignoreAssetsPattern "bank-0.3.0.db" }
     lint { abortOnError true }
 }
 dependencies {
