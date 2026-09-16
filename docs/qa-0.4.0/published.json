@@ -1,0 +1,45 @@
+{
+  "checkedAt": "2026-09-16T04:12:20.057Z",
+  "files": [
+    {
+      "file": "app.js",
+      "status": 200,
+      "sourceMatch": true
+    },
+    {
+      "file": "core.js",
+      "status": 200,
+      "sourceMatch": true
+    },
+    {
+      "file": "race.js",
+      "status": 200,
+      "sourceMatch": true
+    },
+    {
+      "file": "profiles.js",
+      "status": 200,
+      "sourceMatch": true
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "sourceMatch": true
+    },
+    {
+      "file": "docentes.html",
+      "status": 200,
+      "sourceMatch": true
+    }
+  ],
+  "apkPublicStatus": 200,
+  "browser": {
+    "race": true,
+    "oneTap": true,
+    "correction": true,
+    "fixedLevel": true,
+    "calm": true,
+    "offline": true,
+    "errors": []
+  }
+}

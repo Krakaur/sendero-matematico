@@ -1,0 +1,62 @@
+{
+  "version": "0.4.0",
+  "publishedAt": "2026-09-16T04:08:52Z",
+  "nativeSource": "5acab9ff3b998303d8df5416e2c154ac5400600c",
+  "webWindowsSource": "eb661c185e3fecb8b229b94c98a145744169ca6c",
+  "pagesCommit": "d344d0c",
+  "nativeWorkflow": 35053657986,
+  "nativeWorkflowConclusion": "success",
+  "nativeApi": [
+    34,
+    35,
+    36
+  ],
+  "tests": {
+    "node": 31,
+    "java": 8,
+    "instrumentedPerApi": 5
+  },
+  "nativeVerification": {
+    "apkBytes": 423166,
+    "webViewReference": false,
+    "webAssets": false,
+    "nativeLibraries": false,
+    "requestedPermissions": [],
+    "minSdk": 34,
+    "targetSdk": 36
+  },
+  "files": [
+    {
+      "name": "Sendero-0.4.0-Windows-x64.exe",
+      "bytes": 100392730,
+      "sha256": "61625ab30185d8597d49fede5c468b2d6812877365f86dd0db992f06fafc2f4e",
+      "url": "https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-0.4.0-Windows-x64.exe"
+    },
+    {
+      "name": "Sendero-Nativo-0.4.0.aab",
+      "bytes": 404908,
+      "sha256": "c7b95ff8c287438f2ce0776338d5f05dc5800e4cc244197e24ac2f941f6c834d",
+      "url": "https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-Nativo-0.4.0.aab"
+    },
+    {
+      "name": "Sendero-Nativo-0.4.0.apk",
+      "bytes": 423166,
+      "sha256": "ea82d8d2a3824ee9748753a644dd00d6f8051e5d77687eb607b3ff3a11d271ad",
+      "url": "https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-Nativo-0.4.0.apk"
+    },
+    {
+      "name": "SHA256SUMS-0.4.0.txt",
+      "bytes": 281,
+      "sha256": "e4660923bf2f6d559c8350668b958ee8256c57532b1082838f73f2f4c45d05c3",
+      "url": "https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/SHA256SUMS-0.4.0.txt"
+    }
+  ],
+  "limits": [
+    "Physical phone and child pilot pending",
+    "No public teacher hosting",
+    "Active database not encrypted by application",
+    "Windows unsigned",
+    "Not published in app stores",
+    "Curriculum partial"
+  ]
+}

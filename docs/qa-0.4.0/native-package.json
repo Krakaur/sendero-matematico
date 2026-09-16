@@ -1,0 +1,9 @@
+{
+  "apkBytes": 423166,
+  "webViewReference": false,
+  "webAssets": false,
+  "nativeLibraries": false,
+  "requestedPermissions": [],
+  "minSdk": 34,
+  "targetSdk": 36
+}

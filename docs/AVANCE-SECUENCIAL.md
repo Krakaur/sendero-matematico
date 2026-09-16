@@ -10,7 +10,7 @@ Implementados hasta ocho perfiles con contraseña derivada, migración preservan
 
 ## 2. Entrega docente y grupos — receptor y cliente implementados; falta alojamiento público
 
-Receptor con SQLite, invitaciones por aula y rol, tareas, envío/reintento y confirmación por sesión, probado mediante HTTP real con datos sintéticos. La web importa invitaciones y consulta tareas/informes. Leer `SERVICIO-DOCENTE.md`. No se dispone todavía de un servidor HTTPS designado. Se solicitó al usuario la información de alojamiento; se continúa con los demás frentes. No se contrataron servicios ni se enviaron registros reales. La administración escolar completa y el endurecimiento para producción siguen pendientes, diferenciados de esta prueba funcional.
+Receptor con SQLite, invitaciones por aula y rol, tareas, envío/reintento y confirmación por sesión, probado mediante HTTP real con datos sintéticos. La web importa invitaciones y consulta tareas/informes. Leer `SERVICIO-DOCENTE.md`. El usuario confirmó que no dispone de alojamiento y solicitó preparar el servicio sin contratar nada. No se contrataron servicios ni se enviaron registros reales. La administración escolar completa y el endurecimiento para producción siguen pendientes, diferenciados de esta prueba funcional.
 
 ## 3. Investigación — protocolo candidato y herramienta de minimización; sin estudio activo
 
@@ -36,6 +36,6 @@ La compilación inicial pasó Android 14–16 con navegador y WebView deshabilit
 
 ## 8. Distribución, difusión y documentación académica — paquetes y documentación
 
-Se preparan APK/AAB firmados y Windows portátil, página pública para docentes, metadatos/sitemap, material de difusión y expediente descriptivo del software. La publicación efectiva y hashes se registran en las notas de versión. No se han publicado mensajes en redes ni contactado a terceros; se prepararon textos y estrategias. No se contrataron servicios, certificados o cuentas de tiendas. La publicación en tiendas y el registro curricular no se afirman realizados.
+Se publicaron APK/AAB firmados y Windows portátil en 0.4.0, página pública para docentes, metadatos/sitemap, material de difusión y expediente descriptivo del software. La publicación efectiva y hashes se registran en las notas de versión. No se han publicado mensajes en redes ni contactado a terceros; se prepararon textos y estrategias. No se contrataron servicios, certificados o cuentas de tiendas. La publicación en tiendas y el registro curricular no se afirman realizados.
 
 El usuario decidió expresamente preparar el servicio sin contratar alojamiento. Esa dependencia no impide las pruebas locales ni la transferencia manual, pero la entrega automática entre hogares y docentes continúa sin servicio público. Quedan además trabajos de ingeniería posibles —paridad de informes Android, narración nativa, más modalidades curriculares, administración docente y endurecimiento del servidor— que no deben describirse como bloqueos exclusivamente externos. El alcance íntegro no queda cerrado por publicar esta versión.
