@@ -34,6 +34,7 @@ function complete(trail = "suma") {
     q.attempts = [q.answer];
     q.done = true;
     q.activeMs = 1200;
+    q.firstResponseMs = 1200;
   });
   s.completedAt = new Date().toISOString();
   return s;

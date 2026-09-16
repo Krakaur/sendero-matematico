@@ -1,10 +1,11 @@
-const CACHE = "sendero-0.3.0-bank-release";
+const CACHE = "sendero-0.3.1-fluency";
 const FILES = [
   "./",
   "./index.html",
   "./style.css",
   "./app.js",
   "./core.js",
+  "./fluency.js",
   "./bank.js",
   "./practice.js",
   "./bank-data.js",

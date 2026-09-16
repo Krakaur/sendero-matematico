@@ -31,8 +31,8 @@ jobs:
           trap 'rm -f "$SENDERO_KEYSTORE"' EXIT
           gradle -p native-android --no-daemon testDebugUnitTest assembleRelease bundleRelease lintRelease
           mkdir -p native-artifacts
-          cp native-android/app/build/outputs/apk/release/app-release.apk native-artifacts/Sendero-Nativo-0.3.0.apk
-          cp native-android/app/build/outputs/bundle/release/app-release.aab native-artifacts/Sendero-Nativo-0.3.0.aab
+          cp native-android/app/build/outputs/apk/release/app-release.apk native-artifacts/Sendero-Nativo-0.3.1.apk
+          cp native-android/app/build/outputs/bundle/release/app-release.aab native-artifacts/Sendero-Nativo-0.3.1.aab
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs native-artifacts/*.apk > native-artifacts/signature.txt
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging native-artifacts/*.apk > native-artifacts/metadata.txt
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump permissions native-artifacts/*.apk > native-artifacts/permissions.txt

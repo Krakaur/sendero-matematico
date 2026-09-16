@@ -1,3 +1,4 @@
+import { fluency, interruptTiming } from "./fluency.js";
 import { rememberPractice, practiceQuestion } from "./practice.js";
 import { bankQuestion, optionText, reasoningDimensions, bankCount } from "./bank.js";
 import {
@@ -74,6 +75,7 @@ function save() {
 }
 if (!storageOK) storageWarning();
 else save();
+interruptTiming(state.current?.questions[state.current.index]);
 function announce(text) {
   $("#announce").textContent = text;
 }
@@ -105,6 +107,21 @@ function statsHTML(s) {
 function reasoningHTML(sessions) {
  const rows=Object.entries(reasoningDimensions(sessions));if(!rows.length)return "";
  return `<section class="panel dimensions"><h3>Problemas para pensar</h3>${rows.map(([label,d])=>{const pct=Math.round(100*d.independent/d.total);return `<div class="dimension"><div class="dimension-title"><strong>${esc(label)}</strong><span>${d.independent}/${d.total} · ${pct}% sin ayuda</span></div><div class="dimension-bar ${pct<60?"amber":pct<85?"sage":"teal"}" role="meter" aria-label="${esc(label)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%"></span></div></div>`;}).join("")}<p>Estos resultados describen las tareas practicadas. No miden por sí solos razonamiento general ni explicación oral.</p></section>`;
+}
+function fluencyHTML(sessions) {
+  const rows=[];
+  for(const [trail,t] of Object.entries(TRAILS)) {
+    if(trail==='razonar') continue;
+    for(let level=1;level<=4;level++) {
+      const ss=sessions.filter(s=>s.trail===trail).sort((a,b)=>a.completedAt.localeCompare(b.completedAt));
+      const q=ss.flatMap(s=>s.questions).filter(q=>q.level===level);
+      if(!q.length) continue;
+      const f=fluency(q);
+      const recent=ss.map(s=>({s,f:fluency(s.questions.filter(q=>q.level===level))})).filter(x=>x.f.n).slice(-5);
+      rows.push(`<div class="dimension"><strong>${t.short} · nivel ${level}</strong><p>${f.n?`${f.rate.toFixed(1)} aciertos iniciales/min de respuesta · ${f.accuracy.toFixed(0)}% inicial · n=${f.n}`:'Sin tiempos comparables'} · ${f.excluded} excluidos de rapidez</p>${recent.map(({s,f})=>`<p class="micro">${fmtDate(s.completedAt)}: ${f.rate.toFixed(1)}/min · ${f.accuracy.toFixed(0)}% · n=${f.n}</p>`).join('')}</div>`);
+    }
+  }
+  return rows.length?`<section class="panel"><h3>Fluidez de cálculo</h3>${rows.join('')}<p class="micro">60 × aciertos iniciales / segundos hasta la primera respuesta, incluidos los errores iniciales. Excluye pistas, interrupciones y registros antiguos. Las correcciones y transiciones no entran en ese tiempo. Es una tasa de respuesta en práctica, no una carrera continua ni una calificación. Compara precisión y rapidez juntas, con el mismo nivel y contenido; n indica cuántos ejercicios aportan tiempo.</p></section>`:'';
 }
 function dimensionsHTML(sessions) {
   const d = dimensions(sessions);
@@ -180,7 +197,7 @@ function home() {
 }
 function progress() {
   const stats = summarize(state.sessions);
-  return `<header class="page-head fade-in"><span class="eyebrow">Cada intento es un paso</span><h1>Tu cuaderno<br>de aventuras.</h1><p>Aquí quedan tus descubrimientos. Los puntos del juego no son una calificación escolar.</p></header>${statsHTML(stats)}${dimensionsHTML(state.sessions)}${reasoningHTML(state.sessions)}${
+  return `<header class="page-head fade-in"><span class="eyebrow">Cada intento es un paso</span><h1>Tu cuaderno<br>de aventuras.</h1><p>Aquí quedan tus descubrimientos. Los puntos del juego no son una calificación escolar.</p></header>${statsHTML(stats)}${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}${
     !state.sessions.length
       ? `<section class="panel empty"><div class="empty-art" aria-hidden="true">❋</div><h2>El camino empieza contigo</h2><p>Completa una aventura para ver tus primeros resultados. Si haces una pausa, podrás continuar después.</p><a class="primary" href="#explorar">Elegir un camino ↗</a></section>`
       : `<section class="panel"><h3>Tus caminos</h3>${Object.entries(TRAILS)
@@ -221,7 +238,7 @@ function levelTable(sessions) {
     : "<p>Aún no hay aventuras completas. El informe aparecerá después de la primera.</p>";
 }
 function teacher() {
-  return `<header class="page-head fade-in"><span class="eyebrow">Observar para acompañar</span><h1>Una mirada<br>a cada paso.</h1><p>Informes locales para orientar la práctica. Sin cuentas, sin envío automático y sin recopilación para investigación.</p></header><section class="panel"><h3>Este dispositivo · ${profileCode()}</h3><p>Un código representa un perfil local, no una identidad verificada. Esta versión admite un estudiante por perfil. En equipos compartidos usa perfiles separados del navegador o usuarios del sistema, cuando estén disponibles.</p>${statsHTML(summarize(state.sessions))}${levelTable(state.sessions)}<div class="button-row"><button id="export-report" class="primary" ${state.sessions.length ? "" : "disabled"}>Exportar informe JSON ↓</button><button id="export-csv" class="secondary" ${state.sessions.length ? "" : "disabled"}>Detalle CSV ↓</button></div><p class="micro">${state.exportedAt ? `Última exportación: ${fmtDate(state.exportedAt)}. Exportar no confirma recepción por el docente.` : "Sin exportaciones registradas."} Solo se exportan aventuras completas.</p></section>${dimensionsHTML(state.sessions)}${reasoningHTML(state.sessions)}<section class="panel"><h3>Recibir informes de estudiantes</h3><p>El estudiante lleva su archivo JSON al centro educativo. Puedes abrir varios informes aquí; las sesiones repetidas se cuentan una sola vez.</p><div class="button-row"><label for="import-file" class="sr-only">Seleccionar informes JSON de Sendero</label><input id="import-file" type="file" accept=".json,application/json" multiple></div><p id="import-status" role="status" class="micro"></p>${state.teacher.length ? `<div class="table-wrap"><table><caption class="sr-only">Informes recibidos en este dispositivo</caption><thead><tr><th>Perfil</th><th>Contenido</th><th>Aventuras</th><th>Ejercicios</th><th>Última práctica</th></tr></thead><tbody>${teacherRows()}</tbody></table></div>${importedProfiles()}` : '<p class="micro">No hay informes recibidos. Se guardarán solamente en este dispositivo.</p>'}</section><section class="panel"><h3>Cómo interpretar los resultados</h3><details open><summary>Práctica adaptativa, no diagnóstico</summary><p>Hay cuatro niveles de cantidades. Tres respuestas consecutivas correctas al primer intento y sin ayuda suben un nivel; dos ejercicios consecutivos con error o ayuda lo reducen. El tiempo no decide la dificultad. Son reglas iniciales transparentes, todavía sin validación educativa.</p></details><details><summary>Qué significan los indicadores</summary><p>Primer intento: la primera respuesta coincide con el resultado, haya o no ayuda. Sin ayuda: acierto al primer intento sin abrir la pista. Los errores anteriores a la corrección se conservan. El tiempo es una estimación de interacción: se pausa al salir, ocultar la app o tras 60 segundos sin interacción. No equivale a atención ni asistencia escolar.</p></details><details><summary>Comparaciones y evaluación formal</summary><p>Compara por contenido y dificultad; un porcentaje global puede cambiar porque cambiaron los ejercicios. Estas actividades domiciliarias no verifican identidad, supervisión ni ayuda externa. Complementan el criterio docente; no acreditan por sí solas aprendizaje, autoría o una calificación.</p></details><details><summary>Privacidad y conservación</summary><p>No solicitamos nombres, correos ni escuela. Los códigos persistentes y las fechas pueden permitir vincular registros: estos informes no deben considerarse anónimos. Entrégalos solo al adulto autorizado. El juego no los transmite. La investigación requerirá un procedimiento separado.</p></details></section>`;
+  return `<header class="page-head fade-in"><span class="eyebrow">Observar para acompañar</span><h1>Una mirada<br>a cada paso.</h1><p>Informes locales para orientar la práctica. Sin cuentas, sin envío automático y sin recopilación para investigación.</p></header><section class="panel"><h3>Este dispositivo · ${profileCode()}</h3><p>Un código representa un perfil local, no una identidad verificada. Esta versión admite un estudiante por perfil. En equipos compartidos usa perfiles separados del navegador o usuarios del sistema, cuando estén disponibles.</p>${statsHTML(summarize(state.sessions))}${levelTable(state.sessions)}<div class="button-row"><button id="export-report" class="primary" ${state.sessions.length ? "" : "disabled"}>Exportar informe JSON ↓</button><button id="export-csv" class="secondary" ${state.sessions.length ? "" : "disabled"}>Detalle CSV ↓</button></div><p class="micro">${state.exportedAt ? `Última exportación: ${fmtDate(state.exportedAt)}. Exportar no confirma recepción por el docente.` : "Sin exportaciones registradas."} Solo se exportan aventuras completas.</p></section>${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}<section class="panel"><h3>Recibir informes de estudiantes</h3><p>El estudiante lleva su archivo JSON al centro educativo. Puedes abrir varios informes aquí; las sesiones repetidas se cuentan una sola vez.</p><div class="button-row"><label for="import-file" class="sr-only">Seleccionar informes JSON de Sendero</label><input id="import-file" type="file" accept=".json,application/json" multiple></div><p id="import-status" role="status" class="micro"></p>${state.teacher.length ? `<div class="table-wrap"><table><caption class="sr-only">Informes recibidos en este dispositivo</caption><thead><tr><th>Perfil</th><th>Contenido</th><th>Aventuras</th><th>Ejercicios</th><th>Última práctica</th></tr></thead><tbody>${teacherRows()}</tbody></table></div>${importedProfiles()}` : '<p class="micro">No hay informes recibidos. Se guardarán solamente en este dispositivo.</p>'}</section><section class="panel"><h3>Cómo interpretar los resultados</h3><details open><summary>Práctica adaptativa, no diagnóstico</summary><p>Hay cuatro niveles de cantidades. Tres respuestas consecutivas correctas al primer intento y sin ayuda suben un nivel; dos ejercicios consecutivos con error o ayuda lo reducen. El tiempo no decide la dificultad. Son reglas iniciales transparentes, todavía sin validación educativa.</p></details><details><summary>Qué significan los indicadores</summary><p>Primer intento: la primera respuesta coincide con el resultado, haya o no ayuda. Sin ayuda: acierto al primer intento sin abrir la pista. Los errores anteriores a la corrección se conservan. El tiempo es una estimación de interacción: se pausa al salir, ocultar la app o tras 60 segundos sin interacción. No equivale a atención ni asistencia escolar.</p></details><details><summary>Comparaciones y evaluación formal</summary><p>Compara por contenido y dificultad; un porcentaje global puede cambiar porque cambiaron los ejercicios. Estas actividades domiciliarias no verifican identidad, supervisión ni ayuda externa. Complementan el criterio docente; no acreditan por sí solas aprendizaje, autoría o una calificación.</p></details><details><summary>Privacidad y conservación</summary><p>No solicitamos nombres, correos ni escuela. Los códigos persistentes y las fechas pueden permitir vincular registros: estos informes no deben considerarse anónimos. Entrégalos solo al adulto autorizado. El juego no los transmite. La investigación requerirá un procedimiento separado.</p></details></section>`;
 }
 function teacherRows() {
   const profiles = [...new Set(state.teacher.map((s) => s.profile))];
@@ -241,14 +258,15 @@ function importedProfiles() {
   return [...new Set(state.teacher.map((s) => s.profile))]
     .map((profile) => {
       const sessions = state.teacher.filter((s) => s.profile === profile);
-      return `<details><summary>Perfil ${esc(profile.slice(0, 8).toUpperCase())} · ${sessions.length} aventuras</summary>${dimensionsHTML(sessions)}${reasoningHTML(sessions)}${levelTable(sessions)}</details>`;
+      return `<details><summary>Perfil ${esc(profile.slice(0, 8).toUpperCase())} · ${sessions.length} aventuras</summary>${dimensionsHTML(sessions)}${fluencyHTML(sessions)}${reasoningHTML(sessions)}${levelTable(sessions)}</details>`;
     })
     .join("");
 }
 function about() {
   return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje y no quitan recompensas.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. Esta versión no sincroniza con servidores, no tiene publicidad y no realiza investigación con datos infantiles.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p>Desarrollo: Dirk Hans Krakaur Floranes. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales en SVG. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas permanecen en este dispositivo hasta que tú exportas un archivo. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
 }
-function stopTimer() {
+function stopTimer(interrupted = false) {
+  if (interrupted) interruptTiming(state.current?.questions[state.current.index]);
   if (timerStart !== null && state.current) {
     const q = state.current.questions[state.current.index];
     if (q && !q.done)
@@ -267,7 +285,7 @@ function startTimer() {
   if (timerStart === null) timerStart = performance.now();
   clearTimeout(idleTimer);
   idleTimer = setTimeout(() => {
-    stopTimer();
+    stopTimer(true);
     save();
   }, 60000);
 }
@@ -363,14 +381,14 @@ function render(persistState = true) {
     .querySelectorAll("[data-trail]")
     .forEach((b) => b.addEventListener("click", () => begin(b.dataset.trail)));
   main.querySelector("#pause")?.addEventListener("click", () => {
-    stopTimer();
+    stopTimer(true);
     save();
     location.hash = "#explorar";
   });
   main
     .querySelectorAll("[data-answer]")
     .forEach((b) =>
-      b.addEventListener("click", () => answer(Number(b.dataset.answer))),
+      b.addEventListener("click", (e) => { if(e.detail < 2) answer(Number(b.dataset.answer)); }),
     );
   main.querySelector("#hint")?.addEventListener("click", () => {
     stopTimer();
@@ -423,8 +441,9 @@ function begin(trail) {
   goGame();
 }
 function answer(n) {
-  const s = state.current,
-    q = s.questions[s.index];
+  const s = state.current;
+  if (!s) return;
+  const q = s.questions[s.index];
   if (q.done || q.attempts.includes(n) || !q.options.includes(n)) return;
   stopTimer();
   recordAttempt(q, n);
@@ -433,6 +452,11 @@ function answer(n) {
     s.adaptation = adapt(s.adaptation, q);
     tone(true);
   } else tone(false);
+  if (q.done && !q.bankId) {
+    announce(`¡Correcto! ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}.`);
+    next();
+    return;
+  }
   save();
   render();
   if (q.done) {
@@ -449,7 +473,7 @@ function answer(n) {
 }
 function next() {
   const s = state.current;
-  if (!s.questions[s.index].done) return;
+  if (!s || !s.questions[s.index].done) return;
   rememberPractice(state,s.trail,s.questions[s.index]);
   if (s.index === 7) {
     s.completedAt = new Date().toISOString();
@@ -524,7 +548,7 @@ function exportCSV() {
       "pista",
       "solucion_mostrada",
       "interaccion_ms_estimados",
-      "version", "actividad", "banco", "dimension", "reserva", "nueva", "enunciado", "explicacion", "respuesta_texto",
+      "version", "actividad", "banco", "dimension", "reserva", "nueva", "enunciado", "explicacion", "respuesta_texto", "protocolo_tiempo", "primera_respuesta_ms", "tiempo_interrumpido",
     ],
   ];
   for (const s of state.sessions)
@@ -544,7 +568,7 @@ function exportCSV() {
         q.hint,
         q.solutionShown ?? "no registrado",
         Math.round(q.activeMs),
-        s.version, q.bankId??"", q.bankVersion??"", q.dimension??"", q.pool??"", q.novel??"", q.prompt??"", q.explanation??"", optionText(q,q.answer),
+        s.version, q.bankId??"", q.bankVersion??"", q.dimension??"", q.pool??"", q.novel??"", q.prompt??"", q.explanation??"", optionText(q,q.answer), q.timingProtocol??"", q.firstResponseMs??"", q.timingInterrupted??"",
       ]);
   download(
     `sendero-${profileCode()}.csv`,
@@ -610,18 +634,19 @@ $("#sound").addEventListener("click", () => {
   tone(true);
 });
 window.addEventListener("hashchange", () => {
+  if(location.hash !== "#jugar") stopTimer(true);
   render();
   window.scrollTo(0, 0);
   main.focus({ preventScroll: true });
 });
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
-    stopTimer();
+    stopTimer(true);
     save();
   } else startTimer();
 });
 window.addEventListener("pagehide", () => {
-  stopTimer();
+  stopTimer(true);
   save();
 });
 document.addEventListener("pointerdown", () => {

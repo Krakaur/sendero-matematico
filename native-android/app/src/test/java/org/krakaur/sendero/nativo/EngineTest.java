@@ -4,6 +4,17 @@ import org.json.*;
 import java.util.*;
 import static org.junit.Assert.*;
 public class EngineTest {
+    @Test public void fluencySeparatesFirstAnswerAndCorrection()throws Exception {
+        JSONObject a=Engine.question("suma",1,new Random(1)),b=Engine.question("suma",1,new Random(2));
+        a.put("activeMs",2000);Engine.answer(a,a.getInt("answer"));
+        b.put("activeMs",4000);int wrong=b.getJSONArray("options").getInt(0);if(wrong==b.getInt("answer"))wrong=b.getJSONArray("options").getInt(1);
+        Engine.answer(b,wrong);b.put("activeMs",94000);Engine.answer(b,b.getInt("answer"));
+        JSONArray ss=new JSONArray().put(Engine.object("trail","suma","questions",new JSONArray().put(a).put(b)));
+        assertArrayEquals(new double[]{2,1,6000,0},Engine.fluency(ss,"suma",1),0.01);
+        a.put("hint",true);assertArrayEquals(new double[]{1,0,4000,1},Engine.fluency(ss,"suma",1),0.01);
+        b.put("timingInterrupted",true);assertEquals(0,Engine.fluency(ss,"suma",1)[0],0.01);
+        a.remove("hint");a.remove("timingProtocol");assertEquals(0,Engine.fluency(ss,"suma",1)[0],0.01);
+    }
     @Test public void twelveThousandExercisesAreCoherent()throws Exception{
         Random rng=new Random(42);for(String t:new String[]{"suma","resta","multi","tablas20"})for(int l=1;l<=4;l++)for(int n=0;n<1000;n++){
             JSONObject q=Engine.question(t,l,rng);int a=q.getInt("a"),b=q.getInt("b"),answer=q.getInt("answer");assertEquals(t.equals("suma")?a+b:t.equals("resta")?a-b:a*b,answer);assertTrue(answer>=0);Set<Integer> values=new HashSet<>();for(int j=0;j<4;j++)values.add(q.getJSONArray("options").getInt(j));assertEquals(4,values.size());assertTrue(values.contains(answer));

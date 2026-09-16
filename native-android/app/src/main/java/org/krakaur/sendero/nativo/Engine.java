@@ -6,7 +6,7 @@ import java.util.*;
 
 /** Platform-independent arithmetic and report contract, compatible with sendero.report.v1. */
 public final class Engine {
-    public static final String VERSION="0.3.0", SCHEMA="sendero.report.v2";
+    public static final String VERSION="0.3.1", SCHEMA="sendero.report.v2";
     public static final String[] TRAILS={"suma","resta","multi","tablas20","razonar"};
     private Engine() {}
     public static JSONObject object(Object... entries) {
@@ -33,7 +33,7 @@ public final class Engine {
         Set<Integer> set=new LinkedHashSet<>();set.add(answer);
         while(set.size()<4)set.add(Math.max(0,answer-5)+rng.nextInt(answer+5-Math.max(0,answer-5)+1));
         List<Integer> options=new ArrayList<>(set);Collections.shuffle(options,rng);
-        return object("a",a,"b",b,"answer",answer,"level",level,"options",new JSONArray(options),"attempts",new JSONArray(),"hint",false,"solutionShown",false,"activeMs",0,"done",false);
+        return object("a",a,"b",b,"answer",answer,"level",level,"options",new JSONArray(options),"attempts",new JSONArray(),"hint",false,"solutionShown",false,"activeMs",0,"timingProtocol",1,"timingInterrupted",false,"done",false);
     }
     public static JSONObject session(String trail,int level,String profile){
         return object("id",id(),"profile",profile,"trail",trail,"level",level,"version",VERSION,"startedAt",now(),"completedAt",JSONObject.NULL,"index",0,"questions",new JSONArray().put(question(trail,level,new Random())));
@@ -64,6 +64,7 @@ public final class Engine {
         for(int i=0;i<options.length();i++)if(options.optInt(i)==answer)offered=true;
         for(int i=0;i<attempts.length();i++)if(attempts.optInt(i)==answer)return false;
         if(!offered)return false;
+        if(attempts.length()==0&&q.optInt("timingProtocol")==1)try{q.put("firstResponseMs",q.optLong("activeMs"));}catch(JSONException e){throw new IllegalStateException(e);}
         attempts.put(answer);
         try{q.put("solutionShown",q.optBoolean("solutionShown")||answer!=q.optInt("answer"));q.put("done",answer==q.optInt("answer"));}catch(JSONException e){throw new IllegalArgumentException(e);}
         return true;
@@ -95,6 +96,20 @@ public final class Engine {
                 m[6]=(int)Math.min(Integer.MAX_VALUE,(long)m[6]+q.optLong("activeMs"));
             }}return m;
     }
+    public static void interruptTiming(JSONObject q) {
+        if(q!=null&&q.optInt("timingProtocol")==1&&q.optJSONArray("attempts").length()==0)
+            try{q.put("timingInterrupted",true);}catch(JSONException e){throw new IllegalStateException(e);}
+    }
+    // count, first-correct count, summed first-response milliseconds, excluded count.
+    public static double[] fluency(JSONArray sessions,String trail,int level){
+        double[] f=new double[4];
+        for(int i=0;i<sessions.length();i++){JSONObject s=sessions.optJSONObject(i);if(!trail.equals(s.optString("trail")))continue;
+            JSONArray qs=s.optJSONArray("questions");for(int j=0;j<qs.length();j++){JSONObject q=qs.optJSONObject(j);if(q.optInt("level")!=level||q.has("bankId"))continue;
+                double ms=q.optDouble("firstResponseMs",0);
+                if(q.optInt("timingProtocol")!=1||q.optBoolean("timingInterrupted")||q.optBoolean("hint")||!finite(ms)||ms<=0||q.optJSONArray("attempts").length()==0){f[3]++;continue;}
+                f[0]++;f[2]+=ms;if(q.optJSONArray("attempts").optInt(0)==q.optInt("answer"))f[1]++;
+            }}return f;
+    }
     public static JSONObject report(String profile,JSONArray sessions){return object("schema",SCHEMA,"version",VERSION,"profile",profile,"exportedAt",now(),"sessions",sessions);}
     private static void require(boolean valid)throws JSONException{if(!valid)throw new JSONException("Informe de Sendero no válido o fuera de límites.");}
     private static boolean finite(double d){return !Double.isNaN(d)&&!Double.isInfinite(d);}
@@ -114,6 +129,7 @@ public final class Engine {
                 int expected=s.getString("trail").equals("suma")?a+b:s.getString("trail").equals("resta")?a-b:a*b;
                 require((s.getString("trail").equals("razonar")?Bank.valid(q):answer==expected)&&answer>=0&&q.get("hint") instanceof Boolean&&(!q.has("solutionShown")||q.get("solutionShown") instanceof Boolean));
                 Object time=q.get("activeMs");require(time instanceof Number&&finite(((Number)time).doubleValue())&&q.getDouble("activeMs")>=0&&q.getDouble("activeMs")<=86400000);
+                if(q.has("timingProtocol"))require(q.optInt("timingProtocol")==1&&q.get("timingInterrupted") instanceof Boolean&&q.opt("firstResponseMs") instanceof Number&&finite(q.getDouble("firstResponseMs"))&&q.getDouble("firstResponseMs")>=0&&q.getDouble("firstResponseMs")<=q.getDouble("activeMs"));
                 JSONArray attempts=q.getJSONArray("attempts");require(attempts.length()>0&&attempts.length()<=20);
                 for(int k=0;k<attempts.length();k++)require(integer(attempts.get(k))&&attempts.getInt(k)>=0&&attempts.getInt(k)<=2500);
                 require(attempts.getInt(attempts.length()-1)==answer);
@@ -121,9 +137,9 @@ public final class Engine {
         }return r;
     }
     public static String csv(JSONArray sessions)throws JSONException{
-        StringBuilder b=new StringBuilder("\uFEFFperfil,sesion,contenido,nivel,a,b,respuesta,intentos,pista,solucion_mostrada,tiempo_ms,actividad,banco,dimension,reserva,nueva,enunciado,explicacion\r\n");
+        StringBuilder b=new StringBuilder("\uFEFFperfil,sesion,contenido,nivel,a,b,respuesta,intentos,pista,solucion_mostrada,tiempo_ms,actividad,banco,dimension,reserva,nueva,enunciado,explicacion,protocolo_tiempo,primera_respuesta_ms,tiempo_interrumpido\r\n");
         for(int i=0;i<sessions.length();i++){JSONObject s=sessions.getJSONObject(i);JSONArray qs=s.getJSONArray("questions");
-            for(int j=0;j<qs.length();j++){JSONObject q=qs.getJSONObject(j);Object[] row={s.getString("profile"),s.getString("id"),s.getString("trail"),q.getInt("level"),q.getInt("a"),q.getInt("b"),q.getInt("answer"),q.getJSONArray("attempts"),q.getBoolean("hint"),q.opt("solutionShown"),q.getLong("activeMs"),q.optString("bankId"),q.optString("bankVersion"),q.optString("dimension"),q.optString("pool"),q.opt("novel"),q.optString("prompt"),q.optString("explanation")};
+            for(int j=0;j<qs.length();j++){JSONObject q=qs.getJSONObject(j);Object[] row={s.getString("profile"),s.getString("id"),s.getString("trail"),q.getInt("level"),q.getInt("a"),q.getInt("b"),q.getInt("answer"),q.getJSONArray("attempts"),q.getBoolean("hint"),q.opt("solutionShown"),q.getLong("activeMs"),q.optString("bankId"),q.optString("bankVersion"),q.optString("dimension"),q.optString("pool"),q.opt("novel"),q.optString("prompt"),q.optString("explanation"),q.opt("timingProtocol"),q.opt("firstResponseMs"),q.opt("timingInterrupted")};
                 for(int k=0;k<row.length;k++){if(k>0)b.append(',');b.append('"').append(String.valueOf(row[k]).replace("\"","\"\"")).append('"');}b.append("\r\n");}}
         return b.toString();
     }
