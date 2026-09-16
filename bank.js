@@ -1,8 +1,10 @@
+import {EXTRA_BANK} from "./bank-extra.js";
 import { BANK, BANK_VERSION } from './bank-data.js';
-const byId = new Map(BANK.map(q => [q.id, q]));
+export const BANK_ITEMS=[...BANK,...EXTRA_BANK];
+const byId = new Map(BANK_ITEMS.map(q => [q.id, q]));
 const pools = new Map();
-for(const q of BANK) {const key=`${q.level}-${q.pool}`; if(!pools.has(key))pools.set(key,[]);pools.get(key).push(q);}
-export const bankCount = BANK.length;
+for(const q of BANK_ITEMS) {const key=`${q.level}-${q.pool}`; if(!pools.has(key))pools.set(key,[]);pools.get(key).push(q);}
+export const bankCount = BANK_ITEMS.length;
 export function bankQuestion(profile, level, transfer=false, rng=Math.random) {
   const pool=transfer?'transfer':'practice', key=`${level}-${pool}`;
   const history=profile.bankHistory??={};
@@ -17,10 +19,10 @@ export function bankQuestion(profile, level, transfer=false, rng=Math.random) {
   history.contexts=[...contexts,item.context].slice(-4);
   const q=structuredClone(item);
   for(let i=q.options.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[q.options[i],q.options[j]]=[q.options[j],q.options[i]];}
-  return {...q,bankId:q.id,bankVersion:BANK_VERSION,novel:used.cycle===0,cycle:used.cycle,attempts:[],hint:false,solutionShown:false,activeMs:0,done:false};
+  return {...q,bankId:q.id,bankVersion:q.contentVersion||BANK_VERSION,novel:used.cycle===0,cycle:used.cycle,attempts:[],hint:false,solutionShown:false,activeMs:0,done:false};
 }
 export function validBankQuestion(q){
-  const original=byId.get(q.bankId);if(!original||q.bankVersion!==BANK_VERSION)return false;
+  const original=byId.get(q.bankId);if(!original||q.bankVersion!==(original.contentVersion||BANK_VERSION))return false;
   for(const field of ['a','b','answer','level','prompt','explanation','solution','pool','dimension','template','family','labels'])if(JSON.stringify(original[field])!==JSON.stringify(q[field]))return false;
   return Array.isArray(q.options)&&q.options.length===4&&new Set(q.options).size===4&&q.options.every(n=>original.options.includes(n))&&q.attempts.every(n=>original.options.includes(n));
 }

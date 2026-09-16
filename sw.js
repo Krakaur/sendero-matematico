@@ -1,13 +1,19 @@
-const VERSION = "0.3.2";
-const CACHE = `sendero-${VERSION}-river`;
+const VERSION = "0.4.0";
+const CACHE = `sendero-${VERSION}-regatta-final`;
 const FILES = [
   "./",
-  "./index.html",
+  "./index.html", "./docentes.html",
   "./style.css",
   "./app.js",
+  "./profiles.js",
+  "./backup.js", "./race.js",
+  "./classroom.js",
   "./core.js",
   "./fluency.js",
+  "./results.js",
   "./bank.js",
+  "./bank-extra.js",
+  "./narration.js",
   "./practice.js",
   "./bank-data.js",
   "./icon.svg",

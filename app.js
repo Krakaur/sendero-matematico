@@ -1,3 +1,9 @@
+import {newRace,raceStats,raceLevel,competitionHTML} from "./race.js";
+import {encryptBackup,decryptBackup,restoreSnapshot} from "./backup.js";
+import {renderFluency} from "./results.js";
+import {narrateLocally} from "./narration.js";
+import {readInvitation, exchangeClassroom, applyExchange, classroomRequest, validateTasks} from "./classroom.js";
+import {profileList, migrateLegacy, createProfile, loginProfile, updateProfile, profileKey} from "./profiles.js";
 import { fluency, interruptTiming } from "./fluency.js";
 import { rememberPractice, practiceQuestion } from "./practice.js";
 import { bankQuestion, optionText, reasoningDimensions, bankCount } from "./bank.js";
@@ -16,8 +22,8 @@ import {
   mergeSessions,
 } from "./core.js";
 const $ = (s) => document.querySelector(s),
-  main = $("#main"),
-  KEY = "sendero.state.v1";
+  main = $("#main");
+let KEY = null, activeProfile = null;
 const desktop = navigator.userAgent.includes("SenderoDesktop/1");
 const android =
   navigator.userAgent.includes("SenderoAndroid/1") && !!window.SenderoAndroid;
@@ -39,26 +45,33 @@ const fresh = () => ({
   sound: false,
   exportedAt: null,
 });
-let state;
+let state = fresh();
 let storageOK = true;
 try {
-  const raw = localStorage.getItem(KEY);
-  state = raw ? JSON.parse(raw) : fresh();
-  if (
-    !state.profile ||
-    !Array.isArray(state.sessions) ||
-    !Array.isArray(state.teacher)
-  )
-    throw Error();
-} catch {
-  state = fresh();
-  storageOK = false;
-}
+  const migrated = migrateLegacy(localStorage);
+  const id = sessionStorage.getItem('sendero.active') || migrated?.id;
+  activeProfile = profileList(localStorage).find(p=>p.id===id) || null;
+  if(activeProfile) {
+    KEY=profileKey(activeProfile.id);
+    state=JSON.parse(localStorage.getItem(KEY));
+    if(!state || state.profile!==activeProfile.id || !Array.isArray(state.sessions))throw Error();
+    sessionStorage.setItem('sendero.active',activeProfile.id);
+  }
+} catch { activeProfile=null;KEY=null;storageOK=false; }
 let timerStart = null,
   idleTimer = null,
   audioContext = null,
   installPrompt = null;
 let raceMove = null;
+function raceElapsed(){return (state.current?.race?.elapsedMs||0)+(timerStart===null?0:Math.min(60000,Math.max(0,performance.now()-timerStart)));}
+function updateRace(){
+ if(!state.current?.race||document.hidden||location.hash!=='#jugar')return;
+ const ms=raceElapsed(),r=raceStats(state.current,ms);
+ document.querySelectorAll('[data-racer]').forEach(el=>{const i=Number(el.dataset.racer);el.style.left=100*(i?r.bots[i-1]:r.progress)+'%';});
+ if($('#race-position'))$('#race-position').textContent=r.rank+' / 4';
+ if($('#race-clock'))$('#race-clock').textContent=(ms/1000).toFixed(1)+' s';
+}
+setInterval(updateRace,120);
 function storageWarning() {
   const el = $("#storage-alert");
   el.hidden = false;
@@ -66,6 +79,7 @@ function storageWarning() {
     "No se pudo guardar en este dispositivo. Exporta tus resultados antes de cerrar. Comprueba que haya espacio y que el almacenamiento esté permitido.";
 }
 function save() {
+  if(!KEY || !activeProfile) return;
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
     storageOK = true;
@@ -79,6 +93,99 @@ else save();
 interruptTiming(state.current?.questions[state.current.index]);
 function announce(text) {
   $("#announce").textContent = text;
+}
+let syncBusy = false;
+function classroomHTML() {
+  const link=state.classroom,teacherRole=activeProfile?.role==='teacher';
+  const pending=state.sessions.filter(s=>!link?.received?.includes(s.id)).length;
+  return `<section class="panel"><h2>${teacherRole?'Mi aula y las tareas':'Compartir con mi docente'}</h2>${link?`<p>Aula vinculada: ${esc(new URL(link.endpoint).host)}. ${teacherRole?'Recepción de informes habilitada.':`${pending} aventuras pendientes de confirmar.`}</p><p>${link.lastReceipt?'Última confirmación: '+esc(new Date(link.lastReceipt).toLocaleString('es')):'Todavía sin confirmación del servidor.'}</p><p role="status">${esc(link.error||'')}</p><div class="button-row"><button id="sync-now" class="primary">Conectar ahora</button><button id="unlink-class" class="secondary">Desvincular</button></div>`:'<p>Importa una invitación entregada por la persona responsable del aula. Sin invitación, puedes seguir compartiendo los informes mediante archivos.</p>'}
+  <details><summary>${link?'Cambiar invitación':'Vincular con un aula'}</summary><p>La invitación contiene una clave privada y el servidor de destino. Al confirmar, se enviarán automáticamente las aventuras completas de este perfil cuando el juego esté abierto y haya conexión. No se enviarán contraseñas ni alias.</p><label>Archivo de invitación<input id="class-invite" type="file" accept=".json,application/json"></label><p id="class-status" role="status"></p></details>
+  ${link?.tasks?.length?`<h3>Tareas del aula</h3>${link.tasks.map(t=>`<div class="session-row"><div><strong>${esc(t.title)}</strong><p>${TRAILS[t.trail].short}</p></div>${teacherRole?'':`<button class="secondary" data-trail="${t.trail}">Practicar</button>`}</div>`).join('')}`:''}
+  ${teacherRole&&link?`<form id="class-task" class="profile-form"><h3>Asignar una práctica al grupo</h3><label>Título<input name="title" maxlength="100" required></label><label>Contenido<select name="trail">${Object.entries(TRAILS).map(([id,t])=>`<option value="${id}">${t.short}</option>`).join('')}</select></label><button class="primary">Publicar tarea</button></form>`:''}<p class="micro">La confirmación registra recepción técnica, no que el docente haya leído el informe. Las tareas orientan la práctica adaptativa y no son exámenes.</p></section>`;
+}
+async function syncClassroom() {
+  if(syncBusy||!activeProfile||!state.classroom?.enabled||!navigator.onLine)return;
+  const id=state.profile,link=JSON.stringify(state.classroom),snapshot=structuredClone(state);
+  syncBusy=true;
+  try {
+    const result=await exchangeClassroom(snapshot);
+    const current=activeProfile?.id===id?state:JSON.parse(localStorage.getItem(profileKey(id)));
+    if(current?.classroom?.token!==snapshot.classroom.token)return;
+    applyExchange(current,result);
+    if(activeProfile?.id===id)save();else localStorage.setItem(profileKey(id),JSON.stringify(current));
+  }catch(e){if(activeProfile?.id===id&&JSON.stringify(state.classroom)===link){state.classroom.error=e.message;save();}}
+  finally {syncBusy=false;if(activeProfile?.id===id&&location.hash==='#docentes')render(false);}
+}
+function bindClassroom() {
+  $('#sync-now')?.addEventListener('click',syncClassroom);
+  $('#unlink-class')?.addEventListener('click',()=>{delete state.classroom;save();render(false);});
+  $('#class-invite')?.addEventListener('change',async e=>{
+    try {
+      const file=e.target.files[0];if(!file||file.size>10000)throw Error('Invitación demasiado grande.');
+      const link=readInvitation(JSON.parse(await file.text()),activeProfile.role);
+      if(!confirm(`¿Vincular este perfil con ${new URL(link.endpoint).origin}? Se compartirán los informes completos con ese servidor. La invitación es privada.`))return;
+      state.classroom=link;save();render(false);syncClassroom();
+    }catch(err){$('#class-status').textContent=err.message;}
+  });
+  $('#class-task')?.addEventListener('submit',async e=>{
+    e.preventDefault();const b=e.currentTarget.querySelector('button');b.disabled=true;
+    const f=new FormData(e.currentTarget),id=state.profile,link=structuredClone(state.classroom);
+    try {const tasks=validateTasks([...(link.tasks||[]),{id:uid(),title:f.get('title'),trail:f.get('trail')}]);await classroomRequest(link,'/tasks',{tasks});if(state.profile===id){state.classroom.tasks=tasks;save();render(false);}}
+    catch(err){if(state.profile===id){state.classroom.error=err.message;save();render(false);}}
+    finally{b.disabled=false;}
+  });
+}
+window.addEventListener('online',syncClassroom);
+setInterval(()=>{if(!document.hidden)syncClassroom();},60000);
+function profilesScreen() {
+  let profiles=[];try{profiles=profileList(localStorage);}catch{return '<section class="panel"><h1>No se pudo abrir la lista de perfiles</h1><p>El almacenamiento está dañado. No se ha reemplazado. Conserva los datos del navegador para recuperación técnica.</p></section>';}
+  return `<header class="page-head"><span class="eyebrow">Un cuaderno para cada persona</span><h1>¿Quién va a usar Sendero?</h1><p>Los perfiles y las contraseñas funcionan sin internet en este navegador o instalación. No son cuentas en línea.</p></header>
+  ${activeProfile?`<section class="panel"><h2>Estás usando: ${esc(activeProfile.name)}</h2><div class="button-row"><a class="primary" href="#explorar">Continuar</a><button class="secondary" id="logout">Cerrar sesión</button></div><details><summary>Mi alias y contraseña</summary><form id="edit-profile" class="profile-form"><label>Alias<input name="alias" value="${esc(activeProfile.name)}" minlength="2" maxlength="24" required></label>${activeProfile.password?'<label>Contraseña actual<input name="previous" type="password" autocomplete="current-password" required></label>':'<p>Tu registro anterior está conservado. Añade una contraseña para separar el acceso.</p>'}<label>Nueva contraseña<input name="password" type="password" autocomplete="new-password" minlength="6" maxlength="128" ${activeProfile.password?'':'required'}></label><button class="primary">Guardar cambios</button></form></details></section>`:''}
+  ${profiles.length?`<section class="panel"><h2>Entrar en un perfil</h2><form id="login-profile" class="profile-form"><label>Perfil<select name="profile">${profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ${p.role==='teacher'?'Docente':'Estudiante'}${p.password?'':' · sin contraseña'}</option>`).join('')}</select></label><label>Contraseña<input name="password" type="password" autocomplete="current-password" maxlength="128"></label><button class="primary">Entrar</button></form></section>`:''}
+  ${profiles.length<8?`<section class="panel"><h2>Crear un perfil</h2><form id="create-profile" class="profile-form"><label>Alias<input name="alias" minlength="2" maxlength="24" autocomplete="nickname" placeholder="Por ejemplo, Colibrí" required></label><label>Usaré Sendero como<select name="role"><option value="student">Estudiante</option><option value="teacher">Docente o acompañante</option></select></label><label>Contraseña<input name="password" type="password" autocomplete="new-password" minlength="6" maxlength="128" required></label><label>Repetir contraseña<input name="repeat" type="password" autocomplete="new-password" minlength="6" maxlength="128" required></label><button class="primary">Crear y entrar</button></form></section>`:''}
+  <section class="panel"><h2>Copia protegida y recuperación</h2><p>Conserva aventuras, partida pendiente y adaptación. La contraseña del respaldo permite recuperar el perfil y elegir una nueva contraseña de acceso. Guarda el archivo y la clave por separado. El aula debe volver a vincularse.</p>${activeProfile?`<form id="backup-profile" class="profile-form"><label>Contraseña para el respaldo<input name="password" type="password" minlength="10" maxlength="128" autocomplete="new-password" required></label><button class="primary">Descargar copia protegida</button></form>`:''}<form id="restore-profile" class="profile-form"><label>Archivo de respaldo<input name="file" type="file" accept=".json,application/json" required></label><label>Contraseña del respaldo<input name="password" type="password" minlength="10" maxlength="128" required></label><label>Nueva contraseña del perfil<input name="new-password" type="password" minlength="6" maxlength="128" autocomplete="new-password" required></label><button class="secondary">Recuperar perfil</button></form><p class="micro">La copia está cifrada. Los datos activos del navegador no lo están. Este formato recupera perfiles web y Windows; no restaura una base Android.</p></section><p id="profile-message" role="status"></p><p class="micro">Hasta ocho perfiles por instalación. El acceso local no cifra los datos guardados ni verifica identidad docente. No hay recuperación remota de contraseñas. Conserva una copia de tus datos.</p>`;
+}
+function enterProfile(p,s) {
+  stopTimer(true);save();
+  if(KEY && !storageOK)throw Error("No se pudo guardar el perfil anterior. Exporta una copia antes de cambiar.");
+  activeProfile=p;KEY=profileKey(p.id);state=s;
+  interruptTiming(state.current?.questions[state.current.index]);
+  sessionStorage.setItem('sendero.active',p.id);
+  location.hash=p.role==='teacher'?'#docentes':'#explorar';render();syncClassroom();
+}
+function bindProfiles() {
+  $('#backup-profile')?.addEventListener('submit',async e=>{
+    e.preventDefault();const form=e.currentTarget,b=form.querySelector('button');b.disabled=true;
+    try {stopTimer(true);save();const copy=await encryptBackup(activeProfile,state,new FormData(form).get('password'));download(`sendero-respaldo-${profileCode()}.json`,JSON.stringify(copy),'application/json');form.reset();$('#profile-message').textContent='Copia preparada. Conserva también su contraseña.';}
+    catch(err){$('#profile-message').textContent=err.message;}finally{b.disabled=false;}
+  });
+  $('#restore-profile')?.addEventListener('submit',async e=>{
+    e.preventDefault();const form=e.currentTarget,b=form.querySelector('button');b.disabled=true;
+    try {const f=new FormData(form),file=f.get('file');if(file.size>30*1024*1024)throw Error('El respaldo supera 30 MB.');const copy=await decryptBackup(JSON.parse(await file.text()),f.get('password'));
+      if(!confirm(`¿Restaurar el perfil ${copy.profile.name}? Si ya existe, se reemplazará su estado con esta copia y cambiará su contraseña. Se conservará un registro local previo para recuperación técnica.`))return;
+      stopTimer(true);save();await restoreSnapshot(localStorage,copy,f.get('new-password'));activeProfile=null;KEY=null;state=fresh();sessionStorage.removeItem('sendero.active');render(false);$('#profile-message').textContent='Perfil recuperado. Entra con la nueva contraseña.';
+    }catch(err){$('#profile-message').textContent=err.message;}finally{b.disabled=false;}
+  });
+  $('#logout')?.addEventListener('click',()=>{
+    stopTimer(true);save();if(!storageOK)return;activeProfile=null;KEY=null;state=fresh();sessionStorage.removeItem('sendero.active');render(false);
+  });
+  for(const id of ['create-profile','login-profile','edit-profile']) {
+    $('#'+id)?.addEventListener('submit',async e=>{
+      e.preventDefault();const form=e.currentTarget,button=form.querySelector('button');button.disabled=true;
+      const data=new FormData(form);
+      try {
+        if(id==='create-profile') {
+          if(data.get('password')!==data.get('repeat'))throw Error('Las contraseñas no coinciden.');
+          const s=fresh(),p=await createProfile(localStorage,data.get('alias'),data.get('password'),data.get('role'),s);enterProfile(p,s);
+        } else if(id==='login-profile') {
+          const result=await loginProfile(localStorage,data.get('profile'),data.get('password'));enterProfile(result.profile,result.state);
+        } else {
+          activeProfile=await updateProfile(localStorage,activeProfile.id,data.get('alias'),data.get('previous')||'',data.get('password'));render(false);$('#profile-message').textContent='Cambios guardados.';
+        }
+      } catch(error) {$('#profile-message').textContent=error.message;$('#profile-message').scrollIntoView({block:'nearest'});}
+      finally {button.disabled=false;}
+    });
+  }
 }
 function fmtDate(d) {
   return new Date(d).toLocaleDateString("es", {
@@ -107,23 +214,9 @@ function statsHTML(s) {
 }
 function reasoningHTML(sessions) {
  const rows=Object.entries(reasoningDimensions(sessions));if(!rows.length)return "";
- return `<section class="panel dimensions"><h3>Problemas para pensar</h3>${rows.map(([label,d])=>{const pct=Math.round(100*d.independent/d.total);return `<div class="dimension"><div class="dimension-title"><strong>${esc(label)}</strong><span>${d.independent}/${d.total} · ${pct}% sin ayuda</span></div><div class="dimension-bar ${pct<60?"amber":pct<85?"sage":"teal"}" role="meter" aria-label="${esc(label)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%"></span></div></div>`;}).join("")}<p>Estos resultados describen las tareas practicadas. No miden por sí solos razonamiento general ni explicación oral.</p></section>`;
+ return `<section class="panel dimensions"><h3>Problemas para pensar</h3>${rows.map(([label,d])=>{const pct=Math.round(100*d.independent/d.total);return `<div class="dimension"><div class="dimension-title"><strong>${esc(label)}</strong><span>${d.independent}/${d.total} · ${pct}% sin ayuda</span></div><div class="dimension-bar ${pct<50?"amber":pct<80?"sage":"teal"}" role="meter" aria-label="${esc(label)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%"></span></div></div>`;}).join("")}<p>Estos resultados describen las tareas practicadas. No miden por sí solos razonamiento general ni explicación oral.</p></section>`;
 }
-function fluencyHTML(sessions) {
-  const rows=[];
-  for(const [trail,t] of Object.entries(TRAILS)) {
-    if(trail==='razonar') continue;
-    for(let level=1;level<=4;level++) {
-      const ss=sessions.filter(s=>s.trail===trail).sort((a,b)=>a.completedAt.localeCompare(b.completedAt));
-      const q=ss.flatMap(s=>s.questions).filter(q=>q.level===level);
-      if(!q.length) continue;
-      const f=fluency(q);
-      const recent=ss.map(s=>({s,f:fluency(s.questions.filter(q=>q.level===level))})).filter(x=>x.f.n).slice(-5);
-      rows.push(`<div class="dimension"><strong>${t.short} · nivel ${level}</strong><p>${f.n?`${f.rate.toFixed(1)} aciertos iniciales/min de respuesta · ${f.accuracy.toFixed(0)}% inicial · n=${f.n}`:'Sin tiempos comparables'} · ${f.excluded} excluidos de rapidez</p>${recent.map(({s,f})=>`<p class="micro">${fmtDate(s.completedAt)}: ${f.rate.toFixed(1)}/min · ${f.accuracy.toFixed(0)}% · n=${f.n}</p>`).join('')}</div>`);
-    }
-  }
-  return rows.length?`<section class="panel"><h3>Fluidez de cálculo</h3>${rows.join('')}<p class="micro">60 × aciertos iniciales / segundos hasta la primera respuesta, incluidos los errores iniciales. Excluye pistas, interrupciones y registros antiguos. Las correcciones y transiciones no entran en ese tiempo. Es una tasa de respuesta en práctica, no una carrera continua ni una calificación. Compara precisión y rapidez juntas, con el mismo nivel y contenido; n indica cuántos ejercicios aportan tiempo.</p></section>`:'';
-}
+function fluencyHTML(sessions) { return renderFluency(sessions); }
 function dimensionsHTML(sessions) {
   const d = dimensions(sessions);
   const rows = [
@@ -161,9 +254,9 @@ function dimensionsHTML(sessions) {
       const pct = den ? Math.round((100 * num) / den) : 0;
       const color =
         type === "performance"
-          ? pct < 60
+          ? pct < 50
             ? "amber"
-            : pct < 85
+            : pct < 80
               ? "sage"
               : "teal"
           : type === "support"
@@ -171,9 +264,9 @@ function dimensionsHTML(sessions) {
             : "purple";
       const band =
         type === "performance" && den
-          ? pct < 60
+          ? pct < 50
             ? "0–59%"
-            : pct < 85
+            : pct < 80
               ? "60–84%"
               : "85–100%"
           : "Descriptivo";
@@ -185,7 +278,7 @@ function dimensionsHTML(sessions) {
 }
 function home() {
   const total = state.sessions.length;
-  return `<section class="hero fade-in"><div class="hero-copy"><span class="eyebrow">Pequeños pasos. Grandes descubrimientos.</span><h1>Las matemáticas<br>te llevan <em>lejos.</em></h1><p>Practica cálculo y resuelve situaciones con Luma. Dos caminos para aprender a tu ritmo.</p><button class="primary" id="quick-start">${state.current ? "Continuar mi aventura" : "Comenzar aventura"} <span aria-hidden="true">↗</span></button><span class="micro">8 desafíos · Sin prisa · Cada paso cuenta</span></div><div class="hero-art"><img src="./landscape.svg" alt="Luma, una pequeña zorra con bufanda, explora un sendero entre montañas, árboles y una casita."><div class="art-label"><strong>Tu próxima aventura está aquí</strong>${total ? `${total} ${total === 1 ? "sendero recorrido" : "senderos recorridos"}` : "Todo comienza con un pequeño paso"}</div></div></section><section aria-labelledby="trails-title"><div class="section-header"><h2 id="trails-title">Elige tu camino</h2><span class="micro">La dificultad crece contigo</span></div><div class="trail-grid">${Object.entries(
+  return `<section class="hero fade-in"><div class="hero-copy"><span class="eyebrow">Pequeños pasos. Grandes descubrimientos.</span><h1>Las matemáticas<br>te llevan <em>lejos.</em></h1><p>Practica cálculo y resuelve situaciones con Luma. Compite en el río o practica con calma. Tú eliges cómo jugar.</p><button class="primary" id="quick-start">${state.current ? "Continuar mi aventura" : "Comenzar aventura"} <span aria-hidden="true">↗</span></button><span class="micro">8 desafíos · Sin anuncios · También sin internet</span></div><div class="hero-art"><img src="./landscape.svg" alt="Luma, una pequeña zorra con bufanda, explora un sendero entre montañas, árboles y una casita."><div class="art-label"><strong>Tu próxima aventura está aquí</strong>${total ? `${total} ${total === 1 ? "sendero recorrido" : "senderos recorridos"}` : "Todo comienza con un pequeño paso"}</div></div></section><section class="mode-picker" aria-label="Forma de jugar"><div><span class="eyebrow">ELIGE TU EXPERIENCIA</span><h2>¿Carrera o exploración?</h2></div><div class="mode-options"><button data-mode="race" class="mode-card ${(state.playMode||'race')==='race'?'selected':''}" aria-pressed="${(state.playMode||'race')==='race'}"><strong>⚑ Carrera del río</strong><span>Tres rivales virtuales · puntos · tu propio reto</span></button><button data-mode="calm" class="mode-card ${state.playMode==='calm'?'selected':''}" aria-pressed="${state.playMode==='calm'}"><strong>✧ A mi ritmo</strong><span>Explora sin competir · todas las ayudas</span></button></div><p class="micro">El taller de razonamiento siempre va sin carrera. La elección se aplica a la siguiente aventura.</p></section><section aria-labelledby="trails-title"><div class="section-header"><h2 id="trails-title">Elige tu camino</h2><span class="micro">La dificultad crece contigo</span></div><div class="trail-grid">${Object.entries(
     TRAILS,
   )
     .map(
@@ -194,21 +287,24 @@ function home() {
     )
     .join(
       "",
-    )}</div></section><div class="notice"><span class="notice-icon" aria-hidden="true">⌁</span><p><strong>Tu aventura también va sin internet.</strong>Prepara el juego una vez y lleva tus descubrimientos contigo.</p></div><div class="download-strip"><p><strong>Lleva Sendero contigo.</strong> Descarga el juego completo para usarlo sin internet.</p><div class="button-row"><a class="soft-button" href="https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.1/Sendero-Nativo-0.3.1.apk" target="_blank" rel="noopener">Android 14–16 · APK nativa ↓</a><a class="soft-button" href="https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.1/Sendero-0.3.1-Windows-x64.exe" target="_blank" rel="noopener">Windows ↓</a></div></div><p class="footer-note">Explorador ${profileCode()} · Progreso guardado en este dispositivo</p>`;
+    )}</div></section><div class="notice"><span class="notice-icon" aria-hidden="true">⌁</span><p><strong>Tu aventura también va sin internet.</strong>Prepara el juego una vez y lleva tus descubrimientos contigo.</p></div><div class="download-strip"><p><strong>Lleva Sendero contigo.</strong> Descarga el juego completo para usarlo sin internet.</p><div class="button-row"><a class="soft-button" href="https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-Nativo-0.4.0.apk" target="_blank" rel="noopener">Android 14–16 · APK nativa ↓</a><a class="soft-button" href="https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-0.4.0-Windows-x64.exe" target="_blank" rel="noopener">Windows ↓</a></div></div><p class="footer-note">Explorador ${profileCode()} · Progreso guardado en este dispositivo</p>`;
 }
+const reportFilters={days:'all',trail:'all'};
 function progress() {
-  const stats = summarize(state.sessions);
-  return `<header class="page-head fade-in"><span class="eyebrow">Cada intento es un paso</span><h1>Tu cuaderno<br>de aventuras.</h1><p>Aquí quedan tus descubrimientos. Los puntos del juego no son una calificación escolar.</p></header>${statsHTML(stats)}${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}${
-    !state.sessions.length
+  const cutoff=reportFilters.days==='all'?0:Date.now()-Number(reportFilters.days)*86400000;
+  const visibleSessions=state.sessions.filter(s=>Date.parse(s.completedAt)>=cutoff&&(reportFilters.trail==='all'||s.trail===reportFilters.trail));
+  const stats = summarize(visibleSessions);
+  return `<header class="page-head fade-in"><span class="eyebrow">Cada intento es un paso</span><h1>${esc(activeProfile?.name || "Mi perfil")}<br>Tu progreso.</h1><p>Aquí quedan tus descubrimientos. Los puntos del juego no son una calificación escolar.</p></header><form id="result-filters" class="result-filters"><label>Periodo<select name="days"><option value="all" ${reportFilters.days==='all'?'selected':''}>Todo el historial</option><option value="7" ${reportFilters.days==='7'?'selected':''}>Últimos 7 días</option><option value="30" ${reportFilters.days==='30'?'selected':''}>Últimos 30 días</option></select></label><label>Contenido<select name="trail"><option value="all">Todos</option>${Object.entries(TRAILS).map(([id,t])=>`<option value="${id}" ${reportFilters.trail===id?'selected':''}>${t.short}</option>`).join('')}</select></label></form>${statsHTML(stats)}${dimensionsHTML(visibleSessions)}${fluencyHTML(visibleSessions)}${reasoningHTML(visibleSessions)}${
+    !visibleSessions.length
       ? `<section class="panel empty"><div class="empty-art" aria-hidden="true">❋</div><h2>El camino empieza contigo</h2><p>Completa una aventura para ver tus primeros resultados. Si haces una pausa, podrás continuar después.</p><a class="primary" href="#explorar">Elegir un camino ↗</a></section>`
       : `<section class="panel"><h3>Tus caminos</h3>${Object.entries(TRAILS)
           .map(([id, t]) => {
-            const s = summarize(state.sessions.filter((s) => s.trail === id));
+            const s = summarize(visibleSessions.filter((s) => s.trail === id));
             return `<div class="session-row"><div><strong>${t.name}</strong><p>${s.items} ejercicios · ${s.hints} con ayuda</p></div><span class="pill">${levelName(state.adaptive[id]?.level || 1)}</span></div>`;
           })
           .join(
             "",
-          )}</section><section class="panel"><h3>Últimas aventuras</h3>${state.sessions
+          )}</section><section class="panel"><h3>Últimas aventuras</h3>${visibleSessions
           .slice(-10)
           .reverse()
           .map((s) => {
@@ -216,7 +312,7 @@ function progress() {
             return `<div class="session-row"><div><strong>${TRAILS[s.trail].short}</strong><p>${fmtDate(s.completedAt)} · ${duration(r.activeMs)} de interacción estimada</p></div><span>${r.first}/8 al primer intento</span></div>`;
           })
           .join("")}</section>`
-  }<div class="notice"><p><strong>Tu progreso te pertenece.</strong>Exporta una copia para tu docente o para conservarla. Borrar los datos del navegador o desinstalar puede eliminar este cuaderno.</p></div><div class="button-row"><button class="primary" id="export-report" ${state.sessions.length ? "" : "disabled"}>Guardar informe ↓</button><a class="secondary" href="#docentes">Ver informe detallado</a></div>`;
+  }<div class="notice"><p><strong>Tu progreso te pertenece.</strong>Exporta una copia para tu docente o para conservarla. Borrar los datos del navegador o desinstalar puede eliminar este cuaderno.</p></div><div class="button-row"><button class="primary" id="export-report" ${state.sessions.length ? "" : "disabled"}>Guardar informe completo ↓</button><a class="secondary" href="#docentes">Ver informe detallado</a></div>`;
 }
 function levelTable(sessions) {
   let html = "";
@@ -239,7 +335,7 @@ function levelTable(sessions) {
     : "<p>Aún no hay aventuras completas. El informe aparecerá después de la primera.</p>";
 }
 function teacher() {
-  return `<header class="page-head fade-in"><span class="eyebrow">Observar para acompañar</span><h1>Una mirada<br>a cada paso.</h1><p>Informes locales para orientar la práctica. Sin cuentas, sin envío automático y sin recopilación para investigación.</p></header><section class="panel"><h3>Este dispositivo · ${profileCode()}</h3><p>Un código representa un perfil local, no una identidad verificada. Esta versión admite un estudiante por perfil. En equipos compartidos usa perfiles separados del navegador o usuarios del sistema, cuando estén disponibles.</p>${statsHTML(summarize(state.sessions))}${levelTable(state.sessions)}<div class="button-row"><button id="export-report" class="primary" ${state.sessions.length ? "" : "disabled"}>Exportar informe JSON ↓</button><button id="export-csv" class="secondary" ${state.sessions.length ? "" : "disabled"}>Detalle CSV ↓</button></div><p class="micro">${state.exportedAt ? `Última exportación: ${fmtDate(state.exportedAt)}. Exportar no confirma recepción por el docente.` : "Sin exportaciones registradas."} Solo se exportan aventuras completas.</p></section>${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}<section class="panel"><h3>Recibir informes de estudiantes</h3><p>El estudiante lleva su archivo JSON al centro educativo. Puedes abrir varios informes aquí; las sesiones repetidas se cuentan una sola vez.</p><div class="button-row"><label for="import-file" class="sr-only">Seleccionar informes JSON de Sendero</label><input id="import-file" type="file" accept=".json,application/json" multiple></div><p id="import-status" role="status" class="micro"></p>${state.teacher.length ? `<div class="table-wrap"><table><caption class="sr-only">Informes recibidos en este dispositivo</caption><thead><tr><th>Perfil</th><th>Contenido</th><th>Aventuras</th><th>Ejercicios</th><th>Última práctica</th></tr></thead><tbody>${teacherRows()}</tbody></table></div>${importedProfiles()}` : '<p class="micro">No hay informes recibidos. Se guardarán solamente en este dispositivo.</p>'}</section><section class="panel"><h3>Cómo interpretar los resultados</h3><details open><summary>Práctica adaptativa, no diagnóstico</summary><p>Hay cuatro niveles de cantidades. Tres respuestas consecutivas correctas al primer intento y sin ayuda suben un nivel; dos ejercicios consecutivos con error o ayuda lo reducen. El tiempo no decide la dificultad. Son reglas iniciales transparentes, todavía sin validación educativa.</p></details><details><summary>Qué significan los indicadores</summary><p>Primer intento: la primera respuesta coincide con el resultado, haya o no ayuda. Sin ayuda: acierto al primer intento sin abrir la pista. Los errores anteriores a la corrección se conservan. El tiempo es una estimación de interacción: se pausa al salir, ocultar la app o tras 60 segundos sin interacción. No equivale a atención ni asistencia escolar.</p></details><details><summary>Comparaciones y evaluación formal</summary><p>Compara por contenido y dificultad; un porcentaje global puede cambiar porque cambiaron los ejercicios. Estas actividades domiciliarias no verifican identidad, supervisión ni ayuda externa. Complementan el criterio docente; no acreditan por sí solas aprendizaje, autoría o una calificación.</p></details><details><summary>Privacidad y conservación</summary><p>No solicitamos nombres, correos ni escuela. Los códigos persistentes y las fechas pueden permitir vincular registros: estos informes no deben considerarse anónimos. Entrégalos solo al adulto autorizado. El juego no los transmite. La investigación requerirá un procedimiento separado.</p></details></section>`;
+  return `<header class="page-head fade-in"><span class="eyebrow">Observar para acompañar</span><h1>Una mirada<br>a cada paso.</h1><p>Informes locales para orientar la práctica. Perfiles locales e informes por estudiante. La entrega automática requiere una invitación a un aula configurada; la investigación permanece desactivada.</p></header><section class="panel"><h3>Este dispositivo · ${profileCode()}</h3><p>Perfil activo: ${esc(activeProfile?.name || "")}. Cada estudiante tiene su propio acceso local. El código del informe no verifica la identidad ni crea una cuenta en línea.</p>${statsHTML(summarize(state.sessions))}${levelTable(state.sessions)}<div class="button-row"><button id="export-report" class="primary" ${state.sessions.length ? "" : "disabled"}>Exportar informe JSON ↓</button><button id="export-csv" class="secondary" ${state.sessions.length ? "" : "disabled"}>Detalle CSV ↓</button></div><p class="micro">${state.exportedAt ? `Última exportación: ${fmtDate(state.exportedAt)}. Exportar no confirma recepción por el docente.` : "Sin exportaciones registradas."} Solo se exportan aventuras completas.</p></section>${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}<section class="panel"><h3>Recibir informes de estudiantes</h3><p>El estudiante lleva su archivo JSON al centro educativo. Puedes abrir varios informes aquí; las sesiones repetidas se cuentan una sola vez.</p><div class="button-row"><label for="import-file" class="sr-only">Seleccionar informes JSON de Sendero</label><input id="import-file" type="file" accept=".json,application/json" multiple></div><p id="import-status" role="status" class="micro"></p>${state.teacher.length ? `<div class="table-wrap"><table><caption class="sr-only">Informes recibidos en este dispositivo</caption><thead><tr><th>Perfil</th><th>Contenido</th><th>Aventuras</th><th>Ejercicios</th><th>Última práctica</th></tr></thead><tbody>${teacherRows()}</tbody></table></div>${importedProfiles()}` : '<p class="micro">No hay informes recibidos. Se guardarán solamente en este dispositivo.</p>'}</section><section class="panel"><h3>Cómo interpretar los resultados</h3><details open><summary>Práctica adaptativa, no diagnóstico</summary><p>Hay cuatro niveles de cantidades. Tres respuestas consecutivas correctas al primer intento y sin ayuda suben un nivel; dos ejercicios consecutivos con error o ayuda lo reducen. En carrera se conserva el nivel durante ocho retos: siete u ocho aciertos iniciales sin ayuda suben un nivel para la siguiente; cuatro o menos lo reducen. Los rivales ajustan su ritmo a tiempos previos del mismo contenido y nivel. El tiempo no decide el nivel matemático. Son reglas iniciales transparentes, todavía sin validación educativa.</p></details><details><summary>Qué significan los indicadores</summary><p>Primer intento: la primera respuesta coincide con el resultado, haya o no ayuda. Sin ayuda: acierto al primer intento sin abrir la pista. Los errores anteriores a la corrección se conservan. El tiempo es una estimación de interacción: se pausa al salir, ocultar la app o tras 60 segundos sin interacción. No equivale a atención ni asistencia escolar.</p></details><details><summary>Comparaciones y evaluación formal</summary><p>Compara por contenido y dificultad; un porcentaje global puede cambiar porque cambiaron los ejercicios. Estas actividades domiciliarias no verifican identidad, supervisión ni ayuda externa. Complementan el criterio docente; no acreditan por sí solas aprendizaje, autoría o una calificación.</p></details><details><summary>Privacidad y conservación</summary><p>Puedes usar un alias; no necesitas nombre completo, correo ni escuela. Los códigos persistentes y las fechas pueden permitir vincular registros: estos informes no deben considerarse anónimos. Entrégalos solo al adulto autorizado. Solo se transmiten al servidor docente si se vincula expresamente una invitación. La investigación requerirá un procedimiento separado.</p></details></section>`;
 }
 function teacherRows() {
   const profiles = [...new Set(state.teacher.map((s) => s.profile))];
@@ -264,11 +360,12 @@ function importedProfiles() {
     .join("");
 }
 function about() {
-  return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje y no quitan recompensas.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. Esta versión no sincroniza con servidores, no tiene publicidad y no realiza investigación con datos infantiles.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p>Desarrollo: Dirk Hans Krakaur Floranes. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales en SVG. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas permanecen en este dispositivo hasta que tú exportas un archivo. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
+  return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje. Cada reto completado da puntos; el acierto inicial sin ayuda añade una bonificación.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. La entrega al docente solo se activa al vincular una invitación. No tiene publicidad ni recopila datos para investigación.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p><a href="./docentes.html" target="_blank" rel="noopener">Guía breve para familias y docentes</a></p><p>Desarrollo: Dirk Hans Krakaur Floranes. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales en SVG. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas permanecen en este dispositivo salvo exportación manual o vinculación explícita con un servidor docente. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
 }
 function stopTimer(interrupted = false) {
   if (interrupted) interruptTiming(state.current?.questions[state.current.index]);
   if (timerStart !== null && state.current) {
+    if(state.current.race)state.current.race.elapsedMs= Math.min(86400000,raceElapsed());
     const q = state.current.questions[state.current.index];
     if (performance.now() - timerStart >= 60000) interruptTiming(q);
     if (q && !q.done)
@@ -281,6 +378,7 @@ function stopTimer(interrupted = false) {
   clearTimeout(idleTimer);
 }
 function startTimer() {
+  if(!activeProfile) return;
   if (document.hidden || !state.current || location.hash !== "#jugar") return;
   const q = state.current.questions[state.current.index];
   if (q?.done) return;
@@ -307,12 +405,12 @@ function game() {
   const moved = raceMove?.id === s.id && raceMove.index === s.index;
   const from = moved ? s.index - 1 : s.index;
   raceMove = null;
-  return `<section class="game-shell arcade"><div class="game-top"><div><strong>La carrera del río</strong><small>${t.short} · Nivel ${q.level} · Web ${VERSION}</small></div><button id="pause" class="soft-button">Pausar</button></div>
+  return `<section class="game-shell arcade"><div class="game-top"><div><strong>${s.race?"Regata relámpago":"Exploración del río"}</strong><small>${t.short} · Nivel ${q.level} · Web ${VERSION}</small></div><button id="pause" class="soft-button">Pausar</button></div>
     <div class="race-hud"><div><span>Recorrido</span><strong>${s.index}<small> / 8</small></strong></div><div><span>Acierto inicial</span><strong>${answered.length ? Math.round(100 * initial / answered.length) + '<small>%</small>' : '—'}</strong></div><div title="Aciertos iniciales por minuto de respuesta del nivel actual; sin pistas ni interrupciones"><span>Aciertos/min · N${q.level}</span><strong>${f.n ? f.rate.toFixed(1) : '—'}</strong></div></div>
-    ${raceHTML(from, s.index)}
+    ${s.race?competitionHTML(s,esc,activeProfile.name):raceHTML(from, s.index)}
     <div class="question-card"><div class="question-meta"><span>RETO ${s.index + 1} / 8</span><span>${levelName(q.level)}</span></div><h1 class="equation ${q.solutionShown ? 'sr-only' : ''}" tabindex="-1" aria-label="${q.a} ${s.trail === 'suma' ? 'más' : s.trail === 'resta' ? 'menos' : 'por'} ${q.b}, ¿cuánto es?">${q.a} ${t.symbol} ${q.b} <span class="unknown">= ?</span></h1>${q.solutionShown ? solutionHTML(s, q) : ''}
     <div class="answers">${q.options.map(n => `<button class="answer ${q.solutionShown && n === q.answer ? 'correct' : ''} ${q.attempts.includes(n) ? 'wrong' : ''}" data-answer="${n}" ${q.attempts.includes(n) ? 'disabled' : ''} aria-label="Respuesta ${n}">${n}</button>`).join('')}</div>
-    <div class="feedback ${q.solutionShown ? 'error' : ''}" role="status" id="feedback">${q.solutionShown ? 'Mira la solución y toca la respuesta destacada.' : moved ? '¡Bien! Tu siguiente reto ya está aquí.' : 'Toca una respuesta para avanzar.'}</div>${q.hint ? hintHTML(s, q) : ''}<div class="game-controls"><span>Sin límite de tiempo</span><button id="hint" class="soft-button" ${q.hint ? 'disabled' : ''}>${q.hint ? 'Pista abierta' : '✧ Una pista'}</button></div></div>
+    <div class="feedback ${q.solutionShown ? 'error' : ''}" role="status" id="feedback">${q.solutionShown ? 'Mira la solución y toca la respuesta destacada.' : moved ? '¡Bien! Tu siguiente reto ya está aquí.' : 'Toca una respuesta para avanzar.'}</div>${q.hint ? hintHTML(s, q) : ''}<div class="game-controls"><span>${s.race?`${raceStats(s).points} puntos · ${raceStats(s).streak} aciertos seguidos`:"Sin límite de tiempo"}</span><button id="hint" class="soft-button" ${q.hint ? 'disabled' : ''}>${q.hint ? 'Pista abierta' : '✧ Una pista'}</button></div></div>
     <p class="game-note">Rapidez del nivel actual: ${f.n} ${f.n === 1 ? 'ejercicio' : 'ejercicios'} medidos. Tu precisión y tus tiempos se guardan por separado.</p></section>`;
 }
 function raceHTML(from, to) {
@@ -367,9 +465,10 @@ function finished() {
   const s = state.sessions.at(-1);
   if (!s) return home();
   const r = summarize([s]);
-  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>Ocho pasos, nuevos descubrimientos. Gracias por explorar con Luma.</p>${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">Otra aventura ↗</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
+  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ocho ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">Otra aventura ↗</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
 }
 function render(persistState = true) {
+  globalThis.speechSynthesis?.cancel();
   stopTimer();
   // Older versions saved a solved arithmetic item before the extra Next tap.
   // Adaptation already happened at answer time; only advance, exactly once.
@@ -378,10 +477,14 @@ function render(persistState = true) {
     if (pending.done && !pending.bankId) { next(); return; }
   }
   if (persistState) save();
-  const route = location.hash.slice(1) || "explorar";
+  const requestedRoute = location.hash.slice(1) || "explorar";
+  const route = activeProfile || requestedRoute === 'acerca' ? requestedRoute : 'perfiles';
+  $('#profile-switch').textContent = activeProfile ? activeProfile.name + ' · Cambiar' : 'Entrar / Crear perfil';
+  $('#profile-switch').setAttribute('aria-label', activeProfile ? 'Perfil activo: '+activeProfile.name+'. Cambiar perfil' : 'Entrar o crear perfil');
   document.body.classList.toggle('arcade-playing', route === 'jugar' && !!state.current && state.current.trail !== 'razonar');
   main.innerHTML = (
     {
+      perfiles: profilesScreen,
       explorar: home,
       progreso: progress,
       docentes: teacher,
@@ -430,14 +533,28 @@ function render(persistState = true) {
   main.querySelector("#reset-data")?.addEventListener("click", () => {
     if (
       confirm(
-        "¿Borrar todas las aventuras e informes de este dispositivo? Esta acción no se puede deshacer.",
+        "¿Borrar las aventuras e informes de este perfil? Los otros perfiles se conservarán. Esta acción no se puede deshacer.",
       )
     ) {
-      state = fresh();
+      state = {...fresh(),profile:activeProfile.id};
       save();
       render();
     }
   });
+  if(route==='docentes' && activeProfile) { main.insertAdjacentHTML('afterbegin',classroomHTML());bindClassroom(); main.firstElementChild.querySelectorAll('[data-trail]').forEach(b=>b.addEventListener('click',()=>begin(b.dataset.trail))); }
+  if(route==='jugar' && state.current) {
+    main.querySelector('.game-controls')?.insertAdjacentHTML('beforeend','<button id="read-problem" class="soft-button">Escuchar</button>');
+    $('#read-problem')?.addEventListener('click',()=>{
+      const q=state.current.questions[state.current.index];stopTimer(true);save();
+      const text=q.bankId?q.prompt:`${q.a} ${state.current.trail==='suma'?'más':state.current.trail==='resta'?'menos':'por'} ${q.b}. ¿Cuánto es?`;
+      if(!narrateLocally(text,()=>startTimer())) {announce('No hay una voz española sin conexión instalada. Pide a alguien que lea el ejercicio.');$('#feedback').textContent='No hay voz española local disponible en este dispositivo.';startTimer();}
+    });
+  }
+  $('#result-filters')?.addEventListener('change',e=>{const form=e.currentTarget;reportFilters.days=form.elements.days.value;reportFilters.trail=form.elements.trail.value;render(false);});
+  main.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{state.playMode=b.dataset.mode;save();render(false);}));
+  $('#sound').setAttribute('aria-pressed',String(state.sound));
+  $('#sound').setAttribute('aria-label',state.sound?'Desactivar sonidos':'Activar sonidos');
+  bindProfiles();
   startTimer();
 }
 function goGame() {
@@ -445,6 +562,7 @@ function goGame() {
   else location.hash = "#jugar";
 }
 function begin(trail) {
+  if(!activeProfile){location.hash="#perfiles";return;}
   if (state.current) {
     if (state.current.trail === trail) {
       goGame();
@@ -461,6 +579,7 @@ function begin(trail) {
   state.current = trail === "razonar" ? {id:uid(),profile:state.profile,trail,level:a.level,version:VERSION,startedAt:new Date().toISOString(),completedAt:null,index:0,questions:[bankQuestion(state,a.level)]} : newSession(trail, a.level, state.profile);
   if(trail !== "razonar")state.current.questions[0]=practiceQuestion(state,trail,a.level);
   state.current.adaptation = { ...a };
+  if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race=newRace(state.sessions,trail,a.level);
   save();
   goGame();
 }
@@ -473,7 +592,7 @@ function answer(n) {
   recordAttempt(q, n);
   if (n === q.answer) {
     q.done = true;
-    s.adaptation = adapt(s.adaptation, q);
+    if(!s.race)s.adaptation = adapt(s.adaptation, q);
     tone(true);
   } else tone(false);
   if (q.done && !q.bankId) {
@@ -502,16 +621,18 @@ function next() {
   if (s.index === 7) {
     s.completedAt = new Date().toISOString();
     state.sessions.push(s);
+    if(s.race)s.adaptation={level:raceLevel(s),streak:0,support:0};
     state.adaptive[s.trail] = { ...s.adaptation };
     state.current = null;
     save();
+    syncClassroom();
     location.hash = "#logro";
     tone(true);
     return;
   }
   s.index++;
   if (s.trail !== 'razonar') raceMove = {id:s.id, index:s.index};
-  s.questions[s.index] = s.trail === "razonar" ? bankQuestion(state,s.adaptation.level,s.index === 7) : practiceQuestion(state,s.trail, s.adaptation.level);
+  s.questions[s.index] = s.trail === "razonar" ? bankQuestion(state,s.adaptation.level,s.index === 7) : practiceQuestion(state,s.trail, s.race?s.race.level:s.adaptation.level);
   save();
   render();
   main.querySelector(".equation, .word-problem")?.setAttribute("tabindex", "-1");
@@ -721,7 +842,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-river`);
+    const cache = await caches.open(`sendero-${VERSION}-regatta-final`);
     const files = [
       "./index.html",
       "./app.js",
@@ -770,7 +891,7 @@ async function offline() {
   }
 }
 window.addEventListener("storage", (event) => {
-  if (event.key !== KEY || !event.newValue) return;
+  if (!KEY || event.key !== KEY || !event.newValue) return;
   try {
     stopTimer();
     const incoming = JSON.parse(event.newValue);
@@ -789,6 +910,7 @@ window.addEventListener("storage", (event) => {
 });
 render();
 offline();
+syncClassroom();
 
 if (android) {
   document.documentElement.classList.add("android-app");
