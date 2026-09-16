@@ -1229,3 +1229,84 @@ th {
 .word-problem { font-size: clamp(1.3rem,4.6vw,1.8rem); line-height:1.45; text-align:left; max-width:36em; margin:1rem auto 1.5rem; }
 .word-answers .answer {font-size:clamp(1rem,3.5vw,1.35rem);line-height:1.35;min-height:76px;padding:12px;overflow-wrap:anywhere;}
 .reasoning .solution-callout strong {font-size:clamp(1.4rem,5vw,2rem);}
+
+/* River arithmetic: the animation never blocks the next answer. */
+.arcade-playing { background: #edf5f3; }
+.arcade-playing .bottom-nav { display: none; }
+.arcade-playing .topbar { max-width: 900px; padding: 12px 24px; }
+.arcade-playing main { max-width: 840px; margin: auto; padding: 0 20px 24px; min-height: 0; }
+.arcade { max-width: 800px; margin: 8px auto; }
+.arcade .game-top { margin-bottom: 12px; }
+.arcade .game-top strong { font-size: 1.35rem; }
+.arcade .game-top small { font-size: .78rem; }
+.race-hud { display: grid; grid-template-columns: repeat(3, 1fr); background: #164f4c; border-radius: 18px 18px 0 0; color: #fff; padding: 12px 6px; text-align: center; }
+.race-hud > div + div { border-left: 1px solid #ffffff38; }
+.race-hud span { display: block; font-size: .75rem; color: #c6e8df; }
+.race-hud strong { display: block; font-size: 1.75rem; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.race-hud small { font-size: .9rem; }
+.river-scene { position: relative; height: 190px; overflow: hidden; border-radius: 0 0 18px 18px; }
+.river-world { width: 100%; height: 100%; position: absolute; inset: 0; }
+.river-track { position: absolute; left: 8%; right: 12%; top: 46%; height: 90px; }
+.race-boat { position: absolute; left: var(--to); width: 90px; margin-left: -45px; animation: river-advance .36s ease-out; }
+.race-boat svg { display: block; width: 100%; }
+.finish-flag { position: absolute; left: 100%; top: -26px; color: #184f4b; font-size: 48px; line-height: 1; }
+.finish-flag span { display: block; font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+.river-milestones { position: absolute; bottom: 7px; left: 15%; right: 15%; display: flex; justify-content: space-between; gap: 8px; }
+.river-milestones i { height: 5px; flex: 1; border-radius: 4px; background: #fff9; }
+.river-milestones i.passed { background: #175b52; }
+@keyframes river-advance { from { left: var(--from); } to { left: var(--to); } }
+.arcade .question-card { margin-top: 12px; padding: 16px 24px 12px; border: 1px solid #cddfda; box-shadow: 0 6px 20px #194c4210; }
+.arcade .question-meta { justify-content: space-between; font-size: .73rem; font-weight: 700; color: #526d65; }
+.arcade .equation { margin: 12px 0 18px; font-family: system-ui, sans-serif; font-size: clamp(2.65rem, 8vw, 4.2rem); font-variant-numeric: tabular-nums; }
+.arcade .answers { gap: 12px; }
+.arcade .answer { min-height: 80px; border: 2px solid #b3d2ca; background: #fff; border-radius: 16px; box-shadow: 0 4px 0 #c2d9d2; color: #154a43; font: 800 2rem system-ui, sans-serif; }
+@media (hover: hover) { .arcade .answer:not(:disabled):hover { border-color: #217567; background: #edf9f5; transform: translateY(-1px); } }
+.arcade .answer:active { transform: translateY(3px); box-shadow: none; }
+.arcade .answer.correct { background: #d7f0ae; border-color: #548431; }
+.arcade .answer.wrong { background: #f9e9df; border-color: #b98368; color: #76523e; text-decoration: line-through; opacity: .7; }
+.arcade .feedback { margin-top: 12px; min-height: 24px; font-size: .86rem; }
+.arcade .game-controls { justify-content: space-between; margin-top: 5px; gap: 12px; }
+.arcade .game-controls > span { font-size: .72rem; color: #526d65; }
+.arcade .game-controls button { min-height: 44px; padding: 9px 13px; font-size: .82rem; }
+.arcade .game-note { margin: 10px auto 0; font-size: .72rem; max-width: 44em; }
+.arcade .solution-callout { margin: 10px 0 16px; padding: 10px; }
+.arcade .solution-callout > strong { font: 800 clamp(1.6rem, 6vw, 2.6rem) system-ui, sans-serif; }
+.arcade .solution-callout .solution-action { margin-top: 3px; }
+.update-banner { max-width: 840px; margin: 0 auto 12px; padding: 12px; background: #fff0ba; border-radius: 12px; text-align: center; }
+.update-banner[hidden] { display: none; }
+.update-banner button { margin: 5px; min-height: 44px; }
+@media (max-width: 600px) {
+  .arcade-playing .topbar { padding: 8px 14px; }
+  .arcade-playing .brand { font-size: 1.4rem; }
+  .arcade-playing .brand img { width: 30px; height: 30px; }
+  .arcade-playing .top-actions { gap: 6px; }
+  .arcade-playing .status { font-size: .63rem; padding: 5px 7px; }
+  .arcade-playing main { padding: 0 12px 16px; }
+  .arcade .game-top { margin-bottom: 8px; }
+  .arcade .game-top strong { font-size: 1.08rem; }
+  .arcade .game-top small { font-size: .68rem; }
+  .race-hud { padding: 9px 3px; }
+  .race-hud span { font-size: .61rem; }
+  .race-hud strong { font-size: 1.4rem; }
+  .river-scene { height: 125px; }
+  .river-track { height: 65px; top: 38%; }
+  .race-boat { width: 70px; margin-left: -35px; }
+  .finish-flag { top: -14px; font-size: 36px; }
+  .arcade .question-card { margin-top: 9px; padding: 12px 12px 6px; border-radius: 18px; }
+  .arcade .equation { margin: 12px 0 15px; }
+  .arcade .answers { gap: 10px; }
+  .arcade .answer { min-height: 65px; font-size: 1.8rem; }
+  .arcade .feedback { font-size: .74rem; margin-top: 10px; }
+  .arcade .game-note { font-size: .64rem; }
+}
+@media (max-height: 500px) and (min-width: 601px) {
+  .arcade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; }
+  .arcade .game-top { grid-column: 1 / -1; margin: 0; }
+  .arcade .race-hud { grid-column: 1; }
+  .arcade .river-scene { grid-column: 1; margin-top: -8px; height: 150px; }
+  .arcade .question-card { grid-column: 2; grid-row: 2 / 4; margin-top: 0; padding: 10px 14px; }
+  .arcade .equation { font-size: 2.5rem; margin: 8px 0; }
+  .arcade .answer { min-height: 52px; font-size: 1.5rem; }
+  .arcade .game-note { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) { .race-boat { animation: none; } }

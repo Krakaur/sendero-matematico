@@ -9,7 +9,7 @@ async (page) => {
  await page.getByRole('button',{name:'Respuesta '+s.questions[0].answer,exact:true}).dblclick();
  s=await read();
  if(s.index!==1||s.questions[1].attempts.length!==0)throw Error('Double click answered the next question');
- await page.getByRole('button',{name:'Dame una pista',exact:false}).click();
+ await page.locator('#hint').click();
  s=await read();
  if(!s.questions[1].hint)throw Error('Hint not preserved');
  await page.getByRole('button',{name:'Respuesta '+s.questions[1].answer,exact:true}).click();

@@ -1,5 +1,11 @@
 # Sendero
 
+## Web 0.3.2: la carrera del río
+
+[Jugar](https://krakaur.github.io/sendero-matematico/) · [Actualizar conservando el progreso](https://krakaur.github.io/sendero-matematico/actualizar.html)
+
+El cálculo incorpora un recorrido animado, respuestas de una pulsación y contadores de precisión y rapidez. La actualización recupera ejercicios antiguos sin exigir la confirmación pendiente. Ver [evaluación y límites de esta revisión](docs/EVALUACION-WEB-0.3.2.md). Android y Windows continúan en 0.3.1; sus descargas figuran debajo. La estética y su efecto sobre la interacción forman parte de la evaluación prevista para las siguientes versiones.
+
 ## Versión 0.3.1: cálculo con un toque
 
 [Jugar](https://krakaur.github.io/sendero-matematico/) · [APK nativa Android 14–16](https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.1/Sendero-Nativo-0.3.1.apk) · [Windows x64](https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.1/Sendero-0.3.1-Windows-x64.exe)

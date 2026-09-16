@@ -58,6 +58,7 @@ let timerStart = null,
   idleTimer = null,
   audioContext = null,
   installPrompt = null;
+let raceMove = null;
 function storageWarning() {
   const el = $("#storage-alert");
   el.hidden = false;
@@ -300,7 +301,22 @@ function game() {
     t = TRAILS[s.trail];
   if (q.attempts.some((n) => n !== q.answer)) q.solutionShown = true;
   if(q.bankId)return reasoningGame(s,q);
-  return `<section class="game-shell"><div class="game-top"><div><strong>${t.name}</strong><small>Paso ${s.index + 1} de 8</small></div><button id="pause" class="soft-button">Pausar</button></div><div class="progress-track" role="progressbar" aria-label="Avance de la aventura" aria-valuemin="0" aria-valuemax="8" aria-valuenow="${s.index}"><div class="progress-fill" style="width:${(s.index / 8) * 100}%"></div></div><div class="game-land"><img src="./landscape.svg" alt=""><div class="steps" aria-hidden="true">${s.questions.map((_, i) => `<span class="step ${i < s.index ? "done" : i === s.index ? "current" : ""}"></span>`).join("")}</div></div><div class="question-card"><div class="question-meta"><span>${levelName(q.level)}</span><span aria-hidden="true">·</span><span>Sin límite de tiempo</span></div><h1 class="equation ${q.solutionShown ? "sr-only" : ""}" aria-label="${q.a} ${s.trail === "suma" ? "más" : s.trail === "resta" ? "menos" : "por"} ${q.b}, ¿cuánto es?">${q.a} ${t.symbol} ${q.b} <span class="unknown">= ?</span></h1>${q.solutionShown ? solutionHTML(s, q) : ""}<div class="answers">${q.options.map((n, i) => `<button class="answer ${(q.done || q.solutionShown) && n === q.answer ? "correct" : ""} ${q.attempts.includes(n) && n !== q.answer ? "wrong" : ""}" data-answer="${n}" ${q.done || (q.attempts.includes(n) && n !== q.answer) ? "disabled" : ""} aria-label="Respuesta ${n}">${n}</button>`).join("")}</div><div class="feedback ${q.attempts.length && !q.done ? "error" : ""}" role="status" id="feedback">${q.done ? "¡Un paso más! Ya tienes la respuesta." : q.attempts.length ? "Mira la solución y toca la respuesta destacada." : "¿Qué número completa el camino?"}</div>${q.hint ? hintHTML(s, q) : ""}<div class="game-controls">${q.done ? `<button id="next" class="primary">${s.index === 7 ? "Ver mis descubrimientos" : "Siguiente paso"} →</button>` : `<button id="hint" class="soft-button" ${q.hint ? "disabled" : ""}>${q.hint ? "Pista abierta" : "✧ Dame una pista"}</button>`}</div></div><p class="game-note">${q.done ? "Tus intentos quedan guardados." : "Equivocarse también es explorar. Luma te acompaña."}</p></section>`;
+  const answered = s.questions.slice(0, s.index + 1).filter(x => x.attempts.length);
+  const initial = answered.filter(x => x.attempts[0] === x.answer).length;
+  const f = fluency(answered.filter(x => x.level === q.level));
+  const moved = raceMove?.id === s.id && raceMove.index === s.index;
+  const from = moved ? s.index - 1 : s.index;
+  raceMove = null;
+  return `<section class="game-shell arcade"><div class="game-top"><div><strong>La carrera del río</strong><small>${t.short} · Nivel ${q.level} · Web ${VERSION}</small></div><button id="pause" class="soft-button">Pausar</button></div>
+    <div class="race-hud"><div><span>Recorrido</span><strong>${s.index}<small> / 8</small></strong></div><div><span>Acierto inicial</span><strong>${answered.length ? Math.round(100 * initial / answered.length) + '<small>%</small>' : '—'}</strong></div><div title="Aciertos iniciales por minuto de respuesta del nivel actual; sin pistas ni interrupciones"><span>Aciertos/min · N${q.level}</span><strong>${f.n ? f.rate.toFixed(1) : '—'}</strong></div></div>
+    ${raceHTML(from, s.index)}
+    <div class="question-card"><div class="question-meta"><span>RETO ${s.index + 1} / 8</span><span>${levelName(q.level)}</span></div><h1 class="equation ${q.solutionShown ? 'sr-only' : ''}" tabindex="-1" aria-label="${q.a} ${s.trail === 'suma' ? 'más' : s.trail === 'resta' ? 'menos' : 'por'} ${q.b}, ¿cuánto es?">${q.a} ${t.symbol} ${q.b} <span class="unknown">= ?</span></h1>${q.solutionShown ? solutionHTML(s, q) : ''}
+    <div class="answers">${q.options.map(n => `<button class="answer ${q.solutionShown && n === q.answer ? 'correct' : ''} ${q.attempts.includes(n) ? 'wrong' : ''}" data-answer="${n}" ${q.attempts.includes(n) ? 'disabled' : ''} aria-label="Respuesta ${n}">${n}</button>`).join('')}</div>
+    <div class="feedback ${q.solutionShown ? 'error' : ''}" role="status" id="feedback">${q.solutionShown ? 'Mira la solución y toca la respuesta destacada.' : moved ? '¡Bien! Tu siguiente reto ya está aquí.' : 'Toca una respuesta para avanzar.'}</div>${q.hint ? hintHTML(s, q) : ''}<div class="game-controls"><span>Sin límite de tiempo</span><button id="hint" class="soft-button" ${q.hint ? 'disabled' : ''}>${q.hint ? 'Pista abierta' : '✧ Una pista'}</button></div></div>
+    <p class="game-note">Rapidez del nivel actual: ${f.n} ${f.n === 1 ? 'ejercicio' : 'ejercicios'} medidos. Tu precisión y tus tiempos se guardan por separado.</p></section>`;
+}
+function raceHTML(from, to) {
+  return `<div class="river-scene" role="img" aria-label="Luma ha recorrido ${to} de 8 tramos del río"><svg class="river-world" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="800" height="200" fill="#c5ece8"/><circle cx="674" cy="38" r="24" fill="#ffe7a2"/><path d="M0 87 100 15 198 89 327 26 442 90 578 20 680 85 800 10V170H0" fill="#92c3af"/><path d="M0 110Q130 60 260 104T520 94T800 78V200H0" fill="#4d957c"/><path d="M0 115Q170 97 370 116T800 108V200H0" fill="#68c8d6"/><path d="M0 126Q180 109 370 128T800 120" fill="none" stroke="#b5f1eb" stroke-width="5"/><g fill="#246b58"><path d="m32 109 22-70 23 70zm80-7 18-57 20 57zm428 4 22-67 21 67zm171 5 24-79 24 79z"/></g><g stroke="#b5f1eb" stroke-width="3" stroke-linecap="round"><path d="M25 164h45m75 16h42m53-34h66m81 27h42m96-30h61m29 40h38m75-20h59"/></g><path d="M0 194Q160 169 290 197T570 189T800 188V200H0" fill="#e6d5a1"/></svg><div class="river-track"><div class="race-boat" style="--from:${from / 8 * 100}%;--to:${to / 8 * 100}%"><svg viewBox="0 0 100 90" aria-hidden="true"><ellipse cx="49" cy="79" rx="43" ry="6" fill="#277e8c" opacity=".3"/><path d="m29 49 1-33 15 10 23-11 4 35-19 14z" fill="#dd8242"/><path d="m34 47 16-7 17 6-15 14z" fill="#fff1cf"/><path d="m33 25 7 6-6 4zm31 0-7 6 7 4z" fill="#663d36"/><circle cx="42" cy="39" r="3" fill="#193e3c"/><circle cx="61" cy="39" r="3" fill="#193e3c"/><path d="m47 48 5 5 5-5" fill="#193e3c"/><path d="m10 60 78-2-18 21H30z" fill="#e6ad46"/><path d="M15 63h65" stroke="#fff0a9" stroke-width="5"/><path d="m69 44 17 29" stroke="#614938" stroke-width="5" stroke-linecap="round"/></svg></div><div class="finish-flag" aria-hidden="true">⚑<span>META</span></div></div><div class="river-milestones" aria-hidden="true">${Array.from({length:8},(_,i)=>`<i class="${i < to ? 'passed' : ''}"></i>`).join('')}</div></div>`;
 }
 function reasoningGame(s,q) {
  return `<section class="game-shell"><div class="game-top"><div><strong>El taller de las ideas</strong><small>Reto ${s.index+1} de 8 · ${levelName(q.level)}</small></div><button id="pause" class="soft-button">Pausar</button></div><div class="progress-track" role="progressbar" aria-label="Avance" aria-valuemin="0" aria-valuemax="8" aria-valuenow="${s.index}"><div class="progress-fill" style="width:${s.index/8*100}%"></div></div><div class="question-card reasoning"><div class="question-meta">${esc(q.dimension)}${q.pool==='transfer'?(q.novel?' · Reto nuevo':' · Repaso'):''}</div><h1 class="word-problem">${esc(q.prompt)}</h1>${q.solutionShown||q.done?solutionHTML(s,q):''}<div class="answers ${q.labels?'word-answers':''}">${q.options.map(n=>`<button class="answer ${(q.done||q.solutionShown)&&n===q.answer?'correct':''}" data-answer="${n}" ${q.done||q.attempts.includes(n)?'disabled':''}>${esc(optionText(q,n))}</button>`).join('')}</div><div id="feedback" class="feedback" role="status">${q.done?'¡Un paso más!':q.solutionShown?'Observa la solución y vuelve a intentarlo.':'Piensa qué te pregunta la situación.'}</div>${q.hint?hintHTML(s,q):''}<div class="game-controls">${q.done?`<button id="next" class="primary">${s.index===7?'Ver mis descubrimientos':'Siguiente paso'} →</button>`:`<button id="hint" class="soft-button" ${q.hint?'disabled':''}>Una pista</button>`}</div><p class="micro">Puedes dibujar en papel. Al terminar, explica cómo lo pensaste a alguien que te acompañe.</p></div></section>`;
@@ -351,12 +367,19 @@ function finished() {
   const s = state.sessions.at(-1);
   if (!s) return home();
   const r = summarize([s]);
-  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span><div class="medal" aria-hidden="true">❋</div><h1>¡Tu sendero florece!</h1><p>Ocho pasos, nuevos descubrimientos. Gracias por explorar con Luma.</p>${statsHTML(r)}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">Otra aventura ↗</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
+  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>Ocho pasos, nuevos descubrimientos. Gracias por explorar con Luma.</p>${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">Otra aventura ↗</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
 }
 function render(persistState = true) {
   stopTimer();
+  // Older versions saved a solved arithmetic item before the extra Next tap.
+  // Adaptation already happened at answer time; only advance, exactly once.
+  if (location.hash === '#jugar' && state.current) {
+    const pending = state.current.questions[state.current.index];
+    if (pending.done && !pending.bankId) { next(); return; }
+  }
   if (persistState) save();
   const route = location.hash.slice(1) || "explorar";
+  document.body.classList.toggle('arcade-playing', route === 'jugar' && !!state.current && state.current.trail !== 'razonar');
   main.innerHTML = (
     {
       explorar: home,
@@ -487,11 +510,12 @@ function next() {
     return;
   }
   s.index++;
+  if (s.trail !== 'razonar') raceMove = {id:s.id, index:s.index};
   s.questions[s.index] = s.trail === "razonar" ? bankQuestion(state,s.adaptation.level,s.index === 7) : practiceQuestion(state,s.trail, s.adaptation.level);
   save();
   render();
   main.querySelector(".equation, .word-problem")?.setAttribute("tabindex", "-1");
-  main.querySelector(".equation, .word-problem")?.focus();
+  main.querySelector(".equation, .word-problem")?.focus({preventScroll:true});
 }
 function download(name, text, type) {
   if (android) {
@@ -697,6 +721,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
+    const cache = await caches.open(`sendero-${VERSION}-river`);
     const files = [
       "./index.html",
       "./app.js",
@@ -704,17 +729,37 @@ async function offline() {
       "./style.css",
       "./landscape.svg",
       "./icon.svg",
+      "./fluency.js",
+      "./bank.js",
+      "./bank-data.js",
+      "./practice.js",
     ];
     return (
       await Promise.all(
-        files.map((file) => caches.match(new URL(file, location.href))),
+        files.map((file) => cache.match(new URL(file, location.href))),
       )
     ).every(Boolean);
   };
+  const checkVersion = () => navigator.serviceWorker.controller?.postMessage({type:'GET_VERSION'});
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    checkVersion();
+    cached().then(ready => { if(ready) badge.textContent = 'Lista sin conexión'; });
+  });
+  navigator.serviceWorker.addEventListener('message', event => {
+    if(event.data?.type === 'SENDER_VERSION' && event.data.version !== VERSION)
+      $('#update-banner').hidden = false;
+  });
+  $('#apply-update').addEventListener('click', () => {
+    stopTimer(true);
+    save();
+    if(storageOK) location.reload();
+  });
   try {
     if (await cached()) badge.textContent = "Lista sin conexión";
-    await navigator.serviceWorker.register("./sw.js");
+    const registration = await navigator.serviceWorker.register("./sw.js", {updateViaCache:'none'});
+    registration.update().catch(() => {});
     await navigator.serviceWorker.ready;
+    checkVersion();
     badge.textContent = (await cached())
       ? "Lista sin conexión"
       : "Preparación pendiente";

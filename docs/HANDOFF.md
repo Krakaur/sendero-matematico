@@ -1,5 +1,11 @@
 # Estado de continuidad
 
+## Web 0.3.2: carrera y recuperación de versiones anteriores
+
+La escena de cálculo cambia a una carrera individual por un río, con movimiento no bloqueante, precisión inicial y rapidez del nivel actual. Se migra automáticamente el ejercicio aritmético resuelto que 0.3.0 dejó pendiente; no se repite la adaptación. Queda superada la excepción histórica descrita abajo que permitía conservar ese botón. El service worker activa la caché nueva completa y la interfaz ofrece aviso de actualización. `actualizar.html` permite actualizar desde una interfaz antigua sin borrar datos.
+
+Leer `EVALUACION-WEB-0.3.2.md`. Pasaron 22 pruebas de lógica, interacción y layouts en Chromium/Firefox, migración 0.3.0 a 0.3.2 en Firefox, y actualización por enlace directo en Chromium con conservación del perfil, respuesta y adaptación y recarga offline. Los ensayos usan perfiles sintéticos. Las descargas nativas y Windows siguen en 0.3.1. La estética debe evaluarse como parte de la jugabilidad; no hay todavía validación con niños o prueba física en el teléfono del usuario.
+
 ## Versión 0.3.1: fluidez e interacción
 
 El cálculo avanza al acertar sin confirmar “Siguiente”. La corrección visible continúa hasta seleccionar el resultado correcto; razonamiento conserva el avance deliberado. Leer `ARCADEMICS-FLUIDEZ-Y-MEDICION.md` y `EVALUACION-0.3.1.md` antes de modificar estadísticas. `timingProtocol: 1` y `firstResponseMs` distinguen la primera respuesta; las interrupciones, pistas y registros antiguos se excluyen de rapidez. La tasa es de respuesta durante práctica, no de carrera continua ni de capacidad matemática general. Los datos anteriores no se recalculan retrospectivamente. Un ejercicio ya resuelto antes de actualizar puede conservar su botón de avance pendiente.

@@ -1,4 +1,5 @@
-const CACHE = "sendero-0.3.1-fluency";
+const VERSION = "0.3.2";
+const CACHE = `sendero-${VERSION}-river`;
 const FILES = [
   "./",
   "./index.html",
@@ -14,15 +15,21 @@ const FILES = [
   "./icon-192.png",
   "./icon-512.png",
   "./manifest.webmanifest",
+  "./actualizar.html",
+  "./update.js",
 ];
 self.addEventListener("install", (event) =>
   event.waitUntil(
     caches.open(CACHE).then((c) =>
       // A new app cache must not inherit older files from the browser HTTP cache.
       c.addAll(FILES.map((file) => new Request(file, { cache: "reload" }))),
-    ),
+    ).then(() => self.skipWaiting()),
   ),
 );
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'GET_VERSION')
+    event.source?.postMessage({type:'SENDER_VERSION', version:VERSION});
+});
 self.addEventListener("activate", (event) =>
   event.waitUntil(
     (async () => {
@@ -41,13 +48,14 @@ self.addEventListener("fetch", (event) => {
     return;
   event.respondWith(
     (async () => {
-      const cached = await caches.match(event.request);
+      const cache = await caches.open(CACHE);
+      const cached = await cache.match(event.request);
       if (cached) return cached;
       try {
         return await fetch(event.request);
       } catch {
         if (event.request.mode === "navigate")
-          return caches.match("./index.html");
+          return (await cache.match("./index.html")) || Response.error();
         return Response.error();
       }
     })(),
