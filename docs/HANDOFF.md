@@ -1,5 +1,9 @@
 # Estado de continuidad
 
+## Auditoría de alcance posterior a 0.3.2
+
+Leer primero `AUDITORIA-DE-ALCANCE.md`. Web/Windows no tienen todavía perfiles múltiples ni login. La transferencia docente es manual, no existe recogida anonimizada para investigación y la cobertura curricular es parcial. El bloque de resultados requiere una revisión de comprensión. Esta auditoría no implementa esas funciones; explicita las diferencias entre lo solicitado, lo publicado y lo validado. No presentar la disponibilidad de artefactos como cumplimiento integral del alcance.
+
 ## Web 0.3.2: carrera y recuperación de versiones anteriores
 
 La escena de cálculo cambia a una carrera individual por un río, con movimiento no bloqueante, precisión inicial y rapidez del nivel actual. Se migra automáticamente el ejercicio aritmético resuelto que 0.3.0 dejó pendiente; no se repite la adaptación. Queda superada la excepción histórica descrita abajo que permitía conservar ese botón. El service worker activa la caché nueva completa y la interfaz ofrece aviso de actualización. `actualizar.html` permite actualizar desde una interfaz antigua sin borrar datos.
