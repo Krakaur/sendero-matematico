@@ -4,6 +4,8 @@ Versión del aviso: 15 de septiembre de 2026. Desarrollo: Dirk Hans Krakaur Flor
 
 ## Datos dentro del dispositivo
 
+Actualización 0.4.0: también web y Windows tienen hasta ocho perfiles locales con alias y contraseña. El rol docente es una elección local, no una identidad acreditada. Los respaldos completos se cifran; los datos activos no. Los informes JSON/CSV ordinarios siguen sin cifrado. La carrera añade modalidad, calibración de rivales y tiempo activo a los registros; no añade jugadores reales ni comunicación entre menores.
+
 La edición **Sendero Nativo 0.2.0** añade hasta ocho alias locales y credenciales derivadas con sal para separar usuarios del teléfono. Guarda sus datos en SQLite; no transmite alias ni contraseñas y no los incluye en informes. Cada perfil conserva por separado su práctica y los informes que recibe. No hay recuperación remota de contraseña. Esta protección de acceso no cifra toda la base ni los archivos exportados. Las características de sonido y navegador descritas para la edición anterior no corresponden a la interfaz nativa. Detalles y límites en [Android nativo](ANDROID-NATIVO.md).
 
 Sendero guarda un código de perfil generado localmente, ejercicios, respuestas, errores, pistas solicitadas, solución mostrada, dificultad, fechas, estimaciones de tiempo de interacción y avance. También conserva las preferencias de sonido y los informes que un adulto importe en la sección docente. No solicita nombre, correo, escuela, ubicación, cámara, micrófono ni identificadores publicitarios.
@@ -11,6 +13,8 @@ Sendero guarda un código de perfil generado localmente, ejercicios, respuestas,
 Estos registros sirven para continuar la práctica y producir informes locales. El desarrollo no recibe automáticamente respuestas ni informes, no integra publicidad ni analítica y no lleva a cabo investigación con datos infantiles. La APK Android no declara permiso de internet. Los datos se conservan en el dispositivo hasta que se borren, se eliminen los datos de la aplicación o se desinstale; la conservación también depende del sistema y del espacio disponible.
 
 ## Exportación y recepción
+
+En web/Windows, una invitación docente puede activar entrega automática de sesiones completas al servidor que identifica. La interfaz pide confirmación del destino. El servidor recibe códigos persistentes, fechas, respuestas y tiempos; no recibe alias ni contraseñas del perfil. La clave de invitación queda localmente almacenada y debe tratarse como privada. Puede desvincularse desde Docentes. La recepción técnica no confirma lectura ni evaluación del docente. No existe actualmente alojamiento público provisto por el proyecto; solo se probó el servicio local con registros sintéticos. La edición Android mantiene entrega manual y no solicita acceso a internet.
 
 La persona usuaria puede exportar un archivo JSON o CSV y elegir dónde guardarlo. En Android se usa el selector de documentos del sistema; si se elige un proveedor de almacenamiento en la nube instalado en el teléfono, ese proveedor aplica sus propias condiciones. El juego no verifica la identidad del receptor ni confirma la entrega al docente. Corresponde a la persona adulta autorizada decidir el medio y destinatario.
 
@@ -24,4 +28,4 @@ La versión web se aloja en GitHub Pages. Al abrirla, GitHub puede procesar dato
 
 La opción «Borrar datos locales» de la sección Acerca de elimina el progreso y los informes guardados dentro del juego en ese dispositivo. No elimina las copias previamente exportadas; estas deben gestionarse donde se hayan guardado o entregado. Conviene conservar las copias necesarias antes de desinstalar o borrar datos.
 
-Una futura sincronización o investigación requerirá un diseño y un aviso nuevos, revisión institucional y los procedimientos de información y autorización que correspondan. La existencia de una función de exportación no constituye consentimiento para investigación ni autoriza al desarrollador a reutilizar los registros.
+Antes de desplegar un receptor docente real, la institución debe especificar responsable, destino, conservación, acceso y procedimientos de información aplicables. La investigación necesita un procedimiento separado y sigue desactivada. La existencia de una función de exportación no constituye consentimiento para investigación ni autoriza al desarrollador a reutilizar registros.

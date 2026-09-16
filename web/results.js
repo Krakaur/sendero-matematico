@@ -4,12 +4,12 @@ export function resultGroups(sessions) {
  const rows=[];
  for(const [trail,t] of Object.entries(TRAILS)) {
   if(trail==='razonar')continue;
-  for(let level=1;level<=4;level++) {
-   const ss=sessions.filter(s=>s.trail===trail).sort((a,b)=>a.completedAt.localeCompare(b.completedAt));
+  for(let level=1;level<=4;level++) for(const mode of ['calm','race']) {
+   const ss=sessions.filter(s=>s.trail===trail&&(s.race?'race':'calm')===mode).sort((a,b)=>a.completedAt.localeCompare(b.completedAt));
    const questions=ss.flatMap(s=>s.questions).filter(q=>q.level===level&&q.attempts.length);
    if(!questions.length)continue;
    const first=questions.filter(q=>q.attempts[0]===q.answer).length;
-   rows.push({trail,title:t.short,level,total:questions.length,first,errors:questions.length-first,percent:Math.round(100*first/questions.length),fluency:fluency(questions),recent:ss.map(s=>({at:s.completedAt,...fluency(s.questions.filter(q=>q.level===level))})).filter(f=>f.n).slice(-6)});
+   rows.push({trail,title:t.short+' · '+(mode==='race'?'Carrera':'Práctica'),mode,level,total:questions.length,first,errors:questions.length-first,percent:Math.round(100*first/questions.length),fluency:fluency(questions),recent:ss.map(s=>({at:s.completedAt,...fluency(s.questions.filter(q=>q.level===level))})).filter(f=>f.n).slice(-6)});
   }
  }
  return rows;

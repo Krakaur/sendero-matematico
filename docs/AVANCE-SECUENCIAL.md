@@ -24,8 +24,18 @@ Contrastados programas SEP 2025 y preparada matriz por ámbitos. Se incorporan 3
 
 Resultados web con alias, filtros de periodo/contenido, tarjetas de aciertos/errores/ritmo, barras, evolución por nivel y metodología desplegable. Las muestras pequeñas se identifican. Se armonizan los cortes descriptivos de precisión en 50/80% y se simplifica el texto de resultados Android. La prueba separa precisión de la muestra válida de velocidad. La validez educativa y la equivalencia con Arcademics no se afirman. La prueba con condiciones fijas y los puntos de carrera se resuelven en el frente de jugabilidad.
 
-## 6. Conservación y seguridad — por iniciar
+## 6. Conservación y seguridad — respaldos implementados; protección local limitada
 
-## 7. Compatibilidad y experiencia — por iniciar
+Web/Windows y Android tienen copias completas cifradas con recuperación mediante nueva contraseña. Se probaron clave equivocada, alteración, continuidad de partida e identidad. Android rechaza reemplazar un perfil existente. No hay cifrado de los datos activos, recuperación remota ni administración institucional de credenciales. No se presenta este acceso local como protección frente al control físico o técnico del dispositivo. Leer `COPIAS-Y-RECUPERACION.md`.
 
-## 8. Distribución, difusión y documentación académica — por iniciar
+## 7. Compatibilidad y experiencia — carrera implementada y tres ciclos web
+
+Revisión de competencia, fricción, estética, ritmo, adaptación, recompensas y resultados. Se incorpora carrera opcional contra tres rivales virtuales en web/Windows y Android nativo; nivel fijo por carrera, calibración del ritmo, posición y puntos separados de medidas educativas. Tres ciclos web en móvil normal, móvil compacto y Firefox/laptop identificaron y corrigieron desbordamiento del sonido y altura excesiva. Se mantienen práctica tranquila, corrección visible y funcionamiento offline. Leer `JUGABILIDAD-0.4.0.md` y `EVALUACION-0.4.0.md` para evidencia y límites.
+
+La compilación inicial pasó Android 14–16 con navegador y WebView deshabilitados. La revisión visual motivó un ajuste adicional de altura nativa, sometido de nuevo al flujo completo. La prueba física en un teléfono de gama baja y la observación con niños siguen pendientes; los emuladores no las sustituyen.
+
+## 8. Distribución, difusión y documentación académica — paquetes y documentación
+
+Se preparan APK/AAB firmados y Windows portátil, página pública para docentes, metadatos/sitemap, material de difusión y expediente descriptivo del software. La publicación efectiva y hashes se registran en las notas de versión. No se han publicado mensajes en redes ni contactado a terceros; se prepararon textos y estrategias. No se contrataron servicios, certificados o cuentas de tiendas. La publicación en tiendas y el registro curricular no se afirman realizados.
+
+El usuario decidió expresamente preparar el servicio sin contratar alojamiento. Esa dependencia no impide las pruebas locales ni la transferencia manual, pero la entrega automática entre hogares y docentes continúa sin servicio público. Quedan además trabajos de ingeniería posibles —paridad de informes Android, narración nativa, más modalidades curriculares, administración docente y endurecimiento del servidor— que no deben describirse como bloqueos exclusivamente externos. El alcance íntegro no queda cerrado por publicar esta versión.

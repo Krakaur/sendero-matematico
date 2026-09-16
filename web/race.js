@@ -1,6 +1,6 @@
 // Game rewards and simulated competition are independent of educational fluency.
 export function newRace(sessions,trail,level) {
- const times=sessions.filter(s=>s.trail===trail).flatMap(s=>s.questions).filter(q=>q.level===level&&!q.hint&&!q.timingInterrupted&&q.firstResponseMs>=500&&q.firstResponseMs<=60000).slice(-24).map(q=>q.firstResponseMs).sort((a,b)=>a-b);
+ const times=sessions.filter(s=>s.trail===trail).flatMap(s=>s.questions).filter(q=>q.level===level&&q.timingProtocol===1&&!q.hint&&!q.timingInterrupted&&q.firstResponseMs>=500&&q.firstResponseMs<=60000).slice(-24).map(q=>q.firstResponseMs).sort((a,b)=>a-b);
  const pace=times.length>=5?times[Math.floor(times.length/2)]:6000;
  const target=Math.max(24000,Math.min(160000,pace*8*1.2));
  return {protocol:1,elapsedMs:0,level,calibrationN:times.length,finishMs:[target*1.22,target,target*.82],names:['Nube','Rayo','Chispa']};

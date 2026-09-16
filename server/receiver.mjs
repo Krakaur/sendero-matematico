@@ -1,6 +1,7 @@
 import {createServer} from 'node:http';
 import {DatabaseSync} from 'node:sqlite';
 import {createHash} from 'node:crypto';
+import {isDeepStrictEqual} from 'node:util';
 import {validateReport,SCHEMA} from '../web/core.js';
 import {validateTasks} from '../web/classroom.js';
 const digest=s=>createHash('sha256').update(s).digest('hex');
@@ -36,7 +37,7 @@ export function receiver(db,{origins=[]}={}) {
      if(bound&&bound!==report.profile)throw Error('profile');
      for(const s of report.sessions){
       const old=db.prepare('SELECT body FROM sessions WHERE room=? AND profile=? AND id=?').get(who.room,report.profile,s.id);
-      if(old&&old.body!==JSON.stringify(s))throw Error('conflict');
+      if(old&&!isDeepStrictEqual(JSON.parse(old.body),s))throw Error('conflict');
       if(!old)db.prepare('INSERT INTO sessions VALUES(?,?,?,?)').run(who.room,report.profile,s.id,JSON.stringify(s));
      }
      db.prepare('UPDATE access SET profile=? WHERE hash=?').run(report.profile,who.hash);db.exec('COMMIT');

@@ -1,3 +1,12 @@
+# Continuidad 0.4.0
+
+Prevalecen `AVANCE-SECUENCIAL.md`, `JUGABILIDAD-0.4.0.md`, `EVALUACION-0.4.0.md` y el manifiesto de publicación. Se incorporaron perfiles web/Windows, respaldos cifrados independientes web/Android, extensión de 360 problemas, resultados web por modalidad, receptor docente local y carrera contra rivales virtuales en las tres plataformas. El usuario decidió no contratar alojamiento: no existe servicio público. La investigación sigue desactivada y la cobertura curricular es parcial.
+
+No repetir como actuales las carencias históricas que ya se resolvieron. Tampoco presentar el alcance completo como cerrado: faltan prueba física, revisión docente, otras modalidades curriculares, administración escolar, endurecimiento del receptor y paridad del panel Android. Android conserva entrega manual y no tiene narración. Los datos activos no están cifrados. Los respaldos completos no son intercambiables entre web y Android.
+
+La primera compilación 0.4.0 aprobó `35053106617`; una revisión de altura nativa se compiló en `35053657986`. Consultar el manifiesto final para la fuente efectivamente distribuida. Se conservó el PDF PISA ajeno a esta implementación sin añadirlo al repositorio.
+
+## Historial de continuidad
 # Estado de continuidad
 
 ## Auditoría de alcance posterior a 0.3.2

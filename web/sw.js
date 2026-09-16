@@ -1,8 +1,8 @@
 const VERSION = "0.4.0";
-const CACHE = `sendero-${VERSION}-river`;
+const CACHE = `sendero-${VERSION}-regatta-final`;
 const FILES = [
   "./",
-  "./index.html",
+  "./index.html", "./docentes.html",
   "./style.css",
   "./app.js",
   "./profiles.js",

@@ -1,3 +1,5 @@
+> Documento histórico anterior a 0.4.0. Para el estado actualizado, consultar AVANCE-SECUENCIAL.md y EVALUACION-0.4.0.md.
+
 # Auditoría del alcance solicitado y del estado implementado
 
 Estado revisado sobre la fuente `8ed95ef`: web 0.3.2 y paquetes Android/Windows 0.3.1. Esta auditoría describe las funciones actuales y sus límites; no declara implementadas las correcciones pendientes. La publicación y las pruebas técnicas no equivalen al cumplimiento del alcance educativo completo.
