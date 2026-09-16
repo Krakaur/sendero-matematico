@@ -269,6 +269,7 @@ function stopTimer(interrupted = false) {
   if (interrupted) interruptTiming(state.current?.questions[state.current.index]);
   if (timerStart !== null && state.current) {
     const q = state.current.questions[state.current.index];
+    if (performance.now() - timerStart >= 60000) interruptTiming(q);
     if (q && !q.done)
       q.activeMs += Math.min(
         60000,

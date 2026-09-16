@@ -129,7 +129,7 @@ public final class Engine {
                 int expected=s.getString("trail").equals("suma")?a+b:s.getString("trail").equals("resta")?a-b:a*b;
                 require((s.getString("trail").equals("razonar")?Bank.valid(q):answer==expected)&&answer>=0&&q.get("hint") instanceof Boolean&&(!q.has("solutionShown")||q.get("solutionShown") instanceof Boolean));
                 Object time=q.get("activeMs");require(time instanceof Number&&finite(((Number)time).doubleValue())&&q.getDouble("activeMs")>=0&&q.getDouble("activeMs")<=86400000);
-                if(q.has("timingProtocol"))require(q.optInt("timingProtocol")==1&&q.get("timingInterrupted") instanceof Boolean&&q.opt("firstResponseMs") instanceof Number&&finite(q.getDouble("firstResponseMs"))&&q.getDouble("firstResponseMs")>=0&&q.getDouble("firstResponseMs")<=q.getDouble("activeMs"));
+                if(q.has("timingProtocol"))require(integer(q.get("timingProtocol"))&&q.getInt("timingProtocol")==1&&q.get("timingInterrupted") instanceof Boolean&&q.opt("firstResponseMs") instanceof Number&&finite(q.getDouble("firstResponseMs"))&&q.getDouble("firstResponseMs")>=0&&q.getDouble("firstResponseMs")<=q.getDouble("activeMs"));
                 JSONArray attempts=q.getJSONArray("attempts");require(attempts.length()>0&&attempts.length()<=20);
                 for(int k=0;k<attempts.length();k++)require(integer(attempts.get(k))&&attempts.getInt(k)>=0&&attempts.getInt(k)<=2500);
                 require(attempts.getInt(attempts.length()-1)==answer);
