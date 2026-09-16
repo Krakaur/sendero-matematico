@@ -1,5 +1,5 @@
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.3.0";
+export const VERSION = "0.3.1";
 export const SCHEMA = "sendero.report.v2";
 export const TRAILS = {
   suma: {
@@ -41,6 +41,7 @@ export function recordAttempt(question, value) {
     question.attempts.includes(value)
   )
     return false;
+  if (!question.attempts.length && question.timingProtocol === 1) question.firstResponseMs = question.activeMs;
   question.attempts.push(value);
   if (value !== question.answer) question.solutionShown = true;
   else question.done = true;
@@ -107,6 +108,8 @@ export function makeQuestion(trail, level, rng = Math.random) {
     hint: false,
     solutionShown: false,
     activeMs: 0,
+    timingProtocol: 1,
+    timingInterrupted: false,
   };
 }
 export function newSession(trail, level, profile) {
@@ -206,6 +209,7 @@ export function validateReport(data) {
         q.attempts.at(-1) !== q.answer
       )
         throw new Error("El informe contiene respuestas no válidas.");
+      if (q.timingProtocol !== undefined && (q.timingProtocol !== 1 || typeof q.timingInterrupted !== "boolean" || !Number.isFinite(q.firstResponseMs) || q.firstResponseMs < 0 || q.firstResponseMs > q.activeMs)) throw new Error("Registro temporal no válido.");
       const expected =
         s.trail === "suma"
           ? q.a + q.b
