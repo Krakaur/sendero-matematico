@@ -32,6 +32,8 @@ El enlace directo de actualización se probó además en Chromium desde esa mism
 
 ## Alcance y próximas versiones
 
+Publicación verificada: fuente `b21f3a8`, rama Pages `2ef5ca36a29b8b389d18e9da64b2aa16b2dcebf0`, ejecución [35049396951](https://github.com/Krakaur/sendero-matematico/actions/runs/35049396951) finalizada correctamente. En el enlace público de actualización, Firefox abrió 0.3.2; una respuesta avanzó del índice 0 al 1, sin botón de confirmación y con la nueva escena. La recarga posterior sin conexión también pasó. Las capturas de `qa-0.3.2` contienen exclusivamente prácticas sintéticas.
+
 Esta revisión corresponde a la web. Las descargas de Android y Windows siguen siendo 0.3.1 y no incorporan esta escena. No se ha realizado una prueba física en el teléfono del usuario ni una evaluación con niños.
 
 La estética se tratará como una dimensión de jugabilidad: legibilidad, jerarquía visual, respuesta inmediata a la acción, continuidad del movimiento, identidad de personajes y coherencia entre sonido y animación. La siguiente evaluación deberá observar errores de pulsación, tiempo para comprender la acción y deseo de repetir, además de rendimiento en teléfonos modestos. Incorporar un motor gráfico o Canvas se decidirá según la interacción necesaria; JavaScript ya controla las reglas, adaptación y registros actuales. HTML, CSS y SVG no impiden por sí mismos una presentación dinámica.
