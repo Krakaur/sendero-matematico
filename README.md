@@ -1,5 +1,13 @@
 # Sendero
 
+## Versión 0.3.1: cálculo con un toque
+
+[Jugar](https://krakaur.github.io/sendero-matematico/) · [APK nativa Android 14–16](https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.1/Sendero-Nativo-0.3.1.apk) · [Windows x64](https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.1/Sendero-0.3.1-Windows-x64.exe)
+
+Cada acierto en cálculo avanza automáticamente. Después de un error se conserva la solución visible para aprender. Los informes distinguen el tiempo hasta la primera respuesta y muestran aciertos iniciales por minuto junto con precisión y cantidad de observaciones, por contenido y nivel. Las correcciones, pistas, interrupciones y registros antiguos no se convierten en una medida de rapidez equivalente. En razonamiento se conserva el avance deliberado para leer la explicación.
+
+La APK ocupa aproximadamente 390 kB y mantiene el banco de 0.3.0, perfiles, firma y funcionamiento sin WebView. Consulta el [análisis de Arcademics y contrato de medición](docs/ARCADEMICS-FLUIDEZ-Y-MEDICION.md) y las [notas de versión](docs/RELEASE-NOTES-0.3.1.md). La tasa describe fluidez durante práctica; no equivale a una carrera continua ni acredita capacidad matemática general. Las secciones siguientes describen versiones anteriores.
+
 ## Nueva versión 0.3.0
 
 [Juego actualizado](https://krakaur.github.io/sendero-matematico/) · [APK nativa Android 14–16](https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.0/Sendero-Nativo-0.3.0.apk) · [Windows x64](https://github.com/Krakaur/sendero-matematico/releases/download/v0.3.0/Sendero-0.3.0-Windows-x64.exe)

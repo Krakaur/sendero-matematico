@@ -1,0 +1,23 @@
+{
+  "version": "0.3.1",
+  "bankVersion": "0.3.0",
+  "androidSourceCommit": "2bcbe2e1f8c76577ef5422a682c6d9ae25e788bd",
+  "workflow": 35046952836,
+  "files": [
+    {
+      "name": "Sendero-0.3.1-Windows-x64.exe",
+      "bytes": 100372293,
+      "sha256": "aead8bac788f0bea242f463ac5a708a65ce0af9299b3a1d744b0f7fd373e0241"
+    },
+    {
+      "name": "Sendero-Nativo-0.3.1.aab",
+      "bytes": 374733,
+      "sha256": "83bd3e8ae2a0cfc02b3f8a6995781d71f2c1f15c7b6f21d3b10c53de5838fe14"
+    },
+    {
+      "name": "Sendero-Nativo-0.3.1.apk",
+      "bytes": 389594,
+      "sha256": "bba687377baa0713a1a9c773123ea53366ce32b4457d528488fdcad8eb2b95f2"
+    }
+  ]
+}

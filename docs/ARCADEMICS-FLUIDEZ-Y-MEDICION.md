@@ -46,6 +46,8 @@ Un aumento de rapidez acompañado de precisión estable, bajo condiciones compar
 
 La dificultad adaptativa cambia la mezcla de ejercicios. Separar por nivel reduce una fuente de confusión, pero no garantiza equivalencia entre muestras ni entre dispositivos. La latencia de pantalla, la lectura, el tamaño de los controles, la familiaridad con el teléfono y una ayuda externa no observada siguen influyendo. Ocho ejercicios constituyen una muestra breve; ni sus tasas ni las bandas de color son umbrales validados de dominio.
 
+Las bandas cromáticas de precisión heredadas todavía difieren entre web/Windows (cortes en 60% y 85%) y Android (50% y 80%). La comparación entre ediciones debe usar los valores numéricos y sus denominadores. Unificar esas bandas y desarrollar un análisis por operación individual siguen siendo mejoras pendientes; no se incorporó una puntuación compuesta de dominio.
+
 La siguiente extensión metodológica aconsejable es una breve comprobación de fluidez con distribución de contenidos y dificultad constantes, duración o longitud predefinida, familiarización previa y registro de interrupciones. Debe distinguirse de la práctica adaptativa cotidiana. Para valorar retención y transferencia se requieren observaciones posteriores y situaciones nuevas; el progreso dentro de la aplicación, por sí solo, no identifica una mejora causal del aprendizaje general.
 
 ## Fuentes y límites

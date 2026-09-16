@@ -1,5 +1,13 @@
 # Estado de continuidad
 
+## Versión 0.3.1: fluidez e interacción
+
+El cálculo avanza al acertar sin confirmar “Siguiente”. La corrección visible continúa hasta seleccionar el resultado correcto; razonamiento conserva el avance deliberado. Leer `ARCADEMICS-FLUIDEZ-Y-MEDICION.md` y `EVALUACION-0.3.1.md` antes de modificar estadísticas. `timingProtocol: 1` y `firstResponseMs` distinguen la primera respuesta; las interrupciones, pistas y registros antiguos se excluyen de rapidez. La tasa es de respuesta durante práctica, no de carrera continua ni de capacidad matemática general. Los datos anteriores no se recalculan retrospectivamente. Un ejercicio ya resuelto antes de actualizar puede conservar su botón de avance pendiente.
+
+Workflow final aprobado: `35046952836`; fuente nativa `2bcbe2e1f8c76577ef5422a682c6d9ae25e788bd`; APK 389 594 bytes, versionCode 3, misma firma. Pasaron 22 pruebas Node, seis Java y cuatro instrumentadas por Android 14/15/16; también actualización desde 0.2.0, web offline y Windows empaquetado. La igualdad de números JSON se normaliza al deduplicar informes Android. No hay cambios en banco, perfiles, permisos ni protocolo de transferencia manual. Los hashes constan en `RELEASE-0.3.1.json`.
+
+La inspección directa de Arcademics confirmó avance con una selección y distinción entre precisión de intentos y acierto inicial; la cuenta Basic impidió verificar algoritmos y datos detallados de Plus. No se modificó la cuenta ni se incorporaron expedientes de estudiantes. Siguen pendientes prueba de fluidez con condiciones fijas, análisis por operación, armonización de bandas cromáticas entre plataformas y validación física/educativa.
+
 ## Versión 0.3.0: banco sin IA en el dispositivo
 
 La versión 0.3.0 incorpora un banco de 6 270 enunciados, 128 situaciones y 16 familias, con 1 574 problemas reservados. Android, web y Windows incluyen el mismo contenido, selección sin reemplazo y preferencia por redacciones y contextos recientes diferentes. Cálculo y razonamiento tienen estados independientes; las tablas ampliadas llegan al 20 y el cálculo incorpora revisión programada. No se incorpora IA offline ni un servicio generativo.
