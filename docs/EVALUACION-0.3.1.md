@@ -20,6 +20,8 @@ La APK ocupa 389 594 bytes. El análisis de paquete confirma ausencia de referen
 
 Los tamaños y hashes de APK, AAB y Windows se encuentran en `RELEASE-0.3.1.json`. Las capturas y resultados sintéticos están en `qa-0.3.1/`. No contienen datos de niños. Sus tasas automatizadas no representan desempeño humano.
 
+La publicación experimental `v0.3.1` quedó disponible en GitHub Releases. Los hashes publicados de los tres paquetes coinciden con los verificados localmente; se descargó además la APK pública y se comprobó su SHA-256. GitHub Pages desplegó `cae3e0bcb88aa0ed953eebc79de45baef637f8da` mediante la ejecución `35047493569`. Una comprobación en el sitio público confirmó versión 0.3.1 y avance del ejercicio 1 al 2 con una sola selección, con registro del tiempo inicial.
+
 ## Límites
 
 No se realizaron pruebas físicas ni con niños. El flujo de cálculo continúa siendo práctica adaptativa de ocho ejercicios, no una prueba estandarizada de duración fija. La dificultad y la composición de operaciones pueden variar; los resultados deben interpretarse junto con precisión, tamaño de muestra, ayudas y exclusiones. No se verificó la fórmula interna de Arcademics. El análisis y las mejoras metodológicas pendientes se detallan en `ARCADEMICS-FLUIDEZ-Y-MEDICION.md`.
