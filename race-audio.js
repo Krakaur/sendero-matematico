@@ -1,6 +1,7 @@
 // Original short motifs, synthesized locally. Audio is optional and never carries
 // information that is absent from the visual response.
 export const MOTIFS = Object.freeze({
+  countdown: [[392,0,.14]],
   start: [[392,0,.14],[523.25,.16,.14],[659.25,.32,.25]],
   correct: [[659.25,0,.12],[880,.085,.2]],
   recover: [[523.25,0,.13],[659.25,.1,.13],[783.99,.2,.23]],
