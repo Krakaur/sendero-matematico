@@ -14,13 +14,13 @@ Las fechas se completan al trabajar. Los minutos corresponden al tiempo real, no
 | 4 | Primer conjunto sonoro | Candidata | 2026-10-13 | Ver registro de jornada 1 | N/D | Cinco motivos, ambiente y controles; valoración sonora pendiente |
 | 5 | Revisión audiovisual inicial | Pendiente | — | — | N/D | Sin valorar |
 | 6 | Continuidad de escena | Comprobada | 2026-10-13 | Ver registro de jornada 1 | N/D | Escena y animación conservadas en 7/7 cambios y tras error |
-| 7 | Desplazamiento | Pendiente | — | — | N/D | Sin implementar |
+| 7 | Desplazamiento | Parcial | 2026-10-13 | Ver registro de incremento 2 | N/D | Trayectorias continuas según tiempo activo; rendimiento físico pendiente |
 | 8 | Identidad y reacciones | Candidata | 2026-10-13 | Ver registro de jornada 1 | N/D | Zorra, conejo, nutria y tortuga; reacción de acierto y recuperación |
 | 9 | Entorno animado | Candidata | 2026-10-13 | Ver registro de jornada 1 | N/D | Agua, nubes, estelas y remos animados |
 | 10 | Revisión de movimiento y sonido | Pendiente | — | — | N/D | Sin valorar |
-| 11 | Modelo de rivales | Pendiente | — | — | N/D | Sin especificar |
-| 12 | Variación de rivales | Pendiente | — | — | N/D | Sin implementar |
-| 13 | Adelantamiento y recuperación | Pendiente | — | — | N/D | Sin implementar |
+| 11 | Modelo de rivales | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Tres perfiles y 30 escenarios reproducibles |
+| 12 | Variación de rivales | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Seis órdenes finales entre diez semillas; conservación al recargar |
+| 13 | Adelantamiento y recuperación | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Señales visual y sonora; mejorar tiempos no empeora posición emparejada |
 | 14 | Carrera completa | Pendiente | — | — | N/D | Sin implementar |
 | 15 | Revisión de competencia | Pendiente | — | — | N/D | Sin valorar |
 | 16 | Pantalla pequeña y dispositivo | Parcial | 2026-10-13 | Ver registro de jornada 1 | N/D | Cuatro viewports comprobados; teléfono físico pendiente |
@@ -59,7 +59,7 @@ En jornadas de revisión, añadir las puntuaciones por criterio, quién las emit
 
 ## Próxima acción y decisiones pendientes
 
-Próxima acción: revisar esta primera candidata en una partida y escuchar los motivos sonoros; registrar valoraciones por criterio. Después, ajustar ritmo de movimiento y competencia sin perder el bosque ilustrado. El teléfono físico de referencia y la escucha completa de Grand Prix siguen pendientes.
+Próxima acción: revisar una partida de la web 0.5.0 y escuchar los motivos sonoros; registrar valoraciones por criterio y revisar llegada y repetición. El teléfono físico de referencia y la escucha completa de Grand Prix siguen pendientes.
 
 Dirección artística resuelta: desarrollar este bosque ilustrado. Permanecen pendientes las puntuaciones perceptivas por criterio, la revisión de cada hito y la disponibilidad de una persona no familiarizada para observar el uso.
 
@@ -70,3 +70,7 @@ Dirección artística resuelta: desarrollar este bosque ilustrado. Permanecen pe
 ## Primera jornada: entrega web candidata
 
 13 de octubre de 2026. Se preservó la fuente 0.4.0 antes de modificarla, se completó una carrera privada de Grand Prix y se grabaron recorridos controlados de ocho retos en Sendero antes y después. La entrega incorpora paisaje, personajes, movimiento ambiental, motivos sonoros y conservación de la escena al responder. La elección artística del autor no equivale a aprobación final de todas las rúbricas. Evidencia, resultados y límites: [EVALUACION-CICLO-WEB-1.md](EVALUACION-CICLO-WEB-1.md). Tokens atribuibles a la jornada: N/D. El intervalo de tiempo instrumentado se registra en el manifiesto local; la preparación anterior al primer registro de reloj no fue cronometrada.
+
+## Segundo incremento: competencia y publicación web
+
+13 de octubre de 2026. El autor autorizó el siguiente incremento y la sustitución de la web pública después de respaldarla localmente. Se preservaron los 26 archivos públicos y la rama publicada, todos coincidentes por contenido. Se implementaron rivales con semilla, personalidad de ritmo, señales de adelantamiento y calibración centrada en la mediana previa. Se preservan las carreras antiguas. Las comprobaciones incluyen 35 pruebas Node, 30 escenarios y recorridos del navegador; véase [EVALUACION-WEB-0.5.0.md](EVALUACION-WEB-0.5.0.md). La publicación efectiva y la prueba de conservación de datos están en `qa-web-0.5.0/publication.json`. Tokens: N/D; intervalo instrumentado en el manifiesto local de este incremento. Esta autorización de publicación no sustituye las valoraciones perceptivas pendientes del ciclo.

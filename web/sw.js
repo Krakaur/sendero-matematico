@@ -1,5 +1,5 @@
-const VERSION = "0.4.0";
-const CACHE = `sendero-${VERSION}-regatta-candidate6`;
+const VERSION = "0.5.0";
+const CACHE = `sendero-${VERSION}-regatta-v2-release`;
 const FILES = [
   "./",
   "./index.html", "./docentes.html",

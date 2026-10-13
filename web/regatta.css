@@ -32,6 +32,15 @@ body.arcade-playing { background: #edf3ed; }
 .regatta .lane-course { height: 61px; margin-right: 56px; border-bottom: 1px dashed #d9f7e531; }
 .regatta .competitor { top: -15px; width: 84px; margin-left: -15px; filter: none; z-index: 2; transition: left .13s linear; }
 .regatta .competitor[data-racer='0'] { transition: left .52s cubic-bezier(.2,.65,.3,1); }
+.regatta .competitor[data-effort='surge'] .racer-paddle { animation-duration: .72s; }
+.regatta .competitor[data-effort='glide'] .racer-paddle { animation-duration: 1.65s; }
+.regatta .competitor[data-effort='surge'] .boat-wake { width: 72px; opacity: .85; }
+.regatta .competitor[data-effort='finished'] .racer-paddle { animation-play-state: paused; }
+.regatta[data-response='correct'] [data-racer='0'] .racer-paddle,
+.regatta[data-response='recover'] [data-racer='0'] .racer-paddle,
+.regatta[data-response='pass'] [data-racer='0'] .racer-paddle { animation-duration: .65s; }
+.regatta[data-response='pass'] .position-pill { background: #f9df9b; box-shadow: 0 0 0 2px #b88737; }
+.regatta[data-response='pass'] .race-message { background: #fff0b6; color: #58421d; }
 .regatta .competitor svg { width: 84px; height: 77px; position: relative; overflow: visible; }
 .boat-bob { transform-origin: 60px 80px; animation: canoe-bob 2s ease-in-out infinite; animation-delay: var(--racer-delay); }
 .racer-paddle { transform-origin: 73px 59px; animation: paddle-row 1.2s ease-in-out infinite; animation-delay: var(--racer-delay); }
@@ -49,7 +58,8 @@ body.arcade-playing { background: #edf3ed; }
 .regatta .virtual-note { color: #4f685d!important; background: #fcf8eb; font-size: .6rem!important; padding: 0 12px 11px!important; }
 .race-spark { position: absolute; color: #ffec96; text-shadow: 0 0 8px #f4bb2c; top: 8px; left: 22px; opacity: 0; font-size: 35px; pointer-events: none; }
 .regatta[data-response='correct'] [data-racer='0'] .race-spark,
-.regatta[data-response='recover'] [data-racer='0'] .race-spark { animation: race-reward .8s ease-out both; }
+.regatta[data-response='recover'] [data-racer='0'] .race-spark,
+.regatta[data-response='pass'] [data-racer='0'] .race-spark { animation: race-reward .8s ease-out both; }
 .regatta[data-response='error'] [data-racer='0'] .racer-smile { opacity: .25; }
 .regatta[data-response='error'] .race-message { background: #ffe4bc; color: #68401f; }
 .regatta-finished .boat-bob,.regatta-paused .boat-bob,.regatta-finished .racer-paddle,.regatta-paused .racer-paddle,.regatta-paused .regatta-ripples { animation-play-state: paused; }

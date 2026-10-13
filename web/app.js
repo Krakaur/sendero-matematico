@@ -1,4 +1,4 @@
-import {newRace,raceStats,raceLevel,competitionHTML} from "./race.js";
+import {newRace,raceStats,raceLevel,rivalEffort,competitionHTML} from "./race.js";
 import {RiverAudio} from "./race-audio.js";
 import {encryptBackup,decryptBackup,restoreSnapshot} from "./backup.js";
 import {renderFluency} from "./results.js";
@@ -64,20 +64,22 @@ let timerStart = null,
   installPrompt = null;
 const riverAudio = new RiverAudio();
 let reactionTimer = null;
+let passSoundTimer = null;
+let raceObservation = null;
 function syncRaceAudio() {
   riverAudio.river(!!state.sound && !!state.current?.race && location.hash === '#jugar' && timerStart !== null && !document.hidden, state.riverVolume ?? .2);
 }
-function raceReact(event) {
+function raceReact(event,detail) {
   const scene = main.querySelector('.regatta');
   if (!scene) return;
   clearTimeout(reactionTimer);
   scene.dataset.response = event;
-  const messages = {correct:'¡Buen impulso, Luma!',recover:'¡Eso es! Retomamos el rumbo',error:'Respira, mira la pista y vuelve a remar'};
+  const messages = {correct:'¡Buen impulso, Luma!',recover:'¡Eso es! Retomamos el rumbo',error:'Respira, mira la pista y vuelve a remar',pass:detail||'¡Adelantamiento!',start:'¡Al agua! Cada acierto da un impulso'};
   scene.querySelector('#race-message').textContent = messages[event] || 'Cada respuesta te lleva más lejos';
   reactionTimer = setTimeout(() => {
     delete scene.dataset.response;
     if (scene.isConnected) scene.querySelector('#race-message').textContent = 'Cada respuesta te lleva más lejos';
-  }, 1600);
+  }, event==='pass'?2200:1600);
 }
 function raceSettings() {
   return `<details class="race-settings"><summary>Sonido y movimiento</summary><label>Efectos<input id="effect-volume" type="range" min="0" max="100" value="${Math.round((state.effectsVolume ?? .65)*100)}"></label><label>Río<input id="river-volume" type="range" min="0" max="100" value="${Math.round((state.riverVolume ?? .2)*100)}"></label><button id="reduce-motion" class="soft-button" aria-pressed="${!!state.reducedMotion}">Reducir movimiento</button><p>Activa ♪ para escuchar. También puedes jugar en silencio.</p></details>`;
@@ -98,10 +100,22 @@ function bindRaceSettings() {
 let raceMove = null;
 function raceElapsed(){return (state.current?.race?.elapsedMs||0)+(timerStart===null?0:Math.min(60000,Math.max(0,performance.now()-timerStart)));}
 function updateRace(){
- if(!state.current?.race||document.hidden||location.hash!=='#jugar')return;
- main.querySelector('.regatta')?.classList.toggle('regatta-paused',timerStart===null);
+ if(!state.current?.race||document.hidden||location.hash!=='#jugar'){raceObservation=null;return;}
+ const scene=main.querySelector('.regatta');
+ if(!scene)return;
+ scene.classList.toggle('regatta-paused',timerStart===null);
  const ms=raceElapsed(),r=raceStats(state.current,ms);
- document.querySelectorAll('[data-racer]').forEach(el=>{const i=Number(el.dataset.racer);el.style.left=100*(i?r.bots[i-1]:r.progress)+'%';});
+ scene.querySelectorAll('[data-racer]').forEach(el=>{const i=Number(el.dataset.racer);el.style.left=100*(i?r.bots[i-1]:r.progress)+'%';if(i)el.dataset.effort=rivalEffort(state.current.race,i,ms);});
+ if(raceObservation?.scene===scene && r.rank<raceObservation.rank && r.progress>raceObservation.progress){
+   const gained=raceObservation.rank-r.rank;
+   const message=r.rank===1?'¡Vas en cabeza!':`¡Adelantas ${gained===1?'un puesto':gained+' puestos'}!`;
+   raceReact('pass',message);
+   announce(message);
+   clearTimeout(passSoundTimer);
+   const id=state.current.id;
+   passSoundTimer=setTimeout(()=>{if(state.current?.id===id && timerStart!==null && !document.hidden && location.hash==='#jugar')riverAudio.play('pass',state.sound,state.effectsVolume??.65);},240);
+ }
+ raceObservation={scene,rank:r.rank,progress:r.progress};
  if($('#race-position'))$('#race-position').textContent=r.rank+' / 4';
  if($('#race-clock'))$('#race-clock').textContent=(ms/1000).toFixed(1)+' s';
 }
@@ -631,7 +645,7 @@ function begin(trail) {
   if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race=newRace(state.sessions,trail,a.level);
   save();
   goGame();
-  if (state.current?.race) riverAudio.play('start',state.sound,state.effectsVolume ?? .65);
+  if (state.current?.race) {riverAudio.play('start',state.sound,state.effectsVolume ?? .65);raceReact('start');}
 }
 function answer(n) {
   const s = state.current;
@@ -882,7 +896,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-regatta-candidate6`);
+    const cache = await caches.open(`sendero-${VERSION}-regatta-v2-release`);
     const files = [
       "./index.html",
       "./app.js",

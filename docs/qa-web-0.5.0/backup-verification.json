@@ -1,0 +1,164 @@
+{
+  "source_commit": "d344d0c130e86088d65f358261f62f8b62d1b494",
+  "captured_utc": "2026-10-13T18:19:04.122984+00:00",
+  "archive_sha256": "7314e20ef11456b384981103df01afd7a9df865362282ab06dd5de8a7e8cbbce",
+  "files": [
+    {
+      "file": "actualizar.html",
+      "bytes": 1084,
+      "sha256": "a763f25c92624a44e54688f62c582f329242647185ac64bc75c03a1d9425be4c",
+      "matches_branch": true
+    },
+    {
+      "file": "app.js",
+      "bytes": 62888,
+      "sha256": "52e0b567e1da8798bf6485dbbd95f00623c619d0e399a1ec4de14c8ec48f014b",
+      "matches_branch": true
+    },
+    {
+      "file": "backup.js",
+      "bytes": 4950,
+      "sha256": "028ad99a7dcf3a90038b6850e53248ab03627f1ec0cbdca2ba2a554bb0585be0",
+      "matches_branch": true
+    },
+    {
+      "file": "bank-data.js",
+      "bytes": 2956847,
+      "sha256": "443e858a422e7c76acfc4a5285b8a06899f2fea11025da19a1b9f1fc0b473182",
+      "matches_branch": true
+    },
+    {
+      "file": "bank-extra.js",
+      "bytes": 197808,
+      "sha256": "0a768a040083313fb4600152d073bc2037e13386b45f02f6d9091c1cf59d5b84",
+      "matches_branch": true
+    },
+    {
+      "file": "bank.js",
+      "bytes": 2760,
+      "sha256": "a11772f37b1135afa72db3f4510247da86842b733bf413c54dc6c19a9138de1a",
+      "matches_branch": true
+    },
+    {
+      "file": "classroom.js",
+      "bytes": 3267,
+      "sha256": "87ef28bf16989e15922d4f8d243caffb58750f001dbb4d6836e9c63fa3f3b86c",
+      "matches_branch": true
+    },
+    {
+      "file": "core.js",
+      "bytes": 7459,
+      "sha256": "ad131d6137b006df6f8de4fd4378d85ded0666f423a35af3587476ce0063dd23",
+      "matches_branch": true
+    },
+    {
+      "file": "docentes.html",
+      "bytes": 3556,
+      "sha256": "faf88a7cb694306f457208237c14984967ecde435db4b3718427e97109812c8e",
+      "matches_branch": true
+    },
+    {
+      "file": "fluency.js",
+      "bytes": 873,
+      "sha256": "b0cb0c5d7945410b0f0af09ca74fdf3bb064b61ed10434f63164dc47ddfcb1f5",
+      "matches_branch": true
+    },
+    {
+      "file": "icon-192.png",
+      "bytes": 5526,
+      "sha256": "716f9db3e48dc10cc3bbcae501bffbec6430d2339b4e37ef8319d4625b2f4631",
+      "matches_branch": true
+    },
+    {
+      "file": "icon-512.png",
+      "bytes": 20357,
+      "sha256": "94f57012ece08b276048cb962220234e1764584f7674391898ba626b7f525008",
+      "matches_branch": true
+    },
+    {
+      "file": "icon.svg",
+      "bytes": 351,
+      "sha256": "1fb018a3ba24fba6960d0e403ec44a5439a1740596173048f38349029f937749",
+      "matches_branch": true
+    },
+    {
+      "file": "index.html",
+      "bytes": 4054,
+      "sha256": "031230b621d559ac36936e859a6b3ae36255aa0fc3ab4a72be00558394411a58",
+      "matches_branch": true
+    },
+    {
+      "file": "landscape.svg",
+      "bytes": 2749,
+      "sha256": "165214ddc7f9d00a36fd5f1fb6e4a66444ba96b9dcb659bdbe6d1327bceb5467",
+      "matches_branch": true
+    },
+    {
+      "file": "manifest.webmanifest",
+      "bytes": 368,
+      "sha256": "ae0dfce02d00d454fa3eb4850c10f975171803c45530face40b8f17e46274dd3",
+      "matches_branch": true
+    },
+    {
+      "file": "narration.js",
+      "bytes": 524,
+      "sha256": "33bb8bc516d836965792e259dbd891fb3a46aa554d46d4d2671a188101d943c6",
+      "matches_branch": true
+    },
+    {
+      "file": "practice.js",
+      "bytes": 1184,
+      "sha256": "17f02388386d5381fbaa7744105f13add2d3a79e37c35c45dc7f464a10a8ad42",
+      "matches_branch": true
+    },
+    {
+      "file": "profiles.js",
+      "bytes": 3685,
+      "sha256": "979b4195a65faa2539192e346cde30fc4f9385013f35c5217bc0092080ec5926",
+      "matches_branch": true
+    },
+    {
+      "file": "race.js",
+      "bytes": 3226,
+      "sha256": "61b0b016cba95a1d41f9391e9768e5a7212fec1f474e25761d7cef87f2c8445d",
+      "matches_branch": true
+    },
+    {
+      "file": "results.js",
+      "bytes": 3606,
+      "sha256": "ce84a8bb1873f5fc5fdf0aa7cfeb02e552c9d99ee66990aa4def11d5908c21ba",
+      "matches_branch": true
+    },
+    {
+      "file": "sitemap.xml",
+      "bytes": 256,
+      "sha256": "20a90de9b3ec6504e42457d35994cc25807d76ff2fbd99787328668bb2ac9044",
+      "matches_branch": true
+    },
+    {
+      "file": "social.png",
+      "bytes": 70180,
+      "sha256": "2937311520ff9ecdedf2638ad12e46aaae28e6fdd4095844f744469c6c8d334a",
+      "matches_branch": true
+    },
+    {
+      "file": "style.css",
+      "bytes": 34547,
+      "sha256": "e33a4ef03f82537720f83d95cf84eae0d16123caaa3e6e7bd11c941d82ec2a26",
+      "matches_branch": true
+    },
+    {
+      "file": "sw.js",
+      "bytes": 1866,
+      "sha256": "8b1cc64526280bae8e1d54cb459ec78bbe3e02e77593c6e2b452a0ab0af19034",
+      "matches_branch": true
+    },
+    {
+      "file": "update.js",
+      "bytes": 1823,
+      "sha256": "c5df13270e14a727eef68a447e9ff00e201e79481d4f7455af482b6f12a02e39",
+      "matches_branch": true
+    }
+  ],
+  "all_files_match_branch": true
+}

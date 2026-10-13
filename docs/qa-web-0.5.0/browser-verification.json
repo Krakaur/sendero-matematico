@@ -1,0 +1,345 @@
+{
+  "version": "0.5.0",
+  "checked_utc": "2026-10-13T18:32:35.067484+00:00",
+  "tests": {
+    "passed": 35,
+    "failed": 0
+  },
+  "synthetic_data": true,
+  "results": {
+    "race": {
+      "version": "0.5.0",
+      "seed": 3190295310,
+      "completed": true,
+      "scenePersisted": 7,
+      "initialCorrect": 7,
+      "rivalsUnchanged": true,
+      "positions": [
+        "3 / 4",
+        "3 / 4",
+        "4 / 4",
+        "4 / 4",
+        "4 / 4",
+        "4 / 4",
+        "3 / 4"
+      ],
+      "sounds": [
+        "correct",
+        "start",
+        "correct",
+        "pass",
+        "correct",
+        "pass",
+        "error",
+        "recover",
+        "correct",
+        "correct",
+        "correct",
+        "correct",
+        "pass",
+        "finish"
+      ],
+      "passes": [
+        "¡Adelantas un puesto!"
+      ],
+      "errors": []
+    },
+    "settings": {
+      "mobile": {
+        "width": 390,
+        "scrollWidth": 375,
+        "buttons": [
+          {
+            "x": 26.80000114440918,
+            "width": 74.4000015258789,
+            "top": 622.4625244140625,
+            "bottom": 676.4625244140625
+          },
+          {
+            "x": 109.20000457763672,
+            "width": 74.4000015258789,
+            "top": 622.4625244140625,
+            "bottom": 676.4625244140625
+          },
+          {
+            "x": 191.60000610351562,
+            "width": 74.4000015258789,
+            "top": 622.4625244140625,
+            "bottom": 676.4625244140625
+          },
+          {
+            "x": 274,
+            "width": 74.4000015258789,
+            "top": 622.4625244140625,
+            "bottom": 676.4625244140625
+          }
+        ]
+      },
+      "offlineReloadAndAnswer": true,
+      "profileAndPendingRace": true,
+      "volumePersistence": true,
+      "mutePersistence": true,
+      "reducedMotion": true,
+      "pauseTimeExcluded": true
+    },
+    "layouts": {
+      "layouts": [
+        {
+          "viewport": [
+            1280,
+            800
+          ],
+          "scrollWidth": 1265,
+          "answers": [
+            {
+              "text": "0",
+              "x": 806.7750244140625,
+              "right": 989.1750335693359,
+              "bottom": 432.20001220703125
+            },
+            {
+              "text": "3",
+              "x": 1001.1749877929688,
+              "right": 1183.5874938964844,
+              "bottom": 432.20001220703125
+            },
+            {
+              "text": "1",
+              "x": 806.7750244140625,
+              "right": 989.1750335693359,
+              "bottom": 516.2000122070312
+            },
+            {
+              "text": "2",
+              "x": 1001.1749877929688,
+              "right": 1183.5874938964844,
+              "bottom": 516.2000122070312
+            }
+          ],
+          "equation": {
+            "x": 806.7750244140625,
+            "y": 263.0874938964844,
+            "width": 376.8125,
+            "height": 69.11250305175781,
+            "top": 263.0874938964844,
+            "right": 1183.5875244140625,
+            "bottom": 332.1999969482422,
+            "left": 806.7750244140625
+          },
+          "position": {
+            "x": 85.20000457763672,
+            "y": 653.7125244140625,
+            "width": 34.8125,
+            "height": 24,
+            "top": 653.7125244140625,
+            "right": 120.01250457763672,
+            "bottom": 677.7125244140625,
+            "left": 85.20000457763672
+          }
+        },
+        {
+          "viewport": [
+            390,
+            844
+          ],
+          "scrollWidth": 375,
+          "answers": [
+            {
+              "text": "0",
+              "x": 26.80000114440918,
+              "right": 101.20000267028809,
+              "bottom": 676.4625244140625
+            },
+            {
+              "text": "3",
+              "x": 109.20000457763672,
+              "right": 183.60000610351562,
+              "bottom": 676.4625244140625
+            },
+            {
+              "text": "1",
+              "x": 191.60000610351562,
+              "right": 266.00000762939453,
+              "bottom": 676.4625244140625
+            },
+            {
+              "text": "2",
+              "x": 274,
+              "right": 348.4000015258789,
+              "bottom": 676.4625244140625
+            }
+          ],
+          "equation": {
+            "x": 26.80000114440918,
+            "y": 556.7125244140625,
+            "width": 321.6000061035156,
+            "height": 53.75,
+            "top": 556.7125244140625,
+            "right": 348.4000072479248,
+            "bottom": 610.4625244140625,
+            "left": 26.80000114440918
+          },
+          "position": {
+            "x": 30.80000114440918,
+            "y": 451.51251220703125,
+            "width": 27.850000381469727,
+            "height": 19.200000762939453,
+            "top": 451.51251220703125,
+            "right": 58.650001525878906,
+            "bottom": 470.7125129699707,
+            "left": 30.80000114440918
+          }
+        },
+        {
+          "viewport": [
+            360,
+            640
+          ],
+          "scrollWidth": 345,
+          "answers": [
+            {
+              "text": "0",
+              "x": 24.80000114440918,
+              "right": 92.60000419616699,
+              "bottom": 581.1500244140625
+            },
+            {
+              "text": "3",
+              "x": 100.5999984741211,
+              "right": 168.4000015258789,
+              "bottom": 581.1500244140625
+            },
+            {
+              "text": "1",
+              "x": 176.40000915527344,
+              "right": 244.20001220703125,
+              "bottom": 581.1500244140625
+            },
+            {
+              "text": "2",
+              "x": 252.1999969482422,
+              "right": 320,
+              "bottom": 581.1500244140625
+            }
+          ],
+          "equation": {
+            "x": 24.80000114440918,
+            "y": 482.0375061035156,
+            "width": 295.20001220703125,
+            "height": 45.11249923706055,
+            "top": 482.0375061035156,
+            "right": 320.00001335144043,
+            "bottom": 527.1500053405762,
+            "left": 24.80000114440918
+          },
+          "position": {
+            "x": 30.80000114440918,
+            "y": 388.8000183105469,
+            "width": 27.850000381469727,
+            "height": 19.200000762939453,
+            "top": 388.8000183105469,
+            "right": 58.650001525878906,
+            "bottom": 408.0000190734863,
+            "left": 30.80000114440918
+          }
+        },
+        {
+          "viewport": [
+            854,
+            480
+          ],
+          "scrollWidth": 839,
+          "answers": [
+            {
+              "text": "0",
+              "x": 509.1625061035156,
+              "right": 652.7750091552734,
+              "bottom": 263.5124969482422
+            },
+            {
+              "text": "3",
+              "x": 660.7750244140625,
+              "right": 804.3875274658203,
+              "bottom": 263.5124969482422
+            },
+            {
+              "text": "1",
+              "x": 509.1625061035156,
+              "right": 652.7750091552734,
+              "bottom": 317.51251220703125
+            },
+            {
+              "text": "2",
+              "x": 660.7750244140625,
+              "right": 804.3875274658203,
+              "bottom": 317.51251220703125
+            }
+          ],
+          "equation": {
+            "x": 509.1625061035156,
+            "y": 162.40000915527344,
+            "width": 295.2250061035156,
+            "height": 45.11249923706055,
+            "top": 162.40000915527344,
+            "right": 804.3875122070312,
+            "bottom": 207.51250839233398,
+            "left": 509.1625061035156
+          },
+          "position": {
+            "x": 40.79999923706055,
+            "y": 366.0874938964844,
+            "width": 29.600000381469727,
+            "height": 20.399999618530273,
+            "top": 366.0874938964844,
+            "right": 70.39999961853027,
+            "bottom": 386.48749351501465,
+            "left": 40.79999923706055
+          }
+        }
+      ],
+      "allAnswersAndPositionVisible": true,
+      "physicalDevice": false
+    },
+    "audio": {
+      "file": "output/playwright/ciclo-web-2-20261013/motivos-del-juego.wav",
+      "events": [
+        "start",
+        "correct",
+        "error",
+        "recover",
+        "pass",
+        "finish"
+      ],
+      "peak": 0.08970567584037781,
+      "durationSeconds": 12,
+      "renderer": "Production playMotif in OfflineAudioContext",
+      "zeroVolumeSilent": true,
+      "disabledCreatesNoContext": true,
+      "muteStopsEffectsAndRiver": true,
+      "perceptualAssessment": "pending"
+    },
+    "modes": {
+      "calmCompleted": true,
+      "reasoningAdvanced": true,
+      "noCompetitionInOtherModes": true,
+      "errors": []
+    }
+  },
+  "sha256_note": "Hashes of UTF-8 source bytes with CRLF normalized to LF, matching Git text normalization.",
+  "source_sha256_lf": {
+    "app.js": "e3f20c9b1f7401f2cc527db375155706154f51c37493cea8a9a3d99eed950cc7",
+    "core.js": "bfce5bb07202bbaa0da7d3d4980ff25acb0feeb264571acaa255afb8b5c21119",
+    "race.js": "12fd87dfbb95ff9017a836868deb58d1e920f8beef1c122763f876e63259b3d2",
+    "race-art.js": "c4fdf018d8b9fd61477bd3e1389972fbdc41097fb2c8154c8f79ac1363f62719",
+    "race-audio.js": "f71b6f2190c1af43a9f64205b26b06e0d93aead5b1e4690de83c92e00fb12d88",
+    "regatta.css": "c48867c37c92bae3ce137bed6971378b01ac78f85129b57f0dd6c1c45f9b87cc",
+    "sw.js": "a73710a2d632b6b28d6a7a6a40ba9b5003211dc4742394813746ac84bb2ccd90",
+    "index.html": "c250f01940818c746b87e038adf2497bb31e59f17362fba7551eb393eb10bffe"
+  },
+  "limits": [
+    "No child study",
+    "No perceptual ratings",
+    "No physical device test",
+    "No measured frame timing or physical input/audio latency"
+  ]
+}
