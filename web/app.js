@@ -1,5 +1,6 @@
 import {newRace,raceStats,raceLevel,rivalEffort,competitionHTML} from "./race.js";
 import {RiverAudio} from "./race-audio.js";
+import {raceFinishHTML} from "./race-finish.js";
 import {encryptBackup,decryptBackup,restoreSnapshot} from "./backup.js";
 import {renderFluency} from "./results.js";
 import {narrateLocally} from "./narration.js";
@@ -66,6 +67,7 @@ const riverAudio = new RiverAudio();
 let reactionTimer = null;
 let passSoundTimer = null;
 let raceObservation = null;
+let arrivalTimer = null;
 function syncRaceAudio() {
   riverAudio.river(!!state.sound && !!state.current?.race && location.hash === '#jugar' && timerStart !== null && !document.hidden, state.riverVolume ?? .2);
 }
@@ -515,9 +517,11 @@ function finished() {
   const s = state.sessions.at(-1);
   if (!s) return home();
   const r = summarize([s]);
+  if(s.race)return raceFinishHTML(s,esc,activeProfile.name,state.adaptive[s.trail]?.level||s.race.level,TRAILS[s.trail].short,statsHTML(r)+fluencyHTML([s]));
   return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ocho ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">Otra aventura ↗</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
 }
 function render(persistState = true) {
+  clearTimeout(arrivalTimer);
   globalThis.speechSynthesis?.cancel();
   stopTimer();
   // Older versions saved a solved arithmetic item before the extra Next tap.
@@ -532,6 +536,7 @@ function render(persistState = true) {
   $('#profile-switch').textContent = activeProfile ? activeProfile.name + ' · Cambiar' : 'Entrar / Crear perfil';
   $('#profile-switch').setAttribute('aria-label', activeProfile ? 'Perfil activo: '+activeProfile.name+'. Cambiar perfil' : 'Entrar o crear perfil');
   document.body.classList.toggle('arcade-playing', route === 'jugar' && !!state.current && state.current.trail !== 'razonar');
+  document.body.classList.toggle('regatta-results',route==='logro' && !!state.sessions.at(-1)?.race);
   const content = (
     {
       perfiles: profilesScreen,
@@ -679,6 +684,33 @@ function answer(n) {
     );
   }
 }
+function showRaceArrival(session) {
+  const scene=main.querySelector('.regatta');
+  const reduced=state.reducedMotion||matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden;
+  const complete=()=>{
+    if(location.hash!=='#logro'||state.sessions.at(-1)?.id!==session.id)return;
+    riverAudio.play('finish',state.sound,state.effectsVolume??.65);
+    render();
+    $('#finish-title')?.focus({preventScroll:true});
+    window.scrollTo(0,0);
+    announce(`¡Llegaste a la meta! Posición ${raceStats(session).rank} de cuatro. Puedes volver al río o elegir otro camino.`);
+  };
+  // Persist completion and its route before the optional animation, so reloading
+  // cannot repeat the last answer or record another session.
+  history.replaceState(null,'','#logro');
+  if(!scene||reduced){complete();return;}
+  clearTimeout(reactionTimer);clearTimeout(passSoundTimer);
+  scene.classList.add('regatta-arriving');
+  scene.dataset.response='finish';
+  scene.querySelector('[data-racer="0"]').style.left='100%';
+  scene.querySelector('#race-message').textContent='¡Ocho retos completados!';
+  scene.querySelector('#race-position').textContent=raceStats(session).rank+' / 4';
+  scene.querySelector('#race-clock').textContent=(session.race.elapsedMs/1000).toFixed(1)+' s';
+  main.querySelector('.question-card').innerHTML='<div class="arrival-message"><span aria-hidden="true">✦</span><h1>¡Meta!</h1><p>Tu aventura está guardada.</p></div>';
+  $('#pause').disabled=true;
+  riverAudio.play('correct',state.sound,state.effectsVolume??.65);
+  arrivalTimer=setTimeout(complete,650);
+}
 function next() {
   const s = state.current;
   if (!s || !s.questions[s.index].done) return;
@@ -692,8 +724,8 @@ function next() {
     riverAudio.river(false);
     save();
     syncClassroom();
-    location.hash = "#logro";
-    riverAudio.play('finish',state.sound,state.effectsVolume ?? .65);
+    if(s.race)showRaceArrival(s);
+    else {location.hash = "#logro";riverAudio.play('finish',state.sound,state.effectsVolume ?? .65);}
     return;
   }
   s.index++;
@@ -896,13 +928,14 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-regatta-v2-release`);
+    const cache = await caches.open(`sendero-${VERSION}-finish-release`);
     const files = [
       "./index.html",
       "./app.js",
       "./core.js",
       "./style.css",
       "./regatta.css", "./race.js", "./race-art.js", "./race-audio.js",
+      "./race-finish.js",
       "./landscape.svg",
       "./icon.svg",
       "./fluency.js",
