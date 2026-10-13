@@ -1,4 +1,5 @@
-import {newRace,raceStats,raceLevel,competitionHTML} from "./race.js";
+import {newRace,raceStats,raceLevel,rivalEffort,competitionHTML} from "./race.js";
+import {RiverAudio} from "./race-audio.js";
 import {encryptBackup,decryptBackup,restoreSnapshot} from "./backup.js";
 import {renderFluency} from "./results.js";
 import {narrateLocally} from "./narration.js";
@@ -60,14 +61,61 @@ try {
 } catch { activeProfile=null;KEY=null;storageOK=false; }
 let timerStart = null,
   idleTimer = null,
-  audioContext = null,
   installPrompt = null;
+const riverAudio = new RiverAudio();
+let reactionTimer = null;
+let passSoundTimer = null;
+let raceObservation = null;
+function syncRaceAudio() {
+  riverAudio.river(!!state.sound && !!state.current?.race && location.hash === '#jugar' && timerStart !== null && !document.hidden, state.riverVolume ?? .2);
+}
+function raceReact(event,detail) {
+  const scene = main.querySelector('.regatta');
+  if (!scene) return;
+  clearTimeout(reactionTimer);
+  scene.dataset.response = event;
+  const messages = {correct:'¡Buen impulso, Luma!',recover:'¡Eso es! Retomamos el rumbo',error:'Respira, mira la pista y vuelve a remar',pass:detail||'¡Adelantamiento!',start:'¡Al agua! Cada acierto da un impulso'};
+  scene.querySelector('#race-message').textContent = messages[event] || 'Cada respuesta te lleva más lejos';
+  reactionTimer = setTimeout(() => {
+    delete scene.dataset.response;
+    if (scene.isConnected) scene.querySelector('#race-message').textContent = 'Cada respuesta te lleva más lejos';
+  }, event==='pass'?2200:1600);
+}
+function raceSettings() {
+  return `<details class="race-settings"><summary>Sonido y movimiento</summary><label>Efectos<input id="effect-volume" type="range" min="0" max="100" value="${Math.round((state.effectsVolume ?? .65)*100)}"></label><label>Río<input id="river-volume" type="range" min="0" max="100" value="${Math.round((state.riverVolume ?? .2)*100)}"></label><button id="reduce-motion" class="soft-button" aria-pressed="${!!state.reducedMotion}">Reducir movimiento</button><p>Activa ♪ para escuchar. También puedes jugar en silencio.</p></details>`;
+}
+function bindRaceSettings() {
+  document.body.classList.toggle('reduced-motion', !!state.reducedMotion);
+  for (const [id,key] of [['effect-volume','effectsVolume'],['river-volume','riverVolume']]) {
+    document.getElementById(id)?.addEventListener('input', e => {
+      state[key] = Math.max(0, Math.min(1, Number(e.target.value)/100)); save(); syncRaceAudio();
+    });
+  }
+  document.getElementById('reduce-motion')?.addEventListener('click', e => {
+    state.reducedMotion = !state.reducedMotion;
+    e.currentTarget.setAttribute('aria-pressed', String(state.reducedMotion));
+    document.body.classList.toggle('reduced-motion', state.reducedMotion); save();
+  });
+}
 let raceMove = null;
 function raceElapsed(){return (state.current?.race?.elapsedMs||0)+(timerStart===null?0:Math.min(60000,Math.max(0,performance.now()-timerStart)));}
 function updateRace(){
- if(!state.current?.race||document.hidden||location.hash!=='#jugar')return;
+ if(!state.current?.race||document.hidden||location.hash!=='#jugar'){raceObservation=null;return;}
+ const scene=main.querySelector('.regatta');
+ if(!scene)return;
+ scene.classList.toggle('regatta-paused',timerStart===null);
  const ms=raceElapsed(),r=raceStats(state.current,ms);
- document.querySelectorAll('[data-racer]').forEach(el=>{const i=Number(el.dataset.racer);el.style.left=100*(i?r.bots[i-1]:r.progress)+'%';});
+ scene.querySelectorAll('[data-racer]').forEach(el=>{const i=Number(el.dataset.racer);el.style.left=100*(i?r.bots[i-1]:r.progress)+'%';if(i)el.dataset.effort=rivalEffort(state.current.race,i,ms);});
+ if(raceObservation?.scene===scene && r.rank<raceObservation.rank && r.progress>raceObservation.progress){
+   const gained=raceObservation.rank-r.rank;
+   const message=r.rank===1?'¡Vas en cabeza!':`¡Adelantas ${gained===1?'un puesto':gained+' puestos'}!`;
+   raceReact('pass',message);
+   announce(message);
+   clearTimeout(passSoundTimer);
+   const id=state.current.id;
+   passSoundTimer=setTimeout(()=>{if(state.current?.id===id && timerStart!==null && !document.hidden && location.hash==='#jugar')riverAudio.play('pass',state.sound,state.effectsVolume??.65);},240);
+ }
+ raceObservation={scene,rank:r.rank,progress:r.progress};
  if($('#race-position'))$('#race-position').textContent=r.rank+' / 4';
  if($('#race-clock'))$('#race-clock').textContent=(ms/1000).toFixed(1)+' s';
 }
@@ -376,13 +424,15 @@ function stopTimer(interrupted = false) {
   }
   timerStart = null;
   clearTimeout(idleTimer);
+  // Measuring a response must not restart the river between questions.
+  if (interrupted || location.hash !== '#jugar') syncRaceAudio();
 }
 function startTimer() {
   if(!activeProfile) return;
   if (document.hidden || !state.current || location.hash !== "#jugar") return;
   const q = state.current.questions[state.current.index];
   if (q?.done) return;
-  if (timerStart === null) timerStart = performance.now();
+  if (timerStart === null) { timerStart = performance.now(); syncRaceAudio(); }
   clearTimeout(idleTimer);
   idleTimer = setTimeout(() => {
     stopTimer(true);
@@ -405,7 +455,7 @@ function game() {
   const moved = raceMove?.id === s.id && raceMove.index === s.index;
   const from = moved ? s.index - 1 : s.index;
   raceMove = null;
-  return `<section class="game-shell arcade"><div class="game-top"><div><strong>${s.race?"Regata relámpago":"Exploración del río"}</strong><small>${t.short} · Nivel ${q.level} · Web ${VERSION}</small></div><button id="pause" class="soft-button">Pausar</button></div>
+  return `<section class="game-shell arcade ${s.race?'regatta-game':''}"><div class="game-top"><div><strong>${s.race?"La copa del río":"Exploración del río"}</strong><small>${t.short} · Nivel ${q.level}</small></div><button id="pause" class="soft-button">Pausar</button></div>
     <div class="race-hud"><div><span>Recorrido</span><strong>${s.index}<small> / 8</small></strong></div><div><span>Acierto inicial</span><strong>${answered.length ? Math.round(100 * initial / answered.length) + '<small>%</small>' : '—'}</strong></div><div title="Aciertos iniciales por minuto de respuesta del nivel actual; sin pistas ni interrupciones"><span>Aciertos/min · N${q.level}</span><strong>${f.n ? f.rate.toFixed(1) : '—'}</strong></div></div>
     ${s.race?competitionHTML(s,esc,activeProfile.name):raceHTML(from, s.index)}
     <div class="question-card"><div class="question-meta"><span>RETO ${s.index + 1} / 8</span><span>${levelName(q.level)}</span></div><h1 class="equation ${q.solutionShown ? 'sr-only' : ''}" tabindex="-1" aria-label="${q.a} ${s.trail === 'suma' ? 'más' : s.trail === 'resta' ? 'menos' : 'por'} ${q.b}, ¿cuánto es?">${q.a} ${t.symbol} ${q.b} <span class="unknown">= ?</span></h1>${q.solutionShown ? solutionHTML(s, q) : ''}
@@ -482,7 +532,7 @@ function render(persistState = true) {
   $('#profile-switch').textContent = activeProfile ? activeProfile.name + ' · Cambiar' : 'Entrar / Crear perfil';
   $('#profile-switch').setAttribute('aria-label', activeProfile ? 'Perfil activo: '+activeProfile.name+'. Cambiar perfil' : 'Entrar o crear perfil');
   document.body.classList.toggle('arcade-playing', route === 'jugar' && !!state.current && state.current.trail !== 'razonar');
-  main.innerHTML = (
+  const content = (
     {
       perfiles: profilesScreen,
       explorar: home,
@@ -493,6 +543,16 @@ function render(persistState = true) {
       logro: finished,
     }[route] || home
   )();
+  const previousScene = main.querySelector('.regatta');
+  if (route === 'jugar' && state.current?.race && previousScene?.dataset.raceId === state.current.id) {
+    // Keep the live scene in the document: reparenting it would restart CSS
+    // animation and cancel the player's transition on every answer.
+    const updated = document.createElement('template');
+    updated.innerHTML = content;
+    for (const selector of ['.game-top','.race-hud','.question-card','.game-note']) {
+      main.querySelector(selector).replaceWith(updated.content.querySelector(selector));
+    }
+  } else main.innerHTML = content;
   document.querySelectorAll("[data-nav]").forEach((a) => {
     const active = a.dataset.nav === route;
     a.classList.toggle("active", active);
@@ -544,6 +604,7 @@ function render(persistState = true) {
   if(route==='docentes' && activeProfile) { main.insertAdjacentHTML('afterbegin',classroomHTML());bindClassroom(); main.firstElementChild.querySelectorAll('[data-trail]').forEach(b=>b.addEventListener('click',()=>begin(b.dataset.trail))); }
   if(route==='jugar' && state.current) {
     main.querySelector('.game-controls')?.insertAdjacentHTML('beforeend','<button id="read-problem" class="soft-button">Escuchar</button>');
+    if (state.current.race) main.querySelector('.question-card').insertAdjacentHTML('beforeend', raceSettings());
     $('#read-problem')?.addEventListener('click',()=>{
       const q=state.current.questions[state.current.index];stopTimer(true);save();
       const text=q.bankId?q.prompt:`${q.a} ${state.current.trail==='suma'?'más':state.current.trail==='resta'?'menos':'por'} ${q.b}. ¿Cuánto es?`;
@@ -555,7 +616,9 @@ function render(persistState = true) {
   $('#sound').setAttribute('aria-pressed',String(state.sound));
   $('#sound').setAttribute('aria-label',state.sound?'Desactivar sonidos':'Activar sonidos');
   bindProfiles();
+  bindRaceSettings();
   startTimer();
+  updateRace();
 }
 function goGame() {
   if (location.hash === "#jugar") render();
@@ -582,6 +645,7 @@ function begin(trail) {
   if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race=newRace(state.sessions,trail,a.level);
   save();
   goGame();
+  if (state.current?.race) {riverAudio.play('start',state.sound,state.effectsVolume ?? .65);raceReact('start');}
 }
 function answer(n) {
   const s = state.current;
@@ -593,8 +657,9 @@ function answer(n) {
   if (n === q.answer) {
     q.done = true;
     if(!s.race)s.adaptation = adapt(s.adaptation, q);
-    tone(true);
+    if (s.index !== 7 || q.bankId) tone(q.attempts.length > 1 ? 'recover' : 'correct');
   } else tone(false);
+  if (s.race) raceReact(n === q.answer ? q.attempts.length > 1 ? 'recover' : 'correct' : 'error');
   if (q.done && !q.bankId) {
     announce(`¡Correcto! ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}.`);
     next();
@@ -624,10 +689,11 @@ function next() {
     if(s.race)s.adaptation={level:raceLevel(s),streak:0,support:0};
     state.adaptive[s.trail] = { ...s.adaptation };
     state.current = null;
+    riverAudio.river(false);
     save();
     syncClassroom();
     location.hash = "#logro";
-    tone(true);
+    riverAudio.play('finish',state.sound,state.effectsVolume ?? .65);
     return;
   }
   s.index++;
@@ -748,21 +814,7 @@ async function importReports(event) {
     `${added} sesiones nuevas incorporadas. ${errors.join(" ")}`;
 }
 function tone(correct) {
-  if (!state.sound) return;
-  try {
-    audioContext ??= new (window.AudioContext || window.webkitAudioContext)();
-    audioContext.resume();
-    const osc = audioContext.createOscillator(),
-      g = audioContext.createGain();
-    osc.connect(g);
-    g.connect(audioContext.destination);
-    osc.type = "sine";
-    osc.frequency.value = correct ? 660 : 330;
-    g.gain.setValueAtTime(0.06, audioContext.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.18);
-    osc.start();
-    osc.stop(audioContext.currentTime + 0.2);
-  } catch {}
+  riverAudio.play(typeof correct === 'string' ? correct : correct ? 'correct' : 'error',state.sound,state.effectsVolume ?? .65);
 }
 $("#sound").setAttribute("aria-pressed", String(state.sound));
 $("#sound").setAttribute(
@@ -771,6 +823,7 @@ $("#sound").setAttribute(
 );
 $("#sound").addEventListener("click", () => {
   state.sound = !state.sound;
+  if (!state.sound) riverAudio.mute();
   $("#sound").setAttribute("aria-pressed", String(state.sound));
   $("#sound").setAttribute(
     "aria-label",
@@ -778,6 +831,7 @@ $("#sound").addEventListener("click", () => {
   );
   save();
   tone(true);
+  syncRaceAudio();
 });
 window.addEventListener("hashchange", () => {
   if(location.hash !== "#jugar") stopTimer(true);
@@ -842,12 +896,13 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-regatta-final`);
+    const cache = await caches.open(`sendero-${VERSION}-regatta-v2-release`);
     const files = [
       "./index.html",
       "./app.js",
       "./core.js",
       "./style.css",
+      "./regatta.css", "./race.js", "./race-art.js", "./race-audio.js",
       "./landscape.svg",
       "./icon.svg",
       "./fluency.js",
