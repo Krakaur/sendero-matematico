@@ -1,0 +1,209 @@
+{
+  "source_commit": "a835180a97815fc35b9e9d77d17e7e39bcddff23",
+  "deploy_commit": "cb6faacd5fb30f45b30cf72d622fa694f10d7772",
+  "verified_utc": "2026-10-13T19:04:01.296224+00:00",
+  "file_count": 30,
+  "all_files_match_source": true,
+  "files": [
+    {
+      "file": "actualizar.html",
+      "bytes": 1084,
+      "sha256": "a763f25c92624a44e54688f62c582f329242647185ac64bc75c03a1d9425be4c",
+      "matches_source": true
+    },
+    {
+      "file": "app.js",
+      "bytes": 69020,
+      "sha256": "4a8a0a409da0248a8a80b8b5311b632ffe179236fb6a96e828f461de16c3ac26",
+      "matches_source": true
+    },
+    {
+      "file": "backup.js",
+      "bytes": 4950,
+      "sha256": "028ad99a7dcf3a90038b6850e53248ab03627f1ec0cbdca2ba2a554bb0585be0",
+      "matches_source": true
+    },
+    {
+      "file": "bank-data.js",
+      "bytes": 2956847,
+      "sha256": "443e858a422e7c76acfc4a5285b8a06899f2fea11025da19a1b9f1fc0b473182",
+      "matches_source": true
+    },
+    {
+      "file": "bank-extra.js",
+      "bytes": 197808,
+      "sha256": "0a768a040083313fb4600152d073bc2037e13386b45f02f6d9091c1cf59d5b84",
+      "matches_source": true
+    },
+    {
+      "file": "bank.js",
+      "bytes": 2760,
+      "sha256": "a11772f37b1135afa72db3f4510247da86842b733bf413c54dc6c19a9138de1a",
+      "matches_source": true
+    },
+    {
+      "file": "classroom.js",
+      "bytes": 3267,
+      "sha256": "87ef28bf16989e15922d4f8d243caffb58750f001dbb4d6836e9c63fa3f3b86c",
+      "matches_source": true
+    },
+    {
+      "file": "core.js",
+      "bytes": 7459,
+      "sha256": "cf5a752da7738e6efeb90ea379d4a75677b040595b5ff69c455ada0c34979186",
+      "matches_source": true
+    },
+    {
+      "file": "docentes.html",
+      "bytes": 3556,
+      "sha256": "faf88a7cb694306f457208237c14984967ecde435db4b3718427e97109812c8e",
+      "matches_source": true
+    },
+    {
+      "file": "fluency.js",
+      "bytes": 873,
+      "sha256": "b0cb0c5d7945410b0f0af09ca74fdf3bb064b61ed10434f63164dc47ddfcb1f5",
+      "matches_source": true
+    },
+    {
+      "file": "icon-192.png",
+      "bytes": 5526,
+      "sha256": "716f9db3e48dc10cc3bbcae501bffbec6430d2339b4e37ef8319d4625b2f4631",
+      "matches_source": true
+    },
+    {
+      "file": "icon-512.png",
+      "bytes": 20357,
+      "sha256": "94f57012ece08b276048cb962220234e1764584f7674391898ba626b7f525008",
+      "matches_source": true
+    },
+    {
+      "file": "icon.svg",
+      "bytes": 351,
+      "sha256": "1fb018a3ba24fba6960d0e403ec44a5439a1740596173048f38349029f937749",
+      "matches_source": true
+    },
+    {
+      "file": "index.html",
+      "bytes": 4105,
+      "sha256": "c250f01940818c746b87e038adf2497bb31e59f17362fba7551eb393eb10bffe",
+      "matches_source": true
+    },
+    {
+      "file": "landscape.svg",
+      "bytes": 2749,
+      "sha256": "165214ddc7f9d00a36fd5f1fb6e4a66444ba96b9dcb659bdbe6d1327bceb5467",
+      "matches_source": true
+    },
+    {
+      "file": "manifest.webmanifest",
+      "bytes": 368,
+      "sha256": "ae0dfce02d00d454fa3eb4850c10f975171803c45530face40b8f17e46274dd3",
+      "matches_source": true
+    },
+    {
+      "file": "narration.js",
+      "bytes": 524,
+      "sha256": "33bb8bc516d836965792e259dbd891fb3a46aa554d46d4d2671a188101d943c6",
+      "matches_source": true
+    },
+    {
+      "file": "practice.js",
+      "bytes": 1184,
+      "sha256": "17f02388386d5381fbaa7744105f13add2d3a79e37c35c45dc7f464a10a8ad42",
+      "matches_source": true
+    },
+    {
+      "file": "profiles.js",
+      "bytes": 3685,
+      "sha256": "979b4195a65faa2539192e346cde30fc4f9385013f35c5217bc0092080ec5926",
+      "matches_source": true
+    },
+    {
+      "file": "race-art.js",
+      "bytes": 7389,
+      "sha256": "c4fdf018d8b9fd61477bd3e1389972fbdc41097fb2c8154c8f79ac1363f62719",
+      "matches_source": true
+    },
+    {
+      "file": "race-audio.js",
+      "bytes": 3637,
+      "sha256": "f71b6f2190c1af43a9f64205b26b06e0d93aead5b1e4690de83c92e00fb12d88",
+      "matches_source": true
+    },
+    {
+      "file": "race-finish.js",
+      "bytes": 4245,
+      "sha256": "fb2d6bb7d99bd83195d5b8276335448f610237cca8f4625faef3204915159545",
+      "matches_source": true
+    },
+    {
+      "file": "race.js",
+      "bytes": 4927,
+      "sha256": "12fd87dfbb95ff9017a836868deb58d1e920f8beef1c122763f876e63259b3d2",
+      "matches_source": true
+    },
+    {
+      "file": "regatta.css",
+      "bytes": 24772,
+      "sha256": "9318bbc43d60cb3816160fe06575c8accfc506bea136c7403ee0a930ca271af1",
+      "matches_source": true
+    },
+    {
+      "file": "results.js",
+      "bytes": 3606,
+      "sha256": "ce84a8bb1873f5fc5fdf0aa7cfeb02e552c9d99ee66990aa4def11d5908c21ba",
+      "matches_source": true
+    },
+    {
+      "file": "sitemap.xml",
+      "bytes": 256,
+      "sha256": "20a90de9b3ec6504e42457d35994cc25807d76ff2fbd99787328668bb2ac9044",
+      "matches_source": true
+    },
+    {
+      "file": "social.png",
+      "bytes": 70180,
+      "sha256": "2937311520ff9ecdedf2638ad12e46aaae28e6fdd4095844f744469c6c8d334a",
+      "matches_source": true
+    },
+    {
+      "file": "style.css",
+      "bytes": 34547,
+      "sha256": "e33a4ef03f82537720f83d95cf84eae0d16123caaa3e6e7bd11c941d82ec2a26",
+      "matches_source": true
+    },
+    {
+      "file": "sw.js",
+      "bytes": 1944,
+      "sha256": "882ad9252cb9fce6f91b2803979449190e88eb4e274a62412553fdfe07b51d49",
+      "matches_source": true
+    },
+    {
+      "file": "update.js",
+      "bytes": 1823,
+      "sha256": "c5df13270e14a727eef68a447e9ff00e201e79481d4f7455af482b6f12a02e39",
+      "matches_source": true
+    }
+  ],
+  "version": "0.5.1",
+  "public_url": "https://krakaur.github.io/sendero-matematico/",
+  "pull_request": "https://github.com/Krakaur/sendero-matematico/pull/2",
+  "pages_run": 38451610176,
+  "pages_conclusion": "success",
+  "backup_manifest": "qa-private/public-web-backup-20261013-1845/manifest.json",
+  "public_upgrade": {
+    "sourceVersion": "0.5.0",
+    "version": "0.5.1",
+    "profilePreserved": true,
+    "historyPreserved": true,
+    "retainedCompletedSessions": 1,
+    "adaptationPreserved": true,
+    "pendingRaceAndRivalsPreserved": true,
+    "attemptsAndFirstResponsePreserved": true,
+    "previousRaceCompletedExactlyOnce": true,
+    "replayCreatesNewSession": true,
+    "publicOfflineReloadAndAnswer": true,
+    "errors": []
+  }
+}

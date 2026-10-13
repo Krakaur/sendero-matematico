@@ -1,6 +1,6 @@
 # Web 0.5.1: llegada y repetición
 
-13 de octubre de 2026. Tercer incremento del ciclo web, centrado en completar la carrera y facilitar una nueva partida. Estado previo al despliegue: candidata comprobada localmente; la publicación efectiva se registrará en `qa-web-0.5.1/publication.json`. Los paquetes Android y Windows permanecen en 0.4.0.
+13 de octubre de 2026. Tercer incremento del ciclo web, centrado en completar la carrera y facilitar una nueva partida. Publicado en GitHub Pages mediante la ejecución satisfactoria `38451610176`. Los 30 archivos públicos coinciden byte a byte con la fuente Git. La actualización desde 0.5.0 conservó los datos y permitió continuar offline; evidencia en `qa-web-0.5.1/publication.json`. Los paquetes Android y Windows permanecen en 0.4.0.
 
 ## Cambio observable
 
@@ -24,7 +24,7 @@ Evidencia compacta: `qa-web-0.5.1/browser-verification.json`, capturas y registr
 
 Antes de modificar la entrega se preservó la rama publicada `ab3f8861baebb651884079a878d082365cba0246` en `qa-private/public-web-backup-20261013-1845/`: ZIP, 29 archivos obtenidos por HTTP, manifiesto de hashes y `RESTORE.txt`. Los 29 coincidieron byte a byte con los objetos de Git. La restauración se realiza mediante un nuevo commit de `gh-pages`, sin reescribir su historia. Los perfiles locales de cada navegador no forman parte de ese respaldo del sitio.
 
-Se preparó un navegador independiente con perfil sintético y carrera 0.5.0 pendiente, con un acierto y un error. Después de publicar se comprobará la actualización, la conservación de sus datos, la terminación de esa carrera, la repetición y una respuesta offline. Hasta entonces no se afirma que esa prueba pública haya pasado.
+La actualización pública se comprobó en un navegador independiente con perfil sintético, una carrera 0.5.0 ya completada y otra pendiente con un acierto y un error. Se conservaron perfil, historial, adaptación, identificador, intentos, primera respuesta, semilla, ritmos y tiempos de los rivales. La carrera pendiente se completó una sola vez; después se abrió una nueva 0.5.1 y se comprobó recarga y respuesta offline.
 
 ## Continuidad del plan
 

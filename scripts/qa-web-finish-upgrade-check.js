@@ -6,6 +6,7 @@ async(page)=>{
   await page.locator('.solution-callout').waitFor();
   const read=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('sendero.profile.'+sessionStorage.getItem('sendero.active'))));
   const before=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('sendero.qa.upgradeExpected'))),after=await read();
+  if(before.sessions.length<1)throw Error('Upgrade fixture needs nonempty completed history');
   const version=await page.evaluate(async()=>(await import('./core.js')).VERSION);
   if(version!=='0.5.1')throw Error('Expected public web 0.5.1');
   for(const key of ['profile','sessions','adaptive'])if(JSON.stringify(after[key])!==JSON.stringify(before[key]))throw Error('Changed stored '+key);
@@ -18,6 +19,7 @@ async(page)=>{
   for(let i=1;i<8;i++){const q=(await read()).current.questions[i];await page.getByRole('button',{name:'Respuesta '+q.answer,exact:true}).click();}
   await page.locator('#finish-title').waitFor();
   if((await read()).sessions.length!==before.sessions.length+1)throw Error('Completion count mismatch');
+  await page.waitForTimeout(900);
   await page.screenshot({path:'output/playwright/ciclo-web-3-20261013/public-0.5.1.png',fullPage:true});
   await page.locator('#play-again').click();
   const current=(await read()).current;
@@ -33,5 +35,5 @@ async(page)=>{
   }finally{await page.context().setOffline(false);}
   await page.getByRole('button',{name:'Pausar',exact:true}).click();
   if(errors.length)throw Error(errors.join('\n'));
-  return {sourceVersion:'0.5.0',version,profilePreserved:true,historyPreserved:true,adaptationPreserved:true,pendingRaceAndRivalsPreserved:true,attemptsAndFirstResponsePreserved:true,previousRaceCompletedExactlyOnce:true,replayCreatesNewSession:true,publicOfflineReloadAndAnswer:true,errors};
+  return {sourceVersion:'0.5.0',version,profilePreserved:true,historyPreserved:true,retainedCompletedSessions:before.sessions.length,adaptationPreserved:true,pendingRaceAndRivalsPreserved:true,attemptsAndFirstResponsePreserved:true,previousRaceCompletedExactlyOnce:true,replayCreatesNewSession:true,publicOfflineReloadAndAnswer:true,errors};
 }

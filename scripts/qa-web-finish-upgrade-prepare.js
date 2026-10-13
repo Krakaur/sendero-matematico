@@ -11,6 +11,10 @@ async(page)=>{
   const read=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('sendero.profile.'+sessionStorage.getItem('sendero.active'))));
   let s=(await read()).current;
   if(s.version!=='0.5.0'||s.race.protocol!==2)throw Error('Unexpected public source version');
+  for(let i=0;i<8;i++){const q=(await read()).current.questions[i];await page.getByRole('button',{name:'Respuesta '+q.answer,exact:true}).click();}
+  await page.getByRole('heading',{name:'¡Llegaste a la meta!',exact:true}).waitFor();
+  await page.getByRole('button',{name:'Otra aventura ↗',exact:true}).click();
+  s=(await read()).current;
   await page.getByRole('button',{name:'Respuesta '+s.questions[0].answer,exact:true}).click();
   s=(await read()).current;
   await page.getByRole('button',{name:'Respuesta '+s.questions[1].options.find(x=>x!==s.questions[1].answer),exact:true}).click();
@@ -21,6 +25,6 @@ async(page)=>{
   return await page.evaluate(()=>{
     const before=JSON.parse(localStorage.getItem('sendero.profile.'+sessionStorage.getItem('sendero.active')));
     sessionStorage.setItem('sendero.qa.upgradeExpected',JSON.stringify(before));
-    return {sourceVersion:before.current.version,protocol:before.current.race.protocol,index:before.current.index,expectedStored:true};
+    return {sourceVersion:before.current.version,protocol:before.current.race.protocol,index:before.current.index,completedSessions:before.sessions.length,expectedStored:true};
   });
 }

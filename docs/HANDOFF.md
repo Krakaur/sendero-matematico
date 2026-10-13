@@ -1,4 +1,12 @@
-# Continuidad web 0.5.0 · paquetes 0.4.0
+# Continuidad web 0.5.1 · paquetes 0.4.0
+
+13 de octubre de 2026: web 0.5.1 publicada en `https://krakaur.github.io/sendero-matematico/`. Fuente `a835180a97815fc35b9e9d77d17e7e39bcddff23`; despliegue `cb6faacd5fb30f45b30cf72d622fa694f10d7772`; Pages `38451610176`, satisfactorio. Los 30 archivos públicos coinciden con Git. La anterior 0.5.0 queda respaldada en `qa-private/public-web-backup-20261013-1845/`, con ZIP, 29 archivos públicos, hashes y restauración.
+
+La PR #2 incorpora llegada de 650 ms, cierre ilustrado y repetición visible en la primera vista. Se guarda antes de animar, se omite la transición con movimiento reducido y se mantienen los informes educativos desplegables. Pasaron 38 pruebas Node, cuatro viewports, recuperación en cuarto lugar, recarga durante llegada, repetición offline y continuidad de otros modos. La actualización pública conservó un historial no vacío y una partida pendiente 0.5.0; pudo completarse y abrir otra 0.5.1. Leer `EVALUACION-WEB-0.5.1.md` y `qa-web-0.5.1/publication.json`.
+
+Siguiente intervención del plan: preparación y salida de la carrera, seguida de medición de respuesta visual. La jornada 14 queda parcial: llegada y repetición comprobadas, preparación pendiente. Persisten las revisiones estéticas y sonoras, teléfono físico, rendimiento y evaluación infantil. La autorización previa de publicar después de respaldo sigue documentada; no equivale a aprobación de esas rúbricas. Android y Windows continúan en 0.4.0. No añadir a Git el PDF PISA ni `BASE-CURRICULAR-NEM-PISA.md`, ajenos a esta implementación.
+
+## Publicación anterior: web 0.5.0
 
 Actualización del 13 de octubre de 2026: la web 0.5.0 está publicada en `https://krakaur.github.io/sendero-matematico/`. Fuente `f43e9a4e2c262ee77fdb1c65e43ec5631ec255be`; despliegue `ab3f8861baebb651884079a878d082365cba0246`; ejecución Pages `38447822342`, satisfactoria. Los 29 archivos públicos coinciden byte a byte con las fuentes Git. La web anterior se respaldó localmente antes de sustituirla: ZIP, 26 archivos HTTP, hashes y procedimiento de restauración en `qa-private/public-web-backup-20261013-1819/`.
 

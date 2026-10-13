@@ -1,6 +1,6 @@
 # Seguimiento de la mejora progresiva
 
-Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: dos incrementos integrados y web 0.5.0 publicada. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
+Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: tres incrementos integrados y web 0.5.1 publicada. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
 
 ## Tablero de jornadas
 
@@ -21,7 +21,7 @@ Las fechas se completan al trabajar. Los minutos corresponden al tiempo real, no
 | 11 | Modelo de rivales | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Tres perfiles y 30 escenarios reproducibles |
 | 12 | Variación de rivales | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Seis órdenes finales entre diez semillas; conservación al recargar |
 | 13 | Adelantamiento y recuperación | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Señales visual y sonora; mejorar tiempos no empeora posición emparejada |
-| 14 | Carrera completa | Pendiente | — | — | N/D | Sin implementar |
+| 14 | Carrera completa | Parcial | 2026-10-13 | Ver registro de incremento 3 | N/D | Llegada y repetición comprobadas; preparación de salida pendiente |
 | 15 | Revisión de competencia | Pendiente | — | — | N/D | Sin valorar |
 | 16 | Pantalla pequeña y dispositivo | Parcial | 2026-10-13 | Ver registro de jornada 1 | N/D | Cuatro viewports comprobados; teléfono físico pendiente |
 | 17 | Mezcla y accesibilidad | Parcial | 2026-10-13 | Ver registro de jornada 1 | N/D | Silencio, volúmenes y movimiento reducido comprobados; revisión completa pendiente |
@@ -59,7 +59,7 @@ En jornadas de revisión, añadir las puntuaciones por criterio, quién las emit
 
 ## Próxima acción y decisiones pendientes
 
-Próxima acción: revisar una partida de la web 0.5.0 y escuchar los motivos sonoros; registrar valoraciones por criterio y revisar llegada y repetición. El teléfono físico de referencia y la escucha completa de Grand Prix siguen pendientes.
+Próxima acción de implementación: preparación y salida de la carrera y medición de respuesta visual. La llegada y la repetición se comprobaron en la web 0.5.1. Continúa pendiente escuchar una partida completa y registrar valoraciones por criterio; también el teléfono físico de referencia y la escucha completa de Grand Prix.
 
 Dirección artística resuelta: desarrollar este bosque ilustrado. Permanecen pendientes las puntuaciones perceptivas por criterio, la revisión de cada hito y la disponibilidad de una persona no familiarizada para observar el uso.
 
@@ -74,3 +74,7 @@ Dirección artística resuelta: desarrollar este bosque ilustrado. Permanecen pe
 ## Segundo incremento: competencia y publicación web
 
 13 de octubre de 2026. El autor autorizó el siguiente incremento y la sustitución de la web pública después de respaldarla localmente. Se preservaron los 26 archivos públicos y la rama publicada, todos coincidentes por contenido. Se implementaron rivales con semilla, personalidad de ritmo, señales de adelantamiento y calibración centrada en la mediana previa. Se preservan las carreras antiguas. Las comprobaciones incluyen 35 pruebas Node, 30 escenarios y recorridos del navegador; véase [EVALUACION-WEB-0.5.0.md](EVALUACION-WEB-0.5.0.md). La publicación efectiva y la prueba de conservación de datos están en `qa-web-0.5.0/publication.json`. Tokens: N/D; intervalo instrumentado en el manifiesto local de este incremento. Esta autorización de publicación no sustituye las valoraciones perceptivas pendientes del ciclo.
+
+## Tercer incremento: llegada y repetición
+
+13 de octubre de 2026. Publicada la web 0.5.1 después de respaldar los 29 archivos de 0.5.0. El cierre reúne escena ilustrada y repetición en la primera vista; la posición vertical del botón pasa de 1901,7 a 381,5 píxeles en 1280 × 800. Llegada de 650 ms con guardado previo y alternativa sin movimiento. Pasaron 38 pruebas Node, cuatro viewports, conservación al recargar durante la llegada, repetición offline y actualización pública con historial no vacío y partida pendiente. Los 30 archivos publicados coinciden con Git. Evidencia: [EVALUACION-WEB-0.5.1.md](EVALUACION-WEB-0.5.1.md). Intervalo instrumentado: 24.27 minutos; excluye preparación anterior al primer reloj y cierre documental posterior. Tokens atribuibles: N/D. No se consume convencionalmente una jornada completa de 90 minutos. La siguiente implementación aborda preparación y salida; las rúbricas perceptivas siguen pendientes.
