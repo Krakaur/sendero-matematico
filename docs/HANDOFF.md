@@ -1,6 +1,12 @@
-# Continuidad 0.4.0
+# Continuidad web 0.5.0 · paquetes 0.4.0
 
-Actualización del 13 de octubre de 2026: primer ciclo exclusivamente web en curso, en `codex/ciclo-web-calidad`. Leer `EVALUACION-CICLO-WEB-1.md`, `PLAN-MEJORA-PROGRESIVA.md` y `SEGUIMIENTO-MEJORA-PROGRESIVA.md`. El autor eligió desarrollar el bosque ilustrado. La primera candidata incorpora arte original, personajes distintos, escena persistente, animaciones y sonido local con preferencias. Se comprobaron carrera, corrección, datos, offline y cuatro viewports. La revisión perceptiva, el teléfono físico, las métricas de rendimiento y la variedad de rivales siguen pendientes. No se ha publicado esta candidata ni se ha modificado la APK. El estado distribuido sigue siendo el descrito a continuación.
+Actualización del 13 de octubre de 2026: la web 0.5.0 está publicada en `https://krakaur.github.io/sendero-matematico/`. Fuente `f43e9a4e2c262ee77fdb1c65e43ec5631ec255be`; despliegue `ab3f8861baebb651884079a878d082365cba0246`; ejecución Pages `38447822342`, satisfactoria. Los 29 archivos públicos coinciden byte a byte con las fuentes Git. La web anterior se respaldó localmente antes de sustituirla: ZIP, 26 archivos HTTP, hashes y procedimiento de restauración en `qa-private/public-web-backup-20261013-1819/`.
+
+Leer `EVALUACION-WEB-0.5.0.md` y `qa-web-0.5.0/publication.json`. El bosque ilustrado elegido por el autor incorpora cuatro personajes, escena persistente, animaciones, ambiente, seis funciones sonoras y controles sensoriales. El protocolo 2 añade rivales de ritmo variable con semilla guardada, calibración centrada en la mediana previa y señales de adelantamiento. Las partidas anteriores conservan protocolo 1. Se comprobaron 35 pruebas Node, 30 escenarios, carrera con error y recuperación, cuatro viewports, preferencias, offline y actualización pública de 0.4.0 conservando perfil, intentos y partida. La PR #1 se integró en `main`.
+
+Continúa el ciclo progresivo web: `PLAN-MEJORA-PROGRESIVA.md` y `SEGUIMIENTO-MEJORA-PROGRESIVA.md`. La publicación fue autorizada expresamente; no sustituye las rúbricas perceptivas pendientes. Próxima revisión: llegada, repetición y escucha de una partida completa. Quedan pendientes valoración humana, teléfono físico, métricas de rendimiento y evaluación infantil. Android y Windows distribuidos permanecen en 0.4.0; no se compilaron ni publicaron paquetes nuevos.
+
+## Estado anterior 0.4.0 y componentes nativos
 
 Prevalecen `AVANCE-SECUENCIAL.md`, `JUGABILIDAD-0.4.0.md`, `EVALUACION-0.4.0.md` y el manifiesto de publicación. Se incorporaron perfiles web/Windows, respaldos cifrados independientes web/Android, extensión de 360 problemas, resultados web por modalidad, receptor docente local y carrera contra rivales virtuales en las tres plataformas. El usuario decidió no contratar alojamiento: no existe servicio público. La investigación sigue desactivada y la cobertura curricular es parcial.
 

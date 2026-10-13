@@ -1,6 +1,6 @@
 # Seguimiento de la mejora progresiva
 
-Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: primera entrega web candidata del ciclo. El autor eligió desarrollar el bosque ilustrado. Algunas tareas posteriores se adelantaron durante esta misma jornada; sus números no representan jornadas de 90 minutos ya consumidas.
+Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: dos incrementos integrados y web 0.5.0 publicada. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
 
 ## Tablero de jornadas
 

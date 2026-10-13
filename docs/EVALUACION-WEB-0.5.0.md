@@ -1,6 +1,6 @@
 # Web 0.5.0: bosque ilustrado y rivales variables
 
-13 de octubre de 2026. Segundo incremento del ciclo web. La publicación está autorizada por el autor, condicionada a respaldar localmente la web actual y comprobar el incremento. La publicación efectiva se registra por separado en `qa-web-0.5.0/publication.json` una vez verificada. Los paquetes Android y Windows permanecen en 0.4.0.
+13 de octubre de 2026. Segundo incremento del ciclo web, publicado tras respaldo local y comprobación del incremento, conforme a la autorización del autor. La ejecución GitHub Pages `38447822342` terminó satisfactoriamente y los 29 archivos públicos coinciden con la fuente Git. La actualización desde 0.4.0 conservó perfil, historial, adaptación, primera respuesta y carrera pendiente; permitió terminarla, abrir una nueva con protocolo 2 y continuar offline. Evidencia: `qa-web-0.5.0/publication.json`. Los paquetes Android y Windows permanecen en 0.4.0.
 
 ## Comportamiento
 
