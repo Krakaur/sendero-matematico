@@ -1,4 +1,12 @@
-# Continuidad web 0.5.1 · paquetes 0.4.0
+# Continuidad web 0.6.0 · paquetes 0.4.0
+
+13 de octubre de 2026: cuarto incremento, preparación y salida de La copa del río. Leer primero `EVALUACION-WEB-0.6.0.md` y `qa-web-0.6.0/publication.json` para el estado efectivo de publicación. La implementación incluye muelle ilustrado, presentación de rivales, cuenta visual y sonora, salida directa con movimiento reducido, cancelación y conservación del tiempo educativo. Las carreras antiguas se reanudan sin preparación. Se corrigieron doble activación, reingreso al perfil y retorno a la página durante la cuenta.
+
+Pasaron 42 pruebas Node, recorridos en Chrome y Firefox y cinco viewports desde 320 × 568. La evidencia incluye contraste de preparación, alias de 24 caracteres, modos alternativos, offline, tres muestras de rendimiento de al menos 60 segundos y audio PCM de una carrera completa. El respaldo previo está en `qa-private/public-web-backup-20261013-2218/`: ZIP, 30 archivos HTTP, hashes y restauración de 0.5.1. Las grabaciones y el manifiesto de archivos aceptados están en `output/playwright/ciclo-web-4-20261013/`.
+
+Siguiente intervención: revisión audiovisual de una partida completa, puntuaciones separadas de arte, movimiento y sonido y corrección del defecto perceptivo dominante. La jornada 14 está comprobada técnicamente; no repetir preparación/salida como pendiente. Persisten valoración del autor, teléfono físico, escucha comparada de Grand Prix y observación de uso. No declarar equivalencia con Arcademics ni eficacia infantil. La autorización de publicar después de respaldo permanece vigente; no equivale a aceptación perceptiva. Android y Windows siguen en 0.4.0. Conservar sin añadir a Git el PDF PISA y `BASE-CURRICULAR-NEM-PISA.md`, ajenos a esta implementación.
+
+## Publicación anterior: web 0.5.1
 
 13 de octubre de 2026: web 0.5.1 publicada en `https://krakaur.github.io/sendero-matematico/`. Fuente `a835180a97815fc35b9e9d77d17e7e39bcddff23`; despliegue `cb6faacd5fb30f45b30cf72d622fa694f10d7772`; Pages `38451610176`, satisfactorio. Los 30 archivos públicos coinciden con Git. La anterior 0.5.0 queda respaldada en `qa-private/public-web-backup-20261013-1845/`, con ZIP, 29 archivos públicos, hashes y restauración.
 

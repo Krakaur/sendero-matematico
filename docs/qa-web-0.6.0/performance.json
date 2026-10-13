@@ -1,0 +1,58 @@
+{
+  "version": "0.6.0",
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "hardwareConcurrency": 4,
+    "devicePixelRatio": 1.0000000149011612,
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "visibility": "visible"
+  },
+  "frameIntervals": [
+    {
+      "durationMs": 60511.5,
+      "hiddenFrames": 0,
+      "n": 3624,
+      "medianMs": 16.69999999999709,
+      "p95Ms": 16.80000000000291,
+      "maxMs": 33.39999999999418,
+      "over100ms": 0
+    },
+    {
+      "durationMs": 60845.39999997616,
+      "hiddenFrames": 0,
+      "n": 3648,
+      "medianMs": 16.699999999982538,
+      "p95Ms": 16.800000000017462,
+      "maxMs": 33.5,
+      "over100ms": 0
+    },
+    {
+      "durationMs": 60741.299999952316,
+      "hiddenFrames": 0,
+      "n": 3636,
+      "medianMs": 16.699999999982538,
+      "p95Ms": 16.89999999999418,
+      "maxMs": 50.5,
+      "over100ms": 0
+    }
+  ],
+  "responseVisualProxy": {
+    "n": 55,
+    "medianMs": 26.5,
+    "p95Ms": 32.60000002384186,
+    "maxMs": 41.300000071525574,
+    "over100ms": 0
+  },
+  "responseProxyDefinition": "Capture-phase click to second requestAnimationFrame; no screen or audio hardware latency measurement",
+  "longTasks": [],
+  "answers": 48,
+  "targets": {
+    "frameP95Ms": 33.4,
+    "responseP95Ms": 100
+  },
+  "frameTargetMet": true,
+  "responseTargetMet": true
+}

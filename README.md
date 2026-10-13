@@ -1,4 +1,4 @@
-# Sendero Matemático · Web 0.5.1
+# Sendero Matemático · Web 0.6.0
 
 [Jugar](https://krakaur.github.io/sendero-matematico/) · [Actualizar conservando datos](https://krakaur.github.io/sendero-matematico/actualizar.html) · [Android 14–16](https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-Nativo-0.4.0.apk) · [Windows x64](https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-0.4.0-Windows-x64.exe) · [Para docentes](https://krakaur.github.io/sendero-matematico/docentes.html)
 
@@ -8,11 +8,13 @@ Juego gratuito en español para practicar matemáticas con conectividad intermit
 
 La regata web transcurre en un bosque ilustrado con personajes, remos, estelas y ambiente sonoro originales. Nube destaca en la salida, Rayo alterna impulsos y Chispa acelera hacia el final. Sus tiempos y ritmos varían entre carreras y se fijan al comenzar; no reaccionan al desempeño posterior del jugador. Los adelantamientos tienen una señal visual y sonora. El silencio, los volúmenes y la reducción de movimiento se conservan por perfil.
 
+La copa del río comienza en un muelle ilustrado: presenta a Luma, los rivales y las reglas antes de una cuenta de tres pulsos con sonido opcional. La espera no consume tiempo de respuesta. La salida se puede cancelar; con movimiento reducido es directa. Las carreras ya empezadas se reanudan sin repetir la preparación.
+
 La carrera tiene posición, tiempo y puntos; su referencia de ritmo se calibra con la práctica anterior. El nivel permanece fijo durante ocho retos y se adapta para la siguiente carrera. Cada acierto en cálculo avanza con un toque. El error muestra la solución centrada y destacada hasta seleccionarla correctamente. También existe práctica tranquila; el razonamiento permite leer y explicar sin carrera. Las carreras guardadas en versiones anteriores conservan sus rivales originales.
 
 Al terminar los ocho retos, la canoa alcanza la meta y aparece un cierre ilustrado con posición, puntos y tiempo. Se puede volver al río o elegir otro camino sin recorrer un informe largo. El detalle de la carrera y los resultados educativos se despliega por separado; los rivales que aún no llegaron se muestran como «En el río».
 
-Esta entrega corresponde a la **web 0.5.1**. Las descargas Android y Windows permanecen en **0.4.0**. [Cambios, pruebas y límites de la web](docs/EVALUACION-WEB-0.5.1.md).
+Esta entrega corresponde a la **web 0.6.0**. Las descargas Android y Windows permanecen en **0.4.0**. [Cambios, pruebas y límites de la web](docs/EVALUACION-WEB-0.6.0.md).
 
 Los puntos son recompensas de juego. El informe educativo distingue precisión inicial, resolución sin ayuda, pistas, correcciones y ritmo de respuesta. La web separa evolución por modalidad, contenido y nivel. Una posición, porcentaje o color no acredita aprendizaje ni equivale a calificación escolar.
 
