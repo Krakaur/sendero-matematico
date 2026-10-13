@@ -1,0 +1,188 @@
+/* Original illustrated race. Scoped to competition so calm/reasoning keep their layout. */
+body.arcade-playing { background: #edf3ed; }
+.arcade-playing #main { max-width: 1200px; padding: 0 24px 28px; }
+.arcade-playing .topbar { max-width: 1200px; padding-top: 10px; padding-bottom: 6px; }
+.arcade-playing .profile-bar { max-width: 1152px; margin: auto; font-size: .75rem; padding: 3px 0 8px; }
+.arcade.regatta-game { max-width: 1152px; display: grid; grid-template-columns: minmax(0,1fr); grid-template-areas: 'top' 'scene' 'question' 'hud' 'note'; gap: 12px; }
+.regatta-game > .game-top { grid-area: top; margin: 0; min-height: 44px; }
+.regatta-game > .competition { grid-area: scene; }
+.regatta-game > .question-card { grid-area: question; margin: 0; }
+.regatta-game > .race-hud { grid-area: hud; }
+.regatta-game > .game-note { grid-area: note; }
+.regatta-game .game-top strong { color: #285a4b; font-size: 1.2rem; }
+.regatta-game .game-top small { font-size: .76rem; }
+.regatta-game .race-hud { color: #355e54; background: transparent; border: 1px solid #ccdcd0; border-radius: 14px; box-shadow: none; padding: 9px 4px; margin: 0; max-width: none; }
+.regatta-game .race-hud > div { border-color: #c8d6ce; }
+.regatta-game .race-hud strong { color: #244e44; font-size: 1.15rem; }
+.regatta-game .race-hud span { color: #47675b; font-size: .68rem; }
+.regatta-game .game-note { color: #53695f; font-size: .7rem; margin: 0; }
+.regatta.competition { border: 1px solid #c2d3bd; background: #fbf7e9; border-radius: 24px; box-shadow: 0 7px 0 #d7e1d2, 0 15px 30px #305a4110; margin: 0; overflow: hidden; align-self: stretch; }
+.regatta .race-banner { padding: 14px 20px; background: #fcf8eb; color: #254f46; letter-spacing: 0; display: flex; align-items: center; min-height: 70px; box-sizing: border-box; }
+.regatta .race-banner strong { display: block; font-size: 1.24rem; line-height: 1.2; }
+.regatta .regatta-kicker { color: #597262; display: block; font-size: .58rem; letter-spacing: .14em; margin-bottom: 5px; }
+.regatta .regatta-badge { color: #674a20; background: #f9df9b; border: 1px solid #e4c877; border-radius: 20px; padding: 6px 12px; font-size: .72rem; font-weight: 800; white-space: nowrap; }
+.race-stage { position: relative; isolation: isolate; padding: 104px 30px 36px 16px; overflow: hidden; }
+.regatta-landscape { position: absolute; width: 100%; height: 100%; inset: 0; z-index: -2; }
+.regatta .race-lane { position: relative; height: 61px; display: grid; grid-template-columns: 82px minmax(0,1fr); gap: 5px; border: 0; }
+.regatta .lane-label { color: #fff8e6; background: #205d5b; border: 1px solid #83bfaa; box-shadow: 0 2px 0 #174d4940; border-radius: 10px; padding: 6px 7px; max-width: 100%; font-size: .65rem; line-height: 1.2; letter-spacing: 0; }
+.regatta .lane-label small { display: block; color: #dcf0d9; margin-top: 3px; font-size: .56rem; font-weight: 500; }
+.regatta .lane-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.regatta .player-lane .lane-label { color: #58431e; background: #ffe5a1; border-color: #fff1c9; }
+.regatta .player-lane .lane-label small { color: #655125; }
+.regatta .lane-course { height: 61px; margin-right: 56px; border-bottom: 1px dashed #d9f7e531; }
+.regatta .competitor { top: -15px; width: 84px; margin-left: -15px; filter: none; z-index: 2; transition: left .13s linear; }
+.regatta .competitor[data-racer='0'] { transition: left .52s cubic-bezier(.2,.65,.3,1); }
+.regatta .competitor svg { width: 84px; height: 77px; position: relative; overflow: visible; }
+.boat-bob { transform-origin: 60px 80px; animation: canoe-bob 2s ease-in-out infinite; animation-delay: var(--racer-delay); }
+.racer-paddle { transform-origin: 73px 59px; animation: paddle-row 1.2s ease-in-out infinite; animation-delay: var(--racer-delay); }
+.boat-wake { position: absolute; width: 60px; height: 13px; border: 2px solid #cff6e7; border-right: 0; border-left: 0; border-radius: 50%; top: 61px; left: -14px; opacity: .6; animation: river-wake 1.7s ease-in-out infinite; animation-delay: var(--racer-delay); }
+.regatta-ripples { animation: river-flow 6s linear infinite; }
+.regatta-clouds { animation: cloud-drift 25s ease-in-out infinite alternate; }
+.regatta-birds { animation: cloud-drift 13s ease-in-out infinite alternate; }
+.finish-ribbon { position: absolute; right: 34px; top: 105px; height: 244px; width: 12px; background: conic-gradient(#f5f2d5 25%,#367778 0 50%,#f5f2d5 0 75%,#367778 0) 0 0/12px 12px; opacity: .9; border: 1px solid #c4e2cf; border-radius: 3px; }
+.finish-ribbon > span { position: absolute; top: -26px; left: -12px; color: #fff7d9; background: #275f51; border-radius: 5px; padding: 4px 5px; letter-spacing: .1em; font-size: .5rem; font-weight: 800; }
+.race-message { position: absolute; bottom: 8px; left: 12px; right: 12px; margin: auto; width: fit-content; max-width: calc(100% - 24px); padding: 5px 12px; border-radius: 20px; background: #f6f5dced; color: #31544a; font-size: .66rem; font-weight: 700; text-align: center; }
+.regatta .competition-score { color: #3f6455; background: #fcf8eb; padding: 10px 16px 8px; justify-content: space-between; font-size: .67rem; }
+.regatta .competition-score strong { color: #264e43; font-size: 1rem; }
+.position-pill { display: flex; align-items: baseline; gap: 7px; background: #e6eee0; padding: 4px 12px; border-radius: 20px; }
+.race-time { display: flex; align-items: baseline; gap: 7px; }
+.regatta .virtual-note { color: #4f685d!important; background: #fcf8eb; font-size: .6rem!important; padding: 0 12px 11px!important; }
+.race-spark { position: absolute; color: #ffec96; text-shadow: 0 0 8px #f4bb2c; top: 8px; left: 22px; opacity: 0; font-size: 35px; pointer-events: none; }
+.regatta[data-response='correct'] [data-racer='0'] .race-spark,
+.regatta[data-response='recover'] [data-racer='0'] .race-spark { animation: race-reward .8s ease-out both; }
+.regatta[data-response='error'] [data-racer='0'] .racer-smile { opacity: .25; }
+.regatta[data-response='error'] .race-message { background: #ffe4bc; color: #68401f; }
+.regatta-finished .boat-bob,.regatta-paused .boat-bob,.regatta-finished .racer-paddle,.regatta-paused .racer-paddle,.regatta-paused .regatta-ripples { animation-play-state: paused; }
+.regatta-game .question-card { background: #fffcf2; border: 1px solid #d5ddca; border-radius: 24px; box-shadow: 0 5px 0 #dce3d3; padding: 24px; align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+.regatta-game .question-meta { color: #496b5e; font-size: .67rem; }
+.regatta-game .equation { font-size: clamp(2.7rem,4.5vw,4rem); margin: 28px 0; color: #244f43; letter-spacing: -.035em; }
+.regatta-game .unknown { color: #915629; }
+.regatta-game .answers { gap: 12px; }
+.regatta-game .answer { min-height: 72px; border: 2px solid #aec8b7; border-radius: 17px; background: #fffef8; box-shadow: 0 5px 0 #c8d8c2; color: #2c534b; font-size: 2rem; transition: transform .12s, box-shadow .12s, background .12s; }
+.regatta-game .answer:nth-child(n) { border-color: #aec8b7; box-shadow: 0 5px 0 #c8d8c2; }
+.regatta-game .answer:hover:not(:disabled) { background: #f9edbe; border-color: #d7b762; transform: translateY(-2px); }
+.regatta-game .answer:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 #c8d8c2; }
+.regatta-game .answer.correct { background: #e2eec6; border-color: #728e42; }
+.regatta-game .answer.wrong { background: #f6e5d7; border-color: #bb8e72; opacity: .65; }
+.regatta-game .feedback { color: #3c6353; font-size: .78rem; line-height: 1.4; margin: 17px 0 12px; min-height: 2.2em; }
+.regatta-game .game-controls { font-size: .68rem; gap: 8px; margin-top: 8px; }
+.regatta-game .game-controls > span { width: 100%; color: #526b58; }
+.regatta-game .game-controls .soft-button { font-size: .72rem; padding: 9px 12px; min-height: 40px; }
+.regatta-game .solution-callout { padding: 12px; margin: 12px 0; background: #f9ebcc; }
+.regatta-game .solution-callout strong { font-size: 2rem; }
+.regatta-game .solution-callout p { font-size: .76rem; }
+.race-settings { width: 100%; margin-top: 8px; color: #456453; font-size: .72rem; }
+.race-settings summary { cursor: pointer; padding: 6px 0; }
+.race-settings label { display: grid; grid-template-columns: 80px 1fr; align-items: center; gap: 8px; margin: 8px 0; }
+.race-settings input { width: 100%; accent-color: #467561; }
+.race-settings button { margin-top: 6px; }
+.regatta-game :focus-visible { outline: 3px solid #174f66; outline-offset: 4px; }
+.reduced-motion .regatta *, .reduced-motion .regatta-game .answer { animation: none!important; transition: none!important; }
+@keyframes canoe-bob { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-2px) rotate(1deg); } }
+@keyframes paddle-row { 0%,100% { transform: rotate(-11deg); } 50% { transform: rotate(15deg); } }
+@keyframes river-wake { 0%,100% { transform: scaleX(.8); opacity: .35; } 50% { transform: scaleX(1.1); opacity: .7; } }
+@keyframes river-flow { from { transform: translateX(20px); } to { transform: translateX(-25px); } }
+@keyframes cloud-drift { to { transform: translateX(22px); } }
+@keyframes race-reward { 0% { opacity: 0; transform: translateY(0) scale(.4); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-30px) scale(1.3); } }
+@media(min-width:860px) {
+  .arcade.regatta-game { grid-template-columns: minmax(0,1.65fr) minmax(300px,1fr); grid-template-areas: 'top top' 'scene question' 'hud hud' 'note note'; gap: 16px 22px; }
+}
+@media(max-width:600px) {
+  .arcade-playing #main { padding: 0 12px 16px; }
+  .arcade-playing .topbar { padding: 6px 14px; }
+  .arcade-playing .profile-bar { padding: 0 14px 4px; }
+  .arcade.regatta-game { gap: 9px; }
+  .regatta-game .game-top strong { font-size: 1rem; }
+  .regatta-game .game-top small { font-size: .64rem; }
+  .regatta .race-banner { min-height: 46px; padding: 8px 12px; }
+  .regatta .race-banner strong { font-size: 1rem; }
+  .regatta .regatta-kicker { font-size: .48rem; margin-bottom: 2px; }
+  .regatta .regatta-badge { font-size: .61rem; padding: 4px 9px; }
+  .race-stage { padding: 57px 19px 28px 9px; }
+  .regatta .race-lane { height: 39px; grid-template-columns: 62px minmax(0,1fr); gap: 4px; }
+  .regatta .lane-course { height: 39px; margin-right: 38px; }
+  .regatta .lane-label { padding: 4px 5px; font-size: .53rem; border-radius: 7px; }
+  .regatta .lane-label small { font-size: .47rem; margin-top: 1px; }
+  .regatta .competitor { width: 59px; top: -13px; margin-left: -10px; }
+  .regatta .competitor svg { width: 59px; height: 54px; }
+  .boat-wake { width: 36px; top: 41px; height: 9px; left: -6px; }
+  .finish-ribbon { top: 55px; height: 159px; right: 24px; width: 9px; background-size: 10px 10px; }
+  .finish-ribbon > span { font-size: .42rem; left: -10px; top: -19px; padding: 3px; }
+  .race-message { font-size: .56rem; padding: 3px 8px; bottom: 5px; }
+  .regatta .competition-score { padding: 5px 10px; font-size: .57rem; }
+  .regatta .competition-score strong { font-size: .8rem; }
+  .position-pill { padding: 2px 8px; }
+  .regatta .virtual-note { font-size: .5rem!important; padding-bottom: 6px!important; }
+  .regatta-game .question-card { padding: 14px; border-radius: 19px; }
+  .regatta-game .equation { font-size: 2.8rem; margin: 12px 0; }
+  .regatta-game .question-meta { font-size: .6rem; }
+  .regatta-game .answers { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+  .regatta-game .answer { min-height: 54px; padding: 6px; font-size: 1.5rem; border-radius: 12px; }
+  .regatta-game .feedback { margin: 12px 0 4px; min-height: 1.4em; font-size: .67rem; }
+  .regatta-game .game-controls { margin-top: 4px; }
+  .regatta-game .game-controls > span { width: auto; margin-right: auto; font-size: .58rem; }
+  .regatta-game .game-controls .soft-button { min-height: 36px; padding: 6px 8px; font-size: .62rem; }
+  .regatta-game .race-hud { padding: 5px; }
+  .regatta-game .race-hud span { font-size: .55rem; }
+  .regatta-game .race-hud strong { font-size: .95rem; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .regatta *, .regatta-game .answer { animation: none!important; transition: none!important; }
+}
+@media(max-width:600px) and (max-height:760px) {
+  .arcade-playing .topbar { padding-top: 3px; padding-bottom: 3px; }
+  .arcade-playing .topbar .brand img { width: 30px; height: 30px; }
+  .arcade-playing .profile-bar { font-size: .65rem; }
+  .regatta-game .game-top { min-height: 36px; }
+  .regatta .race-banner { min-height: 39px; padding: 6px 10px; }
+  .regatta .regatta-kicker { display: none; }
+  .race-stage { padding-top: 40px; padding-bottom: 23px; }
+  .regatta .race-lane,.regatta .lane-course { height: 31px; }
+  .regatta .competitor { top: -13px; }
+  .regatta .competitor svg { width: 52px; height: 48px; }
+  .regatta .lane-label { padding: 2px 4px; }
+  .regatta .lane-label small { font-size: .43rem; }
+  .boat-wake { top: 36px; }
+  .finish-ribbon { top: 39px; height: 126px; }
+  .regatta .virtual-note { font-size: .46rem!important; padding-bottom: 4px!important; }
+  .regatta-game .question-card { padding: 10px 12px; }
+  .regatta-game .equation { margin: 7px 0; font-size: 2.35rem; }
+  .regatta-game .answer { min-height: 47px; font-size: 1.4rem; }
+  .regatta-game .feedback { margin-top: 9px; }
+  .regatta-game .race-settings { margin-top: 3px; }
+}
+@media(min-width:700px) and (max-height:600px) {
+  .arcade-playing .topbar { padding: 3px 18px; }
+  .arcade-playing .profile-bar { display: none; }
+  .arcade-playing #main { padding: 0 18px 12px; }
+  .arcade.regatta-game { grid-template-columns: minmax(0,1.4fr) minmax(270px,1fr); grid-template-areas: 'top top' 'scene question' 'hud hud' 'note note'; gap: 8px 14px; }
+  .regatta-game .game-top { min-height: 33px; }
+  .regatta-game .game-top strong { font-size: 1rem; }
+  .regatta-game .game-top small { font-size: .62rem; }
+  .regatta .race-banner { min-height: 42px; padding: 7px 12px; }
+  .regatta .race-banner strong { font-size: 1rem; }
+  .regatta .regatta-kicker { display: none; }
+  .race-stage { padding: 38px 22px 25px 9px; }
+  .regatta .race-lane { height: 33px; grid-template-columns: 61px minmax(0,1fr); }
+  .regatta .lane-course { height: 33px; margin-right: 40px; }
+  .regatta .lane-label { padding: 3px 5px; font-size: .54rem; }
+  .regatta .lane-label small { font-size: .46rem; margin-top: 0; }
+  .regatta .competitor { top: -13px; margin-left: -10px; }
+  .regatta .competitor svg { width: 57px; height: 52px; }
+  .boat-wake { width: 39px; top: 39px; height: 8px; left: -4px; }
+  .finish-ribbon { top: 38px; height: 133px; right: 27px; }
+  .race-message { font-size: .57rem; padding: 3px 7px; bottom: 5px; }
+  .regatta .competition-score { padding: 5px 10px; font-size: .57rem; }
+  .regatta .competition-score strong { font-size: .85rem; }
+  .regatta .virtual-note { font-size: .49rem!important; padding-bottom: 5px!important; }
+  .regatta-game .question-card { padding: 12px 16px; justify-content: flex-start; }
+  .regatta-game .question-meta { font-size: .55rem; }
+  .regatta-game .equation { font-size: 2.35rem; margin: 10px 0; }
+  .regatta-game .answers { gap: 8px; }
+  .regatta-game .answer { min-height: 46px; padding: 4px; font-size: 1.55rem; }
+  .regatta-game .feedback { margin: 10px 0 3px; min-height: 1.4em; font-size: .65rem; }
+  .regatta-game .game-controls { margin-top: 4px; }
+  .regatta-game .game-controls > span { width: auto; margin-right: auto; font-size: .56rem; }
+  .regatta-game .game-controls .soft-button { min-height: 30px; padding: 5px 7px; font-size: .6rem; }
+  .regatta-game .race-settings { margin-top: 3px; font-size: .6rem; }
+}

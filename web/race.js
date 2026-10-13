@@ -1,3 +1,4 @@
+import {canoeSVG, riverLandscape} from './race-art.js';
 // Game rewards and simulated competition are independent of educational fluency.
 export function newRace(sessions,trail,level) {
  const times=sessions.filter(s=>s.trail===trail).flatMap(s=>s.questions).filter(q=>q.level===level&&q.timingProtocol===1&&!q.hint&&!q.timingInterrupted&&q.firstResponseMs>=500&&q.firstResponseMs<=60000).slice(-24).map(q=>q.firstResponseMs).sort((a,b)=>a-b);
@@ -18,9 +19,16 @@ export function raceLevel(session) {
  return correct>=7?Math.min(4,level+1):correct<=4?Math.max(1,level-1):level;
 }
 export function racerSVG(color,kind=0) {
- return `<svg viewBox="0 0 84 60" aria-hidden="true"><ellipse cx="42" cy="55" rx="35" ry="4" fill="#083d67" opacity=".2"/><path d="M23 36V14L34 21 49 17 61 11 62 37Z" fill="${color}"/><path d="M29 34 42 28 56 34 43 43Z" fill="#fff3d2"/><circle cx="34" cy="27" r="3" fill="#102d52"/><circle cx="52" cy="27" r="3" fill="#102d52"/><path d="m39 33 4 5 4-5" fill="#102d52"/><path d="M5 41H79L65 55H21Z" fill="${color}"/><path d="M12 44H70" stroke="white" stroke-width="4"/><path d="m64 29 13 22" stroke="#173b62" stroke-width="4"/></svg>`;
+ return canoeSVG(kind,color);
 }
 export function competitionHTML(session,escape=s=>s,alias='Tú') {
- const r=raceStats(session),names=[alias,...session.race.names],colors=['#ffbd32','#ab8dff','#ff7797','#5ee6b2'];
- return `<section class="competition" aria-label="Carrera con tres rivales virtuales"><div class="race-banner"><strong>REGATA RELÁMPAGO</strong><span>⚑ META · 8 RETOS</span></div><div class="race-water">${names.map((name,i)=>`<div class="race-lane"><span class="lane-label">${escape(name)}${i?' · virtual':' · tú'}</span><div class="lane-course"><div class="competitor" data-racer="${i}" style="left:${100*(i?r.bots[i-1]:r.progress)}%">${racerSVG(colors[i],i)}</div><span class="lane-finish">▦</span></div></div>`).join('')}</div><div class="competition-score"><strong id="race-position">${r.rank} / 4</strong><span>posición</span><strong id="race-clock">${(session.race.elapsedMs/1000).toFixed(1)} s</strong><span>tiempo de carrera</span></div><p class="virtual-note">Nube, Rayo y Chispa son rivales simulados en este dispositivo.</p></section>`;
+ const r=raceStats(session),names=[alias,...session.race.names],colors=['#f6b94f','#b6a0d6','#e48a70','#8eb98e'];
+ const finished=!!session.completedAt;
+ return `<section class="competition regatta ${finished?'regatta-finished':''}" data-race-id="${escape(session.id)}" aria-label="Carrera con tres rivales virtuales">
+ <div class="race-banner"><div><span class="regatta-kicker">SENDERO · COPA DEL RÍO</span><strong>Regata del bosque</strong></div><span class="regatta-badge">${finished?'¡Meta!':'8 retos'}</span></div>
+ <div class="race-stage">${riverLandscape()}<div class="finish-ribbon" aria-hidden="true"><span>META</span></div>
+ ${names.map((name,i)=>`<div class="race-lane ${i?'':'player-lane'}"><span class="lane-label"><span class="lane-name" title="${escape(name)}">${escape(name)}</span><small>${i?['','conejo','nutria','tortuga'][i]:'Tú · Luma'}</small></span><div class="lane-course"><div class="competitor" data-racer="${i}" style="left:${100*(i?r.bots[i-1]:r.progress)}%;--racer-delay:${-i*.37}s"><span class="boat-wake" aria-hidden="true"></span>${racerSVG(colors[i],i)}<span class="race-spark" aria-hidden="true">✦</span></div></div></div>`).join('')}
+ <div class="race-message" id="race-message">${finished?'¡Una aventura más, una nueva conquista!':'Cada respuesta te lleva más lejos'}</div></div>
+ <div class="competition-score"><span class="position-pill"><strong id="race-position">${r.rank} / 4</strong> <span>posición</span></span><span class="race-time"><strong id="race-clock">${(session.race.elapsedMs/1000).toFixed(1)} s</strong><span>en el río</span></span></div>
+ <p class="virtual-note">Compites con Nube, Rayo y Chispa · rivales virtuales</p></section>`;
 }
