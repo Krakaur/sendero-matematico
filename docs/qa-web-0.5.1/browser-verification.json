@@ -1,0 +1,139 @@
+{
+  "version": "0.5.1",
+  "test_environment": "Chromium on Windows; isolated synthetic profiles",
+  "finish": {
+    "version": "0.5.1",
+    "completionSavedBeforeAnimation": true,
+    "finishSoundCount": 1,
+    "firstAndFourthPlace": true,
+    "recoveryReplayVisibleOnSmallScreen": true,
+    "replayPreservesHistoryAndNextLevel": true,
+    "reloadDuringArrivalExactlyOnce": true,
+    "reducedMotion": true,
+    "offlineReplay": true,
+    "layouts": [
+      {
+        "width": 1280,
+        "height": 800,
+        "scrollWidth": 1280,
+        "replay": {
+          "top": 381.5375061035156,
+          "bottom": 429.5375061035156,
+          "left": 590.2125244140625,
+          "right": 867.7000427246094,
+          "height": 48
+        },
+        "exit": {
+          "top": 381.5375061035156,
+          "bottom": 429.5375061035156,
+          "left": 875.7000122070312,
+          "right": 1153.2000122070312,
+          "height": 48
+        },
+        "navTop": 717.6000366210938
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "scrollWidth": 390,
+        "replay": {
+          "top": 450.7375183105469,
+          "bottom": 498.7375183105469,
+          "left": 54.79999923706055,
+          "right": 191.20000839233398,
+          "height": 48
+        },
+        "exit": {
+          "top": 450.7375183105469,
+          "bottom": 498.7375183105469,
+          "left": 199.1999969482422,
+          "right": 335.6000061035156,
+          "height": 48
+        },
+        "navTop": 776.1625366210938
+      },
+      {
+        "width": 360,
+        "height": 640,
+        "scrollWidth": 345,
+        "replay": {
+          "top": 491.6499938964844,
+          "bottom": 539.6499938964844,
+          "left": 54.79999923706055,
+          "right": 168.39999771118164,
+          "height": 48
+        },
+        "exit": {
+          "top": 491.6499938964844,
+          "bottom": 539.6499938964844,
+          "left": 176.40000915527344,
+          "right": 290.00000762939453,
+          "height": 48
+        },
+        "navTop": 572.1625366210938
+      },
+      {
+        "width": 854,
+        "height": 480,
+        "scrollWidth": 839,
+        "replay": {
+          "top": 244.03750610351562,
+          "bottom": 288.0375061035156,
+          "left": 386.2749938964844,
+          "right": 572.3374938964844,
+          "height": 44
+        },
+        "exit": {
+          "top": 244.03750610351562,
+          "bottom": 288.0375061035156,
+          "left": 580.3375244140625,
+          "right": 766.4000244140625,
+          "height": 44
+        },
+        "navTop": 397.6000061035156
+      }
+    ],
+    "errors": []
+  },
+  "other_modes": {
+    "calmCompleted": true,
+    "reasoningAdvanced": true,
+    "noCompetitionInOtherModes": true,
+    "errors": []
+  },
+  "desktop_baseline": {
+    "width": 1280,
+    "height": 800,
+    "replay_top": 1901.7125,
+    "document_height": 2123
+  },
+  "unit_tests": {
+    "passed": 38,
+    "failed": 0
+  },
+  "source_hashes": {
+    "actualizar.html": "a763f25c92624a44e54688f62c582f329242647185ac64bc75c03a1d9425be4c",
+    "app.js": "4a8a0a409da0248a8a80b8b5311b632ffe179236fb6a96e828f461de16c3ac26",
+    "backup.js": "028ad99a7dcf3a90038b6850e53248ab03627f1ec0cbdca2ba2a554bb0585be0",
+    "bank-data.js": "443e858a422e7c76acfc4a5285b8a06899f2fea11025da19a1b9f1fc0b473182",
+    "bank-extra.js": "0a768a040083313fb4600152d073bc2037e13386b45f02f6d9091c1cf59d5b84",
+    "bank.js": "a11772f37b1135afa72db3f4510247da86842b733bf413c54dc6c19a9138de1a",
+    "classroom.js": "87ef28bf16989e15922d4f8d243caffb58750f001dbb4d6836e9c63fa3f3b86c",
+    "core.js": "cf5a752da7738e6efeb90ea379d4a75677b040595b5ff69c455ada0c34979186",
+    "docentes.html": "faf88a7cb694306f457208237c14984967ecde435db4b3718427e97109812c8e",
+    "fluency.js": "b0cb0c5d7945410b0f0af09ca74fdf3bb064b61ed10434f63164dc47ddfcb1f5",
+    "index.html": "c250f01940818c746b87e038adf2497bb31e59f17362fba7551eb393eb10bffe",
+    "narration.js": "33bb8bc516d836965792e259dbd891fb3a46aa554d46d4d2671a188101d943c6",
+    "practice.js": "17f02388386d5381fbaa7744105f13add2d3a79e37c35c45dc7f464a10a8ad42",
+    "profiles.js": "979b4195a65faa2539192e346cde30fc4f9385013f35c5217bc0092080ec5926",
+    "race-art.js": "c4fdf018d8b9fd61477bd3e1389972fbdc41097fb2c8154c8f79ac1363f62719",
+    "race-audio.js": "f71b6f2190c1af43a9f64205b26b06e0d93aead5b1e4690de83c92e00fb12d88",
+    "race-finish.js": "fb2d6bb7d99bd83195d5b8276335448f610237cca8f4625faef3204915159545",
+    "race.js": "12fd87dfbb95ff9017a836868deb58d1e920f8beef1c122763f876e63259b3d2",
+    "regatta.css": "9318bbc43d60cb3816160fe06575c8accfc506bea136c7403ee0a930ca271af1",
+    "results.js": "ce84a8bb1873f5fc5fdf0aa7cfeb02e552c9d99ee66990aa4def11d5908c21ba",
+    "style.css": "e33a4ef03f82537720f83d95cf84eae0d16123caaa3e6e7bd11c941d82ec2a26",
+    "sw.js": "882ad9252cb9fce6f91b2803979449190e88eb4e274a62412553fdfe07b51d49",
+    "update.js": "c5df13270e14a727eef68a447e9ff00e201e79481d4f7455af482b6f12a02e39"
+  }
+}

@@ -1,0 +1,50 @@
+
+> sendero-matematico@0.5.1 test
+> node --test tests/*.test.js
+
+✔ Encrypted backup restores pending work with a new password and rejects tampering (685.0426ms)
+✔ Extension answers are correct, alternatives distinct, and old content is separately versioned (5.3327ms)
+✔ Every bank item has a unique prompt, a coherent answer and four valid choices (11.6893ms)
+✔ Reserved situations have no templates in common with practice (1.1055ms)
+✔ Selection never repeats an item before exhausting its pool, survives restart and isolates profiles (67.7751ms)
+✔ Recent wording is avoided while alternatives remain (34.6217ms)
+✔ Bank report round trip verifies original content and separates assisted transfer (5.6582ms)
+✔ Extended tables reach both factors 20 and reasoning needs six independent answers (0.5809ms)
+✔ Assisted facts return sooner and only in the matching arithmetic track and level (1.4643ms)
+✔ Delivery receipt, deduplication, role separation, tasks and revocation (151.3202ms)
+✔ An error reveals the solution and a subsequent correct answer is not independent (1.3859ms)
+✔ Exercises have one correct option, nonnegative integers and declared level ranges (27.8213ms)
+✔ Three independent first responses advance; speed does not affect adaptation (0.2964ms)
+✔ Two supported questions lower difficulty without going below level one (0.1701ms)
+✔ Mistakes reset upward streak; maximum level is four (0.1479ms)
+✔ Multidimensional metrics distinguish assisted accuracy, independence and recovery (4.3365ms)
+✔ No observations are distinct from zero performance (0.1432ms)
+✔ Correction on the second attempt excludes three or more attempts (0.1945ms)
+✔ Report round trip and deduplication preserve individual records (0.6766ms)
+✔ Reports reject malformed identities, impossible arithmetic, mixed profiles and excessive times (0.9811ms)
+✔ Completed data and pending session survive serialization without losing attempts (0.5515ms)
+✔ Initial errors contribute time, but corrections never add fluency credit (3.6043ms)
+✔ Legacy, interrupted, assisted, reasoning and zero-duration records are excluded (0.3718ms)
+✔ Rates use pooled durations, not the mean of per-item rates (0.1559ms)
+✔ Interruption after the first answer does not invalidate captured response time (0.1485ms)
+✔ The offline indicator checks the worker cache and the complete local module graph is cached (22.0599ms)
+✔ Legacy migration preserves identity, pending state and original backup exactly once (1.1064ms)
+✔ Profile authentication, isolation, duplicate aliases and password change (1292.8653ms)
+✔ Corrupt legacy data is not overwritten (0.362ms)
+✔ Finish standings distinguish arrived rivals from those still on the river (6.5844ms)
+✔ Finish standings retain exact ties, first and fourth place (1.6844ms)
+✔ The recap distinguishes initial accuracy, recovery and unassisted game rewards (0.1952ms)
+✔ Virtual race calibration, positions and rewards remain separate from school scores (1.8801ms)
+✔ Seeded rivals vary finish orders and pace while preserving trajectories after save/reload (30.5904ms)
+✔ Faster answers cannot worsen rank under the same seed, and answers do not change the rivals (1.7181ms)
+✔ Legacy pending races and completed reports retain their original linear positions and finish order (29.6959ms)
+✔ Research output suppresses small cohorts, deduplicates people and excludes identifiers (8.3605ms)
+✔ Results separate precision from eligible speed and levels from one another (1.5777ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2850.5484
