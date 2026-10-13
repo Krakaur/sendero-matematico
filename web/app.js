@@ -1,6 +1,7 @@
 import {newRace,raceStats,raceLevel,rivalEffort,competitionHTML} from "./race.js";
 import {RiverAudio} from "./race-audio.js";
 import {raceFinishHTML} from "./race-finish.js";
+import {needsRaceStart,releaseRace,countdownNumber,COUNTDOWN_BEAT_MS,raceStartHTML} from "./race-start.js";
 import {encryptBackup,decryptBackup,restoreSnapshot} from "./backup.js";
 import {renderFluency} from "./results.js";
 import {narrateLocally} from "./narration.js";
@@ -68,6 +69,55 @@ let reactionTimer = null;
 let passSoundTimer = null;
 let raceObservation = null;
 let arrivalTimer = null;
+let launchCountdown = null;
+let launchFeedbackTimer = null;
+const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
+function reducedMotion(){return !!state.reducedMotion||motionPreference.matches;}
+function cancelLaunch(){
+  if(!launchCountdown)return false;
+  clearTimeout(launchCountdown.timer);launchCountdown=null;riverAudio.mute();return true;
+}
+function resetLaunch(){
+  if(!cancelLaunch())return;
+  render(false);
+  $('#race-ready')?.focus({preventScroll:true});
+  announce('Salida en pausa. Cuando quieras, vuelve a pulsar A la salida.');
+}
+function launchRace(){
+  if(!needsRaceStart(state.current)||launchCountdown||document.hidden)return;
+  if(state.sound)riverAudio.unlock();
+  const id=state.current.id;
+  const go=()=>{
+    if(document.hidden||location.hash!=='#jugar'||state.current?.id!==id||!releaseRace(state.current))return;
+    save();render();
+    const scene=main.querySelector('.regatta');scene?.classList.add('regatta-launching');
+    raceReact('start');riverAudio.play('start',state.sound,state.effectsVolume??.65);
+    main.querySelector('.equation')?.focus({preventScroll:true});
+    window.scrollTo(0,0);announce('¡Al río! Responde el primer reto para avanzar.');
+    clearTimeout(launchFeedbackTimer);
+    launchFeedbackTimer=setTimeout(()=>scene?.classList.remove('regatta-launching'),1200);
+  };
+  if(reducedMotion()){go();return;}
+  launchCountdown={id,started:performance.now(),timer:null,number:null};
+  main.querySelector('.race-launch').classList.add('launch-counting');
+  $('#launch-countdown').hidden=false;$('#race-ready').hidden=true;$('#launch-cancel').hidden=false;
+  $('#launch-promise').textContent='La carrera empieza al terminar la cuenta.';
+  $('#launch-cancel').focus({preventScroll:true});
+  const tick=()=>{
+    const clock=launchCountdown;
+    if(!clock||clock.id!==id)return;
+    if(document.hidden||location.hash!=='#jugar'||state.current?.id!==id){resetLaunch();return;}
+    const number=countdownNumber(performance.now()-clock.started);
+    if(!number){launchCountdown=null;go();return;}
+    if(number!==clock.number){
+      clock.number=number;$('#launch-number').textContent=number;
+      main.querySelectorAll('.launch-lights i').forEach((el,i)=>el.classList.toggle('is-lit',i<4-number));
+      announce(String(number));riverAudio.play('countdown',state.sound,state.effectsVolume??.65);
+    }
+    clock.timer=setTimeout(tick,Math.max(10,COUNTDOWN_BEAT_MS-(performance.now()-clock.started)%COUNTDOWN_BEAT_MS));
+  };
+  tick();
+}
 function syncRaceAudio() {
   riverAudio.river(!!state.sound && !!state.current?.race && location.hash === '#jugar' && timerStart !== null && !document.hidden, state.riverVolume ?? .2);
 }
@@ -97,6 +147,8 @@ function bindRaceSettings() {
     state.reducedMotion = !state.reducedMotion;
     e.currentTarget.setAttribute('aria-pressed', String(state.reducedMotion));
     document.body.classList.toggle('reduced-motion', state.reducedMotion); save();
+    if(launchCountdown)resetLaunch();
+    if($('#launch-promise'))$('#launch-promise').textContent=reducedMotion()?'Salida directa · movimiento reducido':'3, 2, 1… ¡al río!';
   });
 }
 let raceMove = null;
@@ -140,7 +192,7 @@ function save() {
 }
 if (!storageOK) storageWarning();
 else save();
-interruptTiming(state.current?.questions[state.current.index]);
+if(!needsRaceStart(state.current))interruptTiming(state.current?.questions[state.current.index]);
 function announce(text) {
   $("#announce").textContent = text;
 }
@@ -199,7 +251,7 @@ function enterProfile(p,s) {
   stopTimer(true);save();
   if(KEY && !storageOK)throw Error("No se pudo guardar el perfil anterior. Exporta una copia antes de cambiar.");
   activeProfile=p;KEY=profileKey(p.id);state=s;
-  interruptTiming(state.current?.questions[state.current.index]);
+  if(!needsRaceStart(state.current))interruptTiming(state.current?.questions[state.current.index]);
   sessionStorage.setItem('sendero.active',p.id);
   location.hash=p.role==='teacher'?'#docentes':'#explorar';render();syncClassroom();
 }
@@ -413,7 +465,7 @@ function about() {
   return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje. Cada reto completado da puntos; el acierto inicial sin ayuda añade una bonificación.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. La entrega al docente solo se activa al vincular una invitación. No tiene publicidad ni recopila datos para investigación.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p><a href="./docentes.html" target="_blank" rel="noopener">Guía breve para familias y docentes</a></p><p>Desarrollo: Dirk Hans Krakaur Floranes. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales en SVG. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas permanecen en este dispositivo salvo exportación manual o vinculación explícita con un servidor docente. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
 }
 function stopTimer(interrupted = false) {
-  if (interrupted) interruptTiming(state.current?.questions[state.current.index]);
+  if (interrupted && !needsRaceStart(state.current)) interruptTiming(state.current?.questions[state.current.index]);
   if (timerStart !== null && state.current) {
     if(state.current.race)state.current.race.elapsedMs= Math.min(86400000,raceElapsed());
     const q = state.current.questions[state.current.index];
@@ -431,6 +483,7 @@ function stopTimer(interrupted = false) {
 }
 function startTimer() {
   if(!activeProfile) return;
+  if(needsRaceStart(state.current))return;
   if (document.hidden || !state.current || location.hash !== "#jugar") return;
   const q = state.current.questions[state.current.index];
   if (q?.done) return;
@@ -449,6 +502,7 @@ function game() {
   }
   const q = s.questions[s.index],
     t = TRAILS[s.trail];
+  if(needsRaceStart(s))return raceStartHTML(s,esc,activeProfile.name,t.short,state.sound,reducedMotion());
   if (q.attempts.some((n) => n !== q.answer)) q.solutionShown = true;
   if(q.bankId)return reasoningGame(s,q);
   const answered = s.questions.slice(0, s.index + 1).filter(x => x.attempts.length);
@@ -521,6 +575,7 @@ function finished() {
   return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ocho ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">Otra aventura ↗</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
 }
 function render(persistState = true) {
+  cancelLaunch();
   clearTimeout(arrivalTimer);
   globalThis.speechSynthesis?.cancel();
   stopTimer();
@@ -537,6 +592,7 @@ function render(persistState = true) {
   $('#profile-switch').setAttribute('aria-label', activeProfile ? 'Perfil activo: '+activeProfile.name+'. Cambiar perfil' : 'Entrar o crear perfil');
   document.body.classList.toggle('arcade-playing', route === 'jugar' && !!state.current && state.current.trail !== 'razonar');
   document.body.classList.toggle('regatta-results',route==='logro' && !!state.sessions.at(-1)?.race);
+  document.body.classList.toggle('race-preparing',route==='jugar' && needsRaceStart(state.current));
   const content = (
     {
       perfiles: profilesScreen,
@@ -590,6 +646,18 @@ function render(persistState = true) {
     announce("Pista abierta. " + main.querySelector(".hint-box p").textContent);
   });
   main.querySelector("#next")?.addEventListener("click", next);
+  $('#race-ready')?.addEventListener('click',launchRace);
+  $('#launch-cancel')?.addEventListener('click',event=>{
+    // The cancel action occupies the start button's place. A double activation
+    // must not immediately cancel the countdown it just started; Escape is immediate.
+    if(event.detail>1 || (launchCountdown && performance.now()-launchCountdown.started<300))return;
+    resetLaunch();
+  });
+  $('#launch-sound')?.addEventListener('click',()=>$('#sound').click());
+  if($('#launch-settings-slot')) {
+    $('#launch-settings-slot').innerHTML=raceSettings();
+    $('#launch-settings-slot details').open=true;
+  }
   main.querySelector("#export-report")?.addEventListener("click", exportReport);
   main.querySelector("#export-csv")?.addEventListener("click", exportCSV);
   main.querySelector("#import-file")?.addEventListener("change", importReports);
@@ -607,7 +675,7 @@ function render(persistState = true) {
     }
   });
   if(route==='docentes' && activeProfile) { main.insertAdjacentHTML('afterbegin',classroomHTML());bindClassroom(); main.firstElementChild.querySelectorAll('[data-trail]').forEach(b=>b.addEventListener('click',()=>begin(b.dataset.trail))); }
-  if(route==='jugar' && state.current) {
+  if(route==='jugar' && state.current && !needsRaceStart(state.current)) {
     main.querySelector('.game-controls')?.insertAdjacentHTML('beforeend','<button id="read-problem" class="soft-button">Escuchar</button>');
     if (state.current.race) main.querySelector('.question-card').insertAdjacentHTML('beforeend', raceSettings());
     $('#read-problem')?.addEventListener('click',()=>{
@@ -637,7 +705,7 @@ function begin(trail) {
       return;
     }
     if (
-      !confirm(
+      !needsRaceStart(state.current) && !confirm(
         "Tienes una aventura en pausa. ¿Dejarla y empezar otro camino? Los intentos de esa aventura incompleta se eliminarán.",
       )
     )
@@ -647,14 +715,13 @@ function begin(trail) {
   state.current = trail === "razonar" ? {id:uid(),profile:state.profile,trail,level:a.level,version:VERSION,startedAt:new Date().toISOString(),completedAt:null,index:0,questions:[bankQuestion(state,a.level)]} : newSession(trail, a.level, state.profile);
   if(trail !== "razonar")state.current.questions[0]=practiceQuestion(state,trail,a.level);
   state.current.adaptation = { ...a };
-  if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race=newRace(state.sessions,trail,a.level);
+  if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race={...newRace(state.sessions,trail,a.level),launch:'ready'};
   save();
   goGame();
-  if (state.current?.race) {riverAudio.play('start',state.sound,state.effectsVolume ?? .65);raceReact('start');}
 }
 function answer(n) {
   const s = state.current;
-  if (!s) return;
+  if (!s || needsRaceStart(s)) return;
   const q = s.questions[s.index];
   if (q.done || q.attempts.includes(n) || !q.options.includes(n)) return;
   stopTimer();
@@ -864,6 +931,10 @@ $("#sound").addEventListener("click", () => {
   save();
   tone(true);
   syncRaceAudio();
+  if($('#launch-sound')){
+    $('#launch-sound').textContent=state.sound?'♪ Sonido activado':'♪ Activar sonidos';
+    $('#launch-sound').setAttribute('aria-pressed',String(state.sound));
+  }
 });
 window.addEventListener("hashchange", () => {
   if(location.hash !== "#jugar") stopTimer(true);
@@ -873,11 +944,13 @@ window.addEventListener("hashchange", () => {
 });
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
+    resetLaunch();
     stopTimer(true);
     save();
   } else startTimer();
 });
 window.addEventListener("pagehide", () => {
+  resetLaunch();
   stopTimer(true);
   save();
 });
@@ -886,6 +959,11 @@ document.addEventListener("pointerdown", () => {
 });
 document.addEventListener("keydown", () => {
   if (state.current && location.hash === "#jugar") startTimer();
+});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&launchCountdown){event.preventDefault();resetLaunch();}});
+motionPreference.addEventListener('change',()=>{
+  if(launchCountdown)resetLaunch();
+  if($('#launch-promise'))$('#launch-promise').textContent=reducedMotion()?'Salida directa · movimiento reducido':'3, 2, 1… ¡al río!';
 });
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
@@ -928,7 +1006,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-finish-release`);
+    const cache = await caches.open(`sendero-${VERSION}-launch-release-v3`);
     const files = [
       "./index.html",
       "./app.js",
@@ -936,6 +1014,7 @@ async function offline() {
       "./style.css",
       "./regatta.css", "./race.js", "./race-art.js", "./race-audio.js",
       "./race-finish.js",
+      "./race-start.js", "./race-start.css",
       "./landscape.svg",
       "./icon.svg",
       "./fluency.js",

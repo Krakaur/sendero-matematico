@@ -1,6 +1,6 @@
 # Seguimiento de la mejora progresiva
 
-Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: tres incrementos integrados y web 0.5.1 publicada. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
+Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: cuarto incremento web 0.6.0 comprobado técnicamente; estado de publicación en `qa-web-0.6.0/publication.json`. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
 
 ## Tablero de jornadas
 
@@ -21,10 +21,10 @@ Las fechas se completan al trabajar. Los minutos corresponden al tiempo real, no
 | 11 | Modelo de rivales | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Tres perfiles y 30 escenarios reproducibles |
 | 12 | Variación de rivales | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Seis órdenes finales entre diez semillas; conservación al recargar |
 | 13 | Adelantamiento y recuperación | Comprobada | 2026-10-13 | Ver registro de incremento 2 | N/D | Señales visual y sonora; mejorar tiempos no empeora posición emparejada |
-| 14 | Carrera completa | Parcial | 2026-10-13 | Ver registro de incremento 3 | N/D | Llegada y repetición comprobadas; preparación de salida pendiente |
+| 14 | Carrera completa | Comprobada técnicamente | 2026-10-13 | Ver registro de incremento 4 | N/D | Preparación, salida, desarrollo, llegada y repetición; valoración perceptiva pendiente |
 | 15 | Revisión de competencia | Pendiente | — | — | N/D | Sin valorar |
-| 16 | Pantalla pequeña y dispositivo | Parcial | 2026-10-13 | Ver registro de jornada 1 | N/D | Cuatro viewports comprobados; teléfono físico pendiente |
-| 17 | Mezcla y accesibilidad | Parcial | 2026-10-13 | Ver registro de jornada 1 | N/D | Silencio, volúmenes y movimiento reducido comprobados; revisión completa pendiente |
+| 16 | Pantalla pequeña y dispositivo | Parcial | 2026-10-13 | Ver registro de incremento 4 | N/D | Cinco viewports en Chrome y Firefox, desde 320 × 568; teléfono físico pendiente |
+| 17 | Mezcla y accesibilidad | Parcial | 2026-10-13 | Ver registro de incremento 4 | N/D | Captura PCM de carrera, contraste de preparación y controles; valoración sonora y revisión completa pendientes |
 | 18 | Observación de uso | Pendiente | — | — | N/D | Sin observar |
 | 19 | Corrección y regresión | Parcial | 2026-10-13 | Ver registro de jornada 1 | N/D | Regresión inicial y recarga offline comprobadas |
 | 20 | Pulido y evaluación final | Pendiente | — | — | N/D | Sin valorar |
@@ -59,7 +59,7 @@ En jornadas de revisión, añadir las puntuaciones por criterio, quién las emit
 
 ## Próxima acción y decisiones pendientes
 
-Próxima acción de implementación: preparación y salida de la carrera y medición de respuesta visual. La llegada y la repetición se comprobaron en la web 0.5.1. Continúa pendiente escuchar una partida completa y registrar valoraciones por criterio; también el teléfono físico de referencia y la escucha completa de Grand Prix.
+Próxima acción: revisar una partida completa, puntuar arte, movimiento y sonido por separado y corregir el defecto perceptivo dominante. La preparación y salida y las mediciones instrumentadas están documentadas en la web 0.6.0. Se dispone de vídeo del recorrido y una muestra PCM del audio. Continúan pendientes la escucha valorada por el autor, el teléfono físico de referencia y la escucha comparada de Grand Prix.
 
 Dirección artística resuelta: desarrollar este bosque ilustrado. Permanecen pendientes las puntuaciones perceptivas por criterio, la revisión de cada hito y la disponibilidad de una persona no familiarizada para observar el uso.
 
@@ -78,3 +78,11 @@ Dirección artística resuelta: desarrollar este bosque ilustrado. Permanecen pe
 ## Tercer incremento: llegada y repetición
 
 13 de octubre de 2026. Publicada la web 0.5.1 después de respaldar los 29 archivos de 0.5.0. El cierre reúne escena ilustrada y repetición en la primera vista; la posición vertical del botón pasa de 1901,7 a 381,5 píxeles en 1280 × 800. Llegada de 650 ms con guardado previo y alternativa sin movimiento. Pasaron 38 pruebas Node, cuatro viewports, conservación al recargar durante la llegada, repetición offline y actualización pública con historial no vacío y partida pendiente. Los 30 archivos publicados coinciden con Git. Evidencia: [EVALUACION-WEB-0.5.1.md](EVALUACION-WEB-0.5.1.md). Intervalo instrumentado: 24.27 minutos; excluye preparación anterior al primer reloj y cierre documental posterior. Tokens atribuibles: N/D. No se consume convencionalmente una jornada completa de 90 minutos. La siguiente implementación aborda preparación y salida; las rúbricas perceptivas siguen pendientes.
+
+## Cuarto incremento: preparación, salida y verificación del recorrido
+
+13 de octubre de 2026. El autor pidió desarrollar a fondo la siguiente intervención, con el referente competitivo de Arcademics. La web 0.5.1 se respaldó antes de modificarla: ZIP, 30 archivos públicos coincidentes con Git y restauración. La candidata 0.6.0 incorpora muelle ilustrado, presentación de cuatro personajes, movimiento ambiental y parpadeo, reglas breves, cuenta de 2,1 s con sonido y salida directa con movimiento reducido. Esperar, cancelar y volver al perfil conserva la primera respuesta sin tiempo consumido. Se corrigió el doble clic que podía cancelar involuntariamente la salida.
+
+Se aprobaron 42 pruebas Node, recorridos en Chrome y Firefox, cinco viewports, contraste mínimo 5,426:1 en la preparación, alias máximo, controles, offline y modos alternativos. La captura PCM documenta la salida y una carrera completa con error y recuperación. Las tres muestras activas de rendimiento y la actualización pública con historial y partida pendiente se registran en [EVALUACION-WEB-0.6.0.md](EVALUACION-WEB-0.6.0.md) y sus JSON asociados. El registro de este incremento complementa la tabla de métricas; no se rellenan retrospectivamente las rúbricas J5/J10/J15 sin valoración humana.
+
+Tiempo instrumentado y publicación: `qa-web-0.6.0/publication.json`. Tokens atribuibles: N/D. La intervención no equivale convencionalmente a una jornada completa de 90 minutos. La siguiente acción es la revisión audiovisual con puntuaciones por criterio y corrección del defecto dominante. La publicación autorizada y las comprobaciones técnicas no equivalen a una aceptación estética ni demuestran preferencia infantil.

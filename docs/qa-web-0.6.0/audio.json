@@ -1,0 +1,99 @@
+{
+  "version": "0.6.0",
+  "capture": "QA-only PCM tap of the production Web Audio graph; no microphone/system audio",
+  "file": "output/playwright/ciclo-web-4-20261013/salida-y-carrera.wav",
+  "sampleRate": 48000,
+  "durationSeconds": 13.525333333333334,
+  "audioGraphSeconds": 13.552,
+  "peak": 0.09948579221963882,
+  "rms": 0.012080683366176714,
+  "mutedTailRms": 0,
+  "events": [
+    {
+      "event": "correct",
+      "enabled": true,
+      "msFromFirstEvent": 0
+    },
+    {
+      "event": "countdown",
+      "enabled": true,
+      "msFromFirstEvent": 692.5
+    },
+    {
+      "event": "countdown",
+      "enabled": true,
+      "msFromFirstEvent": 1393.3999999761581
+    },
+    {
+      "event": "countdown",
+      "enabled": true,
+      "msFromFirstEvent": 2095.899999976158
+    },
+    {
+      "event": "start",
+      "enabled": true,
+      "msFromFirstEvent": 2817.2999999523163
+    },
+    {
+      "event": "correct",
+      "enabled": true,
+      "msFromFirstEvent": 3770.1999999284744
+    },
+    {
+      "event": "pass",
+      "enabled": true,
+      "msFromFirstEvent": 4029.5
+    },
+    {
+      "event": "correct",
+      "enabled": true,
+      "msFromFirstEvent": 4483.600000023842
+    },
+    {
+      "event": "error",
+      "enabled": true,
+      "msFromFirstEvent": 5186.699999928474
+    },
+    {
+      "event": "recover",
+      "enabled": true,
+      "msFromFirstEvent": 5981.199999928474
+    },
+    {
+      "event": "correct",
+      "enabled": true,
+      "msFromFirstEvent": 6711
+    },
+    {
+      "event": "correct",
+      "enabled": true,
+      "msFromFirstEvent": 7420.899999976158
+    },
+    {
+      "event": "correct",
+      "enabled": true,
+      "msFromFirstEvent": 8131.600000023842
+    },
+    {
+      "event": "correct",
+      "enabled": true,
+      "msFromFirstEvent": 8865
+    },
+    {
+      "event": "correct",
+      "enabled": true,
+      "msFromFirstEvent": 9597.299999952316
+    },
+    {
+      "event": "finish",
+      "enabled": true,
+      "msFromFirstEvent": 10261.399999976158
+    },
+    {
+      "event": "correct",
+      "enabled": false,
+      "msFromFirstEvent": 12059.5
+    }
+  ],
+  "perceptualListeningAssessment": "pending"
+}
