@@ -1,3 +1,5 @@
+import { normalizeEnrollment } from "../web/enrollment.js";
+import { MULTIPLAYER_SCHEMA } from "../web/multiplayer-records.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -41,10 +43,18 @@ test("Workers/D1: isolation, pagination, atomic copies, concurrent writers, encr
   );
   const db = await mf.getD1Database("DB");
   // The migration contains triggers; execute each complete SQL statement, including its BEGIN/END.
-  const sql = await readFile(
-    new URL("../cloudflare/migrations/0001_classroom.sql", import.meta.url),
-    "utf8",
-  );
+  const sql =
+    (await readFile(
+      new URL("../cloudflare/migrations/0001_classroom.sql", import.meta.url),
+      "utf8",
+    )) +
+    (await readFile(
+      new URL(
+        "../cloudflare/migrations/0002_school_multiplayer.sql",
+        import.meta.url,
+      ),
+      "utf8",
+    ));
   const statements = sql.match(
     /CREATE TRIGGER[\s\S]*?END;|CREATE (?:TABLE|INDEX)[\s\S]*?;/g,
   );
@@ -90,6 +100,143 @@ test("Workers/D1: isolation, pagination, atomic copies, concurrent writers, encr
       current: null,
       classroom: student,
     };
+    await t.test(
+      "Private enrollment and opt-in multiplayer survive sync without duplicate uploads or cross-room access",
+      async () => {
+        state.enrollment = normalizeEnrollment({
+          school: "Escuela sintética",
+          grade: "3",
+          group: "A",
+          listNumber: 7,
+        });
+        state.multiplayerHistory = [
+          {
+            ...session(),
+            id: "multi-qa",
+            enrollment: structuredClone(state.enrollment),
+            mode: "race",
+            transport: "online",
+            participants: 2,
+            finishedMs: 8000,
+          },
+        ];
+        let writes = 0;
+        const measured = (url, options) => {
+          if (
+            options.method === "POST" &&
+            /\/(enrollment|multiplayer)$/.test(url)
+          )
+            writes++;
+          return fetcher(url, options);
+        };
+        applyExchange(
+          state,
+          await exchangeClassroom(structuredClone(state), measured),
+        );
+        assert.equal(writes, 1);
+        assert.equal((await raw("/multiplayer", null, room.token)).status, 200);
+        assert.equal(
+          (await (await raw("/multiplayer", null, room.token)).json()).reports
+            .length,
+          0,
+        );
+        state.classroom.includeMultiplayer = true;
+        applyExchange(
+          state,
+          await exchangeClassroom(structuredClone(state), measured),
+        );
+        assert.equal(writes, 2);
+        assert.deepEqual(state.classroom.multiplayerReceived, ["multi-qa"]);
+        applyExchange(
+          state,
+          await exchangeClassroom(structuredClone(state), measured),
+        );
+        assert.equal(writes, 2);
+        const teaching = {
+          profile: "teacher-a",
+          sessions: [],
+          teacher: [],
+          classroom: structuredClone(teacher),
+        };
+        applyExchange(
+          teaching,
+          await exchangeClassroom(structuredClone(teaching), fetcher),
+        );
+        assert.equal(teaching.teacherMultiplayer.length, 1);
+        assert.equal(teaching.classroom.students[0].enrollment.listNumber, 7);
+        applyExchange(
+          teaching,
+          await exchangeClassroom(structuredClone(teaching), fetcher),
+        );
+        assert.equal(teaching.teacherMultiplayer.length, 1);
+        assert.equal(
+          (await (await raw("/multiplayer", null, room2.token)).json()).reports
+            .length,
+          0,
+        );
+        assert.equal((await raw("/multiplayer", null, inv.token)).status, 403);
+        assert.equal(
+          (
+            await raw(
+              "/enrollment",
+              { profile: state.profile, enrollment: state.enrollment },
+              room.token,
+            )
+          ).status,
+          403,
+        );
+        assert.equal(
+          (
+            await raw(
+              "/enrollment",
+              { profile: "another-profile", enrollment: state.enrollment },
+              inv.token,
+            )
+          ).status,
+          403,
+        );
+        assert.equal(
+          (
+            await raw(
+              "/enrollment",
+              {
+                profile: state.profile,
+                enrollment: { ...state.enrollment, listNumber: 0 },
+              },
+              inv.token,
+            )
+          ).status,
+          400,
+        );
+        state.enrollment.group = "B";
+        applyExchange(
+          state,
+          await exchangeClassroom(structuredClone(state), measured),
+        );
+        assert.equal(writes, 3);
+        const delivered = (
+          await (await raw("/multiplayer", null, room.token)).json()
+        ).reports[0].multiplayer[0];
+        assert.equal(delivered.enrollment.group, "A");
+        const report = {
+          schema: MULTIPLAYER_SCHEMA,
+          profile: state.profile,
+          multiplayer: [delivered],
+        };
+        assert.equal(
+          (await raw("/multiplayer", report, inv.token)).status,
+          200,
+        );
+        report.multiplayer[0].enrollment.group = "C";
+        assert.equal(
+          (await raw("/multiplayer", report, inv.token)).status,
+          409,
+        );
+        const spoof = structuredClone(report);
+        spoof.multiplayer[0].profile = "another-profile";
+        assert.equal((await raw("/multiplayer", spoof, inv.token)).status, 400);
+      },
+    );
     await t.test(
       "bounded batches, incremental reads and role isolation",
       async () => {

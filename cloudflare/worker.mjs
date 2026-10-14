@@ -1,6 +1,11 @@
 import { validateReport, SCHEMA } from "../web/core.js";
 import { validateTasks } from "../web/classroom.js";
 import { validWorkshop } from "../web/workshop.js";
+import { validEnrollment, normalizeEnrollment } from "../web/enrollment.js";
+import {
+  MULTIPLAYER_SCHEMA,
+  validateMultiplayerReport,
+} from "../web/multiplayer-records.js";
 
 const CHUNK = 65536,
   MAX_COPY = 9 * 1024 * 1024,
@@ -222,6 +227,8 @@ export default {
             "students",
             "paged-reports",
             "chunked-vault",
+            "enrollment",
+            "multiplayer",
           ],
           pageSize: PAGE,
           chunkSize: CHUNK,
@@ -245,11 +252,40 @@ export default {
       }
       if (is("/students")) {
         require(who.role === "teacher", 403, "role");
+        const students = await all(
+          "SELECT a.id,a.profile,e.body FROM access a LEFT JOIN enrollments e ON a.room=e.room AND a.profile=e.profile WHERE a.room=? AND a.role='student' ORDER BY a.id LIMIT 60",
+          who.room,
+        );
         return respond({
-          students: await all(
-            "SELECT id,profile FROM access WHERE room=? AND role='student' ORDER BY id LIMIT 60",
+          students: students.map(({ id, profile, body }) => ({
+            id,
+            profile,
+            enrollment: body ? JSON.parse(body) : null,
+          })),
+        });
+      }
+      if (is("/enrollment", "POST")) {
+        require(who.role === "student", 403, "role");
+        require(validId(data.profile) && validEnrollment(data.enrollment));
+        require(!who.profile || who.profile === data.profile, 403, "profile");
+        const enrollment = normalizeEnrollment(data.enrollment);
+        const results = await batch([
+          stmt("UPDATE access SET profile=? WHERE hash=?", data.profile, hash),
+          stmt(
+            "INSERT INTO enrollments(room,profile,body,updated_at) SELECT ?,?,?,? WHERE EXISTS(SELECT 1 FROM access WHERE hash=? AND profile=?) ON CONFLICT(room,profile) DO UPDATE SET body=excluded.body,updated_at=excluded.updated_at",
             who.room,
+            data.profile,
+            JSON.stringify(enrollment),
+            new Date().toISOString(),
+            hash,
+            data.profile,
           ),
+        ]);
+        require(results.every((r) => r.meta.changes === 1), 401, "revoked");
+        return respond({
+          classId: who.room,
+          profile: data.profile,
+          enrollment,
         });
       }
       if (is("/students", "POST")) {
@@ -281,8 +317,13 @@ export default {
         );
         return respond({ revoked: true });
       }
-      if (path === "/reports" || path === "/projects") {
-        const table = path === "/reports" ? "sessions" : "projects",
+      if (["/reports", "/projects", "/multiplayer"].includes(path)) {
+        const table =
+            path === "/reports"
+              ? "sessions"
+              : path === "/projects"
+                ? "projects"
+                : "multiplayer",
           key = table;
         if (request.method === "GET") {
           require(who.role === "teacher", 403, "role");
@@ -298,7 +339,7 @@ export default {
           for (const row of rows) {
             if (!groups.has(row.profile))
               groups.set(row.profile, {
-                schema: SCHEMA,
+                schema: key === "multiplayer" ? MULTIPLAYER_SCHEMA : SCHEMA,
                 profile: row.profile,
                 [key]: [],
               });
@@ -319,6 +360,7 @@ export default {
         );
         require(!who.profile || who.profile === data.profile, 403, "profile");
         if (key === "sessions") validateReport(data);
+        else if (key === "multiplayer") validateMultiplayerReport(data);
         else
           require(
             data.projects.every((p) => p.completedAt && validWorkshop(p)),

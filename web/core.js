@@ -1,5 +1,6 @@
+import {validEnrollment} from './enrollment.js';
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.10.0";
+export const VERSION = "0.11.0";
 export const SCHEMA = "sendero.report.v2";
 export const TRAILS = {
   suma: {
@@ -175,6 +176,7 @@ export function validateReport(data) {
   for (const s of data.sessions) {
     if (
       !s ||
+      (s.enrollment !== undefined && !validEnrollment(s.enrollment)) ||
       typeof s.id !== "string" ||
       !/^[a-zA-Z0-9-]{1,80}$/.test(s.id) ||
       s.profile !== data.profile ||

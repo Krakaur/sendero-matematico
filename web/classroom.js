@@ -1,5 +1,11 @@
 import { validWorkshop, mergeWorkshopReports } from "./workshop.js";
 import { SCHEMA, TRAILS, validateReport, mergeSessions } from "./core.js";
+import { normalizeEnrollment, validEnrollment } from "./enrollment.js";
+import {
+  MULTIPLAYER_SCHEMA,
+  validateMultiplayerReport,
+  mergeMultiplayer,
+} from "./multiplayer-records.js";
 export function readInvitation(data, role) {
   if (
     data?.schema !== "sendero.invitation.v1" ||
@@ -107,6 +113,8 @@ export async function exchangeClassroom(state, fetcher = fetch) {
             "students",
             "paged-reports",
             "chunked-vault",
+            "enrollment",
+            "multiplayer",
           ].includes(f),
         );
       capabilitiesAt = Date.now();
@@ -130,7 +138,27 @@ export async function exchangeClassroom(state, fetcher = fetch) {
       throw Error("Cursor de informes no válido.");
     const sessions = data.reports.flatMap((r) => validateReport(r).sessions);
     let projects = [],
+      multiplayer = [],
+      multiplayerCursor = link.multiplayerCursor || 0,
       students = [];
+    if (capabilities.includes("multiplayer")) {
+      const response = await classroomRequest(
+        link,
+        "/multiplayer?after=" + multiplayerCursor,
+        null,
+        fetcher,
+      );
+      if (
+        !Array.isArray(response.reports) ||
+        !Number.isSafeInteger(response.cursor) ||
+        response.cursor < multiplayerCursor
+      )
+        throw Error("Participaciones o cursor no válidos.");
+      multiplayer = response.reports.flatMap(
+        (r) => validateMultiplayerReport(r).multiplayer,
+      );
+      multiplayerCursor = response.cursor;
+    }
     if (capabilities.includes("projects")) {
       const response = await classroomRequest(
         link,
@@ -168,7 +196,8 @@ export async function exchangeClassroom(state, fetcher = fetch) {
           (s) =>
             typeof s.id !== "string" ||
             s.id.length > 80 ||
-            (s.profile !== null && typeof s.profile !== "string"),
+            (s.profile !== null && typeof s.profile !== "string") ||
+            (s.enrollment != null && !validEnrollment(s.enrollment)),
         )
       )
         throw Error("Participantes no válidos.");
@@ -178,6 +207,8 @@ export async function exchangeClassroom(state, fetcher = fetch) {
       sessions,
       projects,
       students,
+      multiplayer,
+      multiplayerCursor,
       capabilities,
       capabilitiesAt,
       ...(paged
@@ -185,6 +216,53 @@ export async function exchangeClassroom(state, fetcher = fetch) {
         : {}),
       at: new Date().toISOString(),
     };
+  }
+  const extra = {};
+  if (capabilities.includes("enrollment")) {
+    const enrollment = normalizeEnrollment(state.enrollment),
+      stamp = JSON.stringify(enrollment);
+    if (link.enrollmentSent !== stamp) {
+      const receipt = await classroomRequest(
+        link,
+        "/enrollment",
+        { profile: state.profile, enrollment },
+        fetcher,
+      );
+      if (
+        receipt.profile !== state.profile ||
+        receipt.classId !== link.classId ||
+        JSON.stringify(receipt.enrollment) !== stamp
+      )
+        throw Error("La confirmación de datos escolares no coincide.");
+      extra.enrollmentSent = stamp;
+    }
+  }
+  if (link.includeMultiplayer && capabilities.includes("multiplayer")) {
+    const pending = (state.multiplayerHistory || [])
+      .filter((r) => !link.multiplayerReceived?.includes(r.id))
+      .slice(0, 1);
+    if (pending.length) {
+      const report = {
+        schema: MULTIPLAYER_SCHEMA,
+        profile: state.profile,
+        multiplayer: pending,
+      };
+      validateMultiplayerReport(report);
+      const receipt = await classroomRequest(
+        link,
+        "/multiplayer",
+        report,
+        fetcher,
+      );
+      if (
+        receipt.profile !== state.profile ||
+        receipt.classId !== link.classId ||
+        !Array.isArray(receipt.accepted) ||
+        pending.some((r) => !receipt.accepted.includes(r.id))
+      )
+        throw Error("La confirmación multijugador no coincide.");
+      extra.multiplayerReceived = receipt.accepted;
+    }
   }
   let projectReceived = [];
   if (link.includeProjects && capabilities.includes("projects")) {
@@ -213,6 +291,7 @@ export async function exchangeClassroom(state, fetcher = fetch) {
     .slice(0, paged ? 4 : 5000);
   if (!pending.length)
     return {
+      ...extra,
       tasks,
       received: [],
       projectReceived,
@@ -231,6 +310,7 @@ export async function exchangeClassroom(state, fetcher = fetch) {
   )
     throw Error("La confirmación no coincide con los informes enviados.");
   return {
+    ...extra,
     tasks,
     received: receipt.accepted,
     projectReceived,
@@ -241,6 +321,25 @@ export async function exchangeClassroom(state, fetcher = fetch) {
 }
 export function applyExchange(state, result) {
   if (!result) return;
+  if (result.multiplayer)
+    state.teacherMultiplayer = mergeMultiplayer(
+      state.teacherMultiplayer || [],
+      result.multiplayer,
+    );
+  if (
+    Number.isSafeInteger(result.multiplayerCursor) &&
+    result.multiplayerCursor >= 0
+  )
+    state.classroom.multiplayerCursor = result.multiplayerCursor;
+  if (result.enrollmentSent)
+    state.classroom.enrollmentSent = result.enrollmentSent;
+  if (result.multiplayerReceived)
+    state.classroom.multiplayerReceived = [
+      ...new Set([
+        ...(state.classroom.multiplayerReceived || []),
+        ...result.multiplayerReceived,
+      ]),
+    ];
   if (result.projects)
     state.teacherProjects = mergeWorkshopReports(
       state.teacherProjects || [],

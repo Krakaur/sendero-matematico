@@ -1,3 +1,5 @@
+import {validEnrollment} from './enrollment.js';
+import {validateMultiplayerRecord} from './multiplayer-records.js';
 import {validWorkshop,mergeWorkshopReports} from './workshop.js';
 import {validateReport,SCHEMA,TRAILS} from './core.js';import {validBankQuestion} from './bank.js';
 import {profileList,profileKey,passwordRecord,PROFILE_INDEX} from './profiles.js';
@@ -7,6 +9,9 @@ const schema='sendero.backup.v1',iterations=210000;
 async function key(password,salt){if(typeof password!=='string'||password.length<10||password.length>128)throw Error('Usa una contraseña de respaldo de 10 a 128 caracteres.');const raw=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations,hash:'SHA-256'},raw,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
 export function validateSnapshot(data) {
  const p=data?.profile,s=data?.state;
+ if(s?.enrollment!==undefined&&!validEnrollment(s.enrollment))throw Error('Adscripción del respaldo no válida.');
+ for(const key of ['multiplayerHistory','teacherMultiplayer'])if(s?.[key]){if(!Array.isArray(s[key])||s[key].length>5000)throw Error('Participaciones no válidas.');s[key].forEach(validateMultiplayerRecord);}
+ if(s?.multiplayerHistory?.some(r=>r.profile!==s.profile))throw Error('Participación de otro perfil.');
  if(s?.teacherProjects)mergeWorkshopReports([],s.teacherProjects);
  if(s?.workshop&&!validWorkshop(s.workshop)||s?.workshopHistory&&(!Array.isArray(s.workshopHistory)||s.workshopHistory.length>5000||!s.workshopHistory.every(validWorkshop)))throw Error('Proyectos del respaldo no válidos.');
  if(!p||!s||typeof p.name!=='string'||p.name.length<2||p.name.length>24||!['student','teacher'].includes(p.role)||p.id!==s.profile)throw Error('Perfil de respaldo no válido.');

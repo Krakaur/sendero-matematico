@@ -1349,3 +1349,16 @@ th {
 @media(max-width:600px) and (max-height:750px){.arcade-playing .site-header{padding-top:4px;padding-bottom:4px}.arcade-playing .profile-bar{font-size:.72rem}.arcade .game-top{margin-bottom:3px}.arcade .race-hud{padding:6px;margin:5px 0}.arcade .race-hud span{font-size:.58rem}.race-lane,.lane-course{height:30px}.competitor svg{height:32px;width:44px}.competitor{width:44px;top:-1px}.lane-finish{font-size:24px}.lane-label{font-size:.58rem;padding:3px}.race-banner{padding:4px 8px}.competition-score{padding:3px 8px}.virtual-note{padding:3px!important}.arcade .question-card{padding:10px}.arcade .equation{font-size:2.5rem;margin:5px 0 8px}.arcade .answer{min-height:50px;padding:4px;font-size:1.6rem}.arcade .answers{gap:9px}.arcade .feedback{font-size:.73rem;margin:8px 0}.arcade .game-controls{font-size:.65rem;justify-content:space-between}.arcade .game-controls .soft-button{font-size:.7rem;padding:7px}.arcade .game-note{margin-top:5px}.arcade .solution-callout{padding:9px}.arcade .solution-callout p{font-size:.72rem;margin:5px}.arcade .solution-callout strong{font-size:1.7rem}}
 @media(min-width:760px) and (min-aspect-ratio:3/2){.arcade{max-width:1120px;display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.arcade>.game-top,.arcade>.race-hud,.arcade>.game-note{grid-column:1/-1}.arcade>.competition,.arcade>.river-scene{align-self:center}.arcade .question-card{margin-top:12px}.arcade .race-water{padding-top:10px;padding-bottom:10px}.arcade .race-lane,.arcade .lane-course{height:62px}.arcade .competitor{top:6px}.arcade .race-hud{max-width:none}.arcade .equation{font-size:3.7rem}}
 @media(max-width:600px) and (max-height:750px){.arcade-playing .topbar{padding-top:3px;padding-bottom:3px}.arcade-playing .profile-bar{padding-top:0;padding-bottom:0}.arcade .game-top{min-height:44px}.arcade .competition{margin-top:4px;margin-bottom:8px}}
+
+/* School data remains within the local profile and private classroom reports. */
+.enrollment-fields {border:1px solid var(--line,#b5c3b6);border-radius:14px;padding:1rem;display:grid;gap:.75rem}
+.enrollment-fields[hidden] {display:none}
+.enrollment-fields legend {font-weight:700;padding:0 .4rem}
+.cohort-panel .room-fields,.room-profile-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:1rem;align-items:end}
+.cohort-panel label,.room-profile-grid label {display:grid;gap:.35rem}
+.room-profile-panel {border-bottom:1px solid #b5c3b6;margin-bottom:1.5rem;padding-bottom:1.5rem}
+.room-profile-grid form {padding:1rem;border:1px solid #b5c3b6;border-radius:14px;display:grid;gap:.75rem}
+.cohort-panel .table-wrap {overflow-x:auto;max-width:100%}
+.cohort-panel table {min-width:760px}
+
+.cohort-panel input,.cohort-panel select,.room-profile-grid input,.room-profile-grid select {font:inherit;min-height:48px;padding:10px 12px;width:100%;min-width:0;border:1px solid #8eafa1;border-radius:10px;background:white;color:#173e35}
