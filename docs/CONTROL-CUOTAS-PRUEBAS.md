@@ -1,0 +1,17 @@
+# Control de cuotas durante la validación
+
+Requisito del proyecto: comprobar antes y después de cada corrida de pruebas la cuota pública disponible, el espacio ocupado, el consumo de CPU y las ejecuciones de Cloudflare. Una corrida puede agrupar casos automatizados o una sesión acotada de comprobaciones en navegador. Identificar cada corrida, sus horarios UTC, objetivo, revisión del código y entorno. Un despliegue y su verificación pública también se registran.
+
+Confirmar Workers Free en el panel de planes. En Workers & Pages, registrar solicitudes de hoy y el límite diario; en las métricas del Worker, errores, CPU P50/P90/P99 y errores por exceder CPU. Registrar la ventana temporal de cada indicador: la CPU acumulada del mes no es la CPU de esa corrida ni una bolsa de minutos disponibles. El límite de CPU de Workers Free es por solicitud. No calcular una resta entre un percentil y el límite como si fuera capacidad diaria reservada.
+
+En D1, registrar filas leídas y escritas desde medianoche UTC y almacenamiento total. Contrastar el tamaño actual con `npx wrangler d1 info sendero-aula-db --config cloudflare/wrangler.jsonc --json`. Sus contadores de operaciones corresponden a 24 horas móviles; no confundirlos con el día UTC del panel. La consulta administrativa de metadatos no es una partida ni una ejecución del Worker público. Si el panel muestra tamaño atrasado, conservar ambos valores y utilizar el tamaño actual verificado para la estimación del espacio libre.
+
+Guardar las observaciones y resultados en `qa-private/<corrida>/`, sin tokens, cookies, contraseñas ni invitaciones. Calcular el saldo para cada dimensión con su propio límite. El almacenamiento D1 tiene un máximo total de 5 GB y un máximo menor por base en Free: consultar la documentación vigente, no tomar el límite de cuenta como capacidad de una sola base. Documentar la convención decimal o binaria utilizada.
+
+Las pruebas con Node y Miniflare deben ejecutarse localmente, sin credenciales remotas ni sincronización con estudiantes reales. Su consumo del servicio público es cero por diseño; comprobar que el panel no muestra incremento atribuible y distinguir tráfico externo. En navegador, usar perfiles sintéticos sin aula vinculada para probar interfaz y persistencia local. Si se prueba la API pública, fijar de antemano el máximo de solicitudes, utilizar datos sintéticos identificables y registrar lecturas y escrituras devueltas por D1 cuando estén disponibles.
+
+Las métricas del proveedor pueden retrasarse. Un contador sin actualización no demuestra consumo nulo: declarar el retraso, el tráfico emitido y la incertidumbre. No repetir pruebas públicas para intentar actualizar el panel. Si no se pueden consultar las cuotas, continuar solo con trabajo local y dejar explícita la lectura faltante antes de pruebas remotas con consumo.
+
+El despliegue actual aplica límites internos de 10 000 solicitudes diarias globales y 1 000 por acceso, además de las cuotas de la plataforma. Permanecer en Free; ante agotamiento, limitar o suspender el servicio, sin habilitar ampliaciones automáticas de pago. No agregar facturación o nuevos productos de pago como solución a una prueba fallida.
+
+Para una futura sala con Durable Objects se deben agregar sus propias métricas: solicitudes, mensajes entrantes, duración en GB-s, almacenamiento y operaciones SQL. Su duración no equivale a CPU del Worker y debe informarse por separado.

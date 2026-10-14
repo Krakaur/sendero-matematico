@@ -1,6 +1,6 @@
 import {validEnrollment} from './enrollment.js';
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.11.0";
+export const VERSION = "0.12.0";
 export const SCHEMA = "sendero.report.v2";
 export const TRAILS = {
   suma: {

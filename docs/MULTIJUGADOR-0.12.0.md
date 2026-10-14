@@ -1,0 +1,15 @@
+# Multijugador web 0.12.0
+
+La misma pantalla admite dos, tres o cuatro estudiantes. La selección predeterminada es cuatro y la pestaña recuerda la última cantidad elegida. Cada plaza tiene su zona de respuestas, sus controles y una vinculación opcional con un perfil diferente. Los invitados pueden jugar sin expediente. Las salas por enlace mantienen su capacidad previa de dos a cuatro personas.
+
+Los controles son A/S/D/F para Luma, J/K/L/Ñ para Nube, 1/2/3/4 para Rayo y 7/8/9/0 para Chispa. También se utilizan botones con ratón o pantalla táctil. El teclado no interviene mientras se escribe en un formulario ni durante los proyectos de razonamiento. La capacidad de registrar muchas teclas simultáneas depende del teclado físico; las pruebas de automatización no verifican esa característica del hardware.
+
+En pantallas amplias, las cuatro zonas de respuesta se distribuyen en una fila. Las embarcaciones se ajustan para mantener sus etiquetas visibles. En anchos menores se usan dos columnas; los proyectos manipulables requieren más espacio y se apilan en pantallas pequeñas. Para cuatro personas se recomienda una pantalla grande o un dispositivo por persona. No se afirma haber validado el uso conjunto por cuatro niños en teléfonos físicos.
+
+La confirmación de salida incluye a todas las plazas. La carrera continúa hasta que todas completan ocho retos. El modo cooperativo de razonamiento también admite cuatro. La recarga recupera las plazas, sus avances y sus vinculaciones privadas. Los resultados se guardan por separado de la práctica individual y no modifican su adaptación. El perfil de una persona no puede vincularse simultáneamente a dos plazas, incluidas solicitudes concurrentes.
+
+La validación local superó 90 pruebas automatizadas. Se probó en Chrome una carrera con cuatro perfiles sintéticos 000001–000004: 32 respuestas completadas, recarga en el segundo reto, cuatro expedientes independientes y una pista atribuida únicamente al tercer perfil. También se comprobaron las selecciones de dos y tres personas, el rechazo de un perfil duplicado, la conservación de perfiles al actualizar y la ausencia de errores de consola en esa sesión. Los cuatro controles tienen pruebas automatizadas; el controlador de navegador no pudo enviar la tecla Ñ, por lo que esa respuesta se comprobó con el botón correspondiente.
+
+El respaldo previo conserva los 56 archivos publicados de la versión 0.11.0 y su manifiesto de hashes. Los artefactos detallados se conservan localmente en qa-private, fuera del sitio y del repositorio. Las cuotas de Cloudflare se registran antes y después de cada corrida; las pruebas locales no usan la API pública.
+
+La independencia del anfitrión y el acceso automático al mismo perfil desde otro dispositivo siguen pendientes. Su arquitectura propuesta se describe en CONTINUIDAD-MULTIJUGADOR.md. Esta versión no presenta el respaldo cifrado como si fuera una cuenta sincronizada ni atribuye preferencia infantil o eficacia educativa a una comprobación funcional.

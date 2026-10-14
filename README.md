@@ -1,14 +1,16 @@
-# Sendero Matemático · Web 0.9.0
+# Sendero Matemático · Web 0.12.0
 
 [Jugar](https://krakaur.github.io/sendero-matematico/) · [Actualizar conservando datos](https://krakaur.github.io/sendero-matematico/actualizar.html) · [Android 14–16](https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-Nativo-0.4.0.apk) · [Windows x64](https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-0.4.0-Windows-x64.exe) · [Para docentes](https://krakaur.github.io/sendero-matematico/docentes.html)
 
 Juego gratuito en español para practicar matemáticas con conectividad intermitente. Incluye cálculo, tablas ampliadas hasta el 20 y 6 630 problemas y variantes. No utiliza IA en el dispositivo. Desarrollo: Dirk Hans Krakaur Floranes. Código e ilustraciones originales con licencia MIT; sin afiliación con Arcademics.
 
+La web 0.12.0 permite elegir dos, tres o cuatro estudiantes en la misma pantalla, cada uno con controles y perfil independientes. Se conservan las salas por enlace de hasta cuatro personas. [Validación de esta versión](docs/MULTIJUGADOR-0.12.0.md) · [Continuidad en la nube: diseño pendiente](docs/CONTINUIDAD-MULTIJUGADOR.md) · [Usuarios y pruebas](docs/USUARIOS-Y-DATOS-DE-PRUEBA.md) · [Control de cuotas](docs/CONTROL-CUOTAS-PRUEBAS.md).
+
 ## Catálogo y razonamiento
 
 La web 0.9.0 incorpora ocho proyectos manipulables: equilibrio, reparto, grupos, fracciones, perímetro, datos, patrones y planificación. Cada solución exige construir y elegir una justificación; después de un error o ayuda se comprueba otra construcción con cantidades diferentes. La nota libre es opcional y no se califica automáticamente. Son ocho diseños de interacción, con variantes en cuatro niveles de cantidades, no ocho currículos completos. Se conserva el banco de 6 630 problemas y variantes.
 
-Las cuatro rutas aritméticas tienen práctica tranquila con respuesta escrita y modelos explorables; sus resultados se separan de los ejercicios con opciones y las carreras. El razonamiento admite cooperación entre dos personas en una pantalla o de dos a cuatro por enlace, sin clasificación por rapidez. Las salas permiten liberar plazas abandonadas y recuperar la identidad y el avance al recargar la misma pestaña, incluido el anfitrión. No hay migración de anfitrión a otra persona ni garantía en toda red.
+Las cuatro rutas aritméticas tienen práctica tranquila con respuesta escrita y modelos explorables; sus resultados se separan de los ejercicios con opciones y las carreras. El razonamiento admite cooperación entre dos y cuatro personas, en una pantalla o por enlace, sin clasificación por rapidez. Las salas permiten liberar plazas abandonadas y recuperar la identidad y el avance al recargar la misma pestaña, incluido el anfitrión. No hay migración de anfitrión a otra persona ni garantía en toda red.
 
 ## Carrera y aprendizaje
 
@@ -22,7 +24,7 @@ La carrera tiene posición, tiempo y puntos; su referencia de ritmo se calibra c
 
 Al terminar los ocho retos, la canoa alcanza la meta y aparece un cierre ilustrado con posición, puntos y tiempo. Se puede volver al río o elegir otro camino sin recorrer un informe largo. El detalle de la carrera y los resultados educativos se despliega por separado; los rivales que aún no llegaron se muestran como «En el río».
 
-Esta entrega corresponde a la **web 0.9.0**. Las descargas Android y Windows permanecen en **0.4.0**. [Cambios, pruebas y límites](docs/EVALUACION-WEB-0.9.0.md) · [Análisis global comparativo](docs/ANALISIS-GLOBAL-WEB-0.8.0.md) · [Salas y circuitos](docs/MULTIJUGADOR-Y-CIRCUITOS.md). Atractivo, preferencia y audio quedan pendientes de evaluación.
+Esta entrega corresponde a la **web 0.12.0**. Las descargas Android y Windows permanecen en **0.4.0**. [Cambios, pruebas y límites](docs/EVALUACION-WEB-0.9.0.md) · [Análisis global comparativo](docs/ANALISIS-GLOBAL-WEB-0.8.0.md) · [Salas y circuitos](docs/MULTIJUGADOR-Y-CIRCUITOS.md). Atractivo, preferencia y audio quedan pendientes de evaluación.
 
 Los puntos son recompensas de juego. El informe educativo distingue precisión inicial, resolución sin ayuda, pistas, correcciones y ritmo de respuesta. La web separa evolución por modalidad, contenido y nivel. Una posición, porcentaje o color no acredita aprendizaje ni equivale a calificación escolar.
 

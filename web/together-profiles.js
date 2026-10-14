@@ -9,7 +9,7 @@ import { exchangeClassroom, applyExchange } from "./classroom.js";
 // These bindings belong to this tab only. Never attach them to a room snapshot.
 export function togetherProfiles(storage, tabStorage, onChange) {
   const key = "sendero.together.profiles";
-  let bindings = [null, null],
+  let bindings = [null, null, null, null],
     captured = null,
     message = "",
     persistError = false;
@@ -26,8 +26,17 @@ export function togetherProfiles(storage, tabStorage, onChange) {
   };
   try {
     const saved = JSON.parse(tabStorage.getItem(key));
-    if (saved?.bindings?.length === 2) {
-      bindings = saved.bindings.map((b) => b && binding(b.id));
+    if (
+      Array.isArray(saved?.bindings) &&
+      [2, 3, 4].includes(saved.bindings.length)
+    ) {
+      const used = new Set();
+      bindings = bindings.map((_, i) => {
+        const b = saved.bindings[i] && binding(saved.bindings[i].id);
+        if (!b || used.has(b.id)) return null;
+        used.add(b.id);
+        return b;
+      });
       captured = saved.captured;
     } else bindings[0] = binding(tabStorage.getItem("sendero.active"));
   } catch {}
@@ -38,14 +47,25 @@ export function togetherProfiles(storage, tabStorage, onChange) {
       persistError = true;
     }
   };
-  function panel() {
+  function panel(count = 4) {
+    count = [2, 3, 4].includes(count) ? count : 4;
     let profiles = [];
     try {
       profiles = list();
     } catch {
       message = "No se pudo leer la lista de perfiles.";
     }
-    return `<section class="room-profile-panel"><h2>Guardar mi participación</h2><p>Elige un perfil local o juega como invitado. Tu alias y tus datos escolares no se muestran a tus compañeros. En una sala por enlace se usa solo el primer perfil; la segunda plaza es para compartir esta pantalla.</p><div class="room-profile-grid">${[0, 1].map((i) => `<form data-profile-seat="${i}"><h3>${i ? "Segunda persona · misma pantalla" : "Mi perfil"}</h3><p>${bindings[i] ? `Vinculado: <strong>${esc(bindings[i].name)}</strong>` : "Invitado · sin expediente"}</p><label>Perfil<select name="profile"><option value="">Invitado</option>${profiles.map((p) => `<option value="${esc(p.id)}" ${bindings[i]?.id === p.id ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select></label><label>Contraseña del perfil<input name="password" type="password" autocomplete="current-password"></label><button class="secondary" type="submit">Usar este perfil</button></form>`).join("")}</div><p><a href="./#perfiles">Crear perfil o completar mis datos escolares</a></p><p role="status">${esc(message)}</p></section>`;
+    return `<section class="room-profile-panel"><h2>Guardar mi participación</h2><p>Elige un perfil local o juega como invitado. Tu alias y tus datos escolares no se muestran a tus compañeros. En una sala por enlace se usa solo el primer perfil; las demás plazas son para compartir esta pantalla.</p><div class="room-profile-grid">${Array.from(
+      { length: count },
+      (_, i) => i,
+    )
+      .map(
+        (i) =>
+          `<form data-profile-seat="${i}"><h3>${["Luma · Mi perfil", "Nube · Segunda persona", "Rayo · Tercera persona", "Chispa · Cuarta persona"][i]}</h3><p>${bindings[i] ? `Vinculado: <strong>${esc(bindings[i].name)}</strong>` : "Invitado · sin expediente"}</p><label>Perfil<select name="profile"><option value="">Invitado</option>${profiles.map((p) => `<option value="${esc(p.id)}" ${bindings[i]?.id === p.id ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select></label><label>Contraseña del perfil<input name="password" type="password" autocomplete="current-password"></label><button class="secondary" type="submit">Usar este perfil</button></form>`,
+      )
+      .join(
+        "",
+      )}</div><p><a href="./#perfiles">Crear perfil o completar mis datos escolares</a></p><p role="status">${esc(message)}</p></section>`;
   }
   function bind(root) {
     root.addEventListener("submit", async (e) => {
@@ -58,26 +78,32 @@ export function togetherProfiles(storage, tabStorage, onChange) {
         button = form.querySelector("button");
       button.disabled = true;
       try {
-        if (!id) bindings[seat] = null;
-        else {
-          if (bindings[1 - seat]?.id === id)
-            throw Error("Cada persona necesita un perfil distinto.");
-          const result = await loginProfile(storage, id, f.get("password"));
-          if (result.profile.role !== "student")
-            throw Error("Elige un perfil de estudiante.");
-          bindings[seat] = binding(id);
-        }
-        captured = null;
-        message = bindings[seat]
-          ? "Perfil vinculado. Se guardarán tus próximas participaciones."
-          : "Jugarás como invitado, sin guardar un expediente.";
-        persist();
+        await selectProfile(seat, id, f.get("password"));
       } catch (error) {
         message = error.message;
       } finally {
         onChange();
       }
     });
+  }
+  async function selectProfile(seat, id, password) {
+    if (!Number.isInteger(seat) || seat < 0 || seat >= 4)
+      throw Error("La plaza no existe.");
+    if (!id) bindings[seat] = null;
+    else {
+      const result = await loginProfile(storage, id, password);
+      if (result.profile.role !== "student")
+        throw Error("Elige un perfil de estudiante.");
+      // Check after authentication too: parallel submissions must not duplicate a profile.
+      if (bindings.some((b, i) => i !== seat && b?.id === id))
+        throw Error("Cada persona necesita un perfil distinto.");
+      bindings[seat] = binding(id);
+    }
+    captured = null;
+    message = bindings[seat]
+      ? "Perfil vinculado. Se guardarán tus próximas participaciones."
+      : "Jugarás como invitado, sin guardar un expediente.";
+    persist();
   }
   async function sync(id) {
     if (syncing.has(id)) return;
@@ -160,5 +186,5 @@ export function togetherProfiles(storage, tabStorage, onChange) {
   function status() {
     return `<p class="room-notice" role="status">${esc(message || "Los perfiles vinculados guardan sus resultados al completar los ocho retos. Los invitados no generan expediente.")}${persistError ? " No se pudo conservar la vinculación para recuperar esta pestaña." : ""}</p><a class="room-return" href="./#progreso">Ver mis resultados y sincronizar el aula</a>`;
   }
-  return { panel, bind, capture, status };
+  return { panel, bind, capture, status, selectProfile };
 }
