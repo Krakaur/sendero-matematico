@@ -1,8 +1,14 @@
-# Sendero Matemático · Web 0.8.0
+# Sendero Matemático · Web 0.9.0
 
 [Jugar](https://krakaur.github.io/sendero-matematico/) · [Actualizar conservando datos](https://krakaur.github.io/sendero-matematico/actualizar.html) · [Android 14–16](https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-Nativo-0.4.0.apk) · [Windows x64](https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-0.4.0-Windows-x64.exe) · [Para docentes](https://krakaur.github.io/sendero-matematico/docentes.html)
 
 Juego gratuito en español para practicar matemáticas con conectividad intermitente. Incluye cálculo, tablas ampliadas hasta el 20 y 6 630 problemas y variantes. No utiliza IA en el dispositivo. Desarrollo: Dirk Hans Krakaur Floranes. Código e ilustraciones originales con licencia MIT; sin afiliación con Arcademics.
+
+## Catálogo y razonamiento
+
+La web 0.9.0 incorpora ocho proyectos manipulables: equilibrio, reparto, grupos, fracciones, perímetro, datos, patrones y planificación. Cada solución exige construir y elegir una justificación; después de un error o ayuda se comprueba otra construcción con cantidades diferentes. La nota libre es opcional y no se califica automáticamente. Son ocho diseños de interacción, con variantes en cuatro niveles de cantidades, no ocho currículos completos. Se conserva el banco de 6 630 problemas y variantes.
+
+Las cuatro rutas aritméticas tienen práctica tranquila con respuesta escrita y modelos explorables; sus resultados se separan de los ejercicios con opciones y las carreras. El razonamiento admite cooperación entre dos personas en una pantalla o de dos a cuatro por enlace, sin clasificación por rapidez. Las salas permiten liberar plazas abandonadas y recuperar la identidad y el avance al recargar la misma pestaña, incluido el anfitrión. No hay migración de anfitrión a otra persona ni garantía en toda red.
 
 ## Carrera y aprendizaje
 
@@ -12,11 +18,11 @@ La web 0.8.0 añade tres circuitos con curvas, incluida una vuelta completa, y [
 
 La copa del río comienza en un muelle ilustrado: presenta a Luma, los rivales y las reglas antes de una cuenta de tres pulsos con sonido opcional. La espera no consume tiempo de respuesta. La salida se puede cancelar; con movimiento reducido es directa. Las carreras ya empezadas se reanudan sin repetir la preparación.
 
-La carrera tiene posición, tiempo y puntos; su referencia de ritmo se calibra con la práctica anterior. El nivel permanece fijo durante ocho retos y se adapta para la siguiente carrera. Cada acierto en cálculo avanza con un toque. El error muestra la solución centrada y destacada hasta seleccionarla correctamente. También existe práctica tranquila; el razonamiento permite leer y explicar sin carrera. Las carreras guardadas en versiones anteriores conservan sus rivales originales.
+La carrera tiene posición, tiempo y puntos; su referencia de ritmo se calibra con la práctica anterior. El nivel permanece fijo durante ocho retos y se adapta para la siguiente carrera. Cada acierto en cálculo avanza con un toque. El error muestra la solución centrada y destacada hasta seleccionarla correctamente. En el banco de razonamiento el primer error orienta la revisión; la solución explicada se abre por elección del estudiante. Las carreras guardadas en versiones anteriores conservan sus rivales originales.
 
 Al terminar los ocho retos, la canoa alcanza la meta y aparece un cierre ilustrado con posición, puntos y tiempo. Se puede volver al río o elegir otro camino sin recorrer un informe largo. El detalle de la carrera y los resultados educativos se despliega por separado; los rivales que aún no llegaron se muestran como «En el río».
 
-Esta entrega corresponde a la **web 0.8.0**. Las descargas Android y Windows permanecen en **0.4.0**. [Cambios, pruebas y límites](docs/EVALUACION-WEB-0.8.0.md) · [Análisis global comparativo](docs/ANALISIS-GLOBAL-WEB-0.8.0.md) · [Salas y circuitos](docs/MULTIJUGADOR-Y-CIRCUITOS.md). Atractivo, preferencia y audio quedan pendientes de evaluación.
+Esta entrega corresponde a la **web 0.9.0**. Las descargas Android y Windows permanecen en **0.4.0**. [Cambios, pruebas y límites](docs/EVALUACION-WEB-0.9.0.md) · [Análisis global comparativo](docs/ANALISIS-GLOBAL-WEB-0.8.0.md) · [Salas y circuitos](docs/MULTIJUGADOR-Y-CIRCUITOS.md). Atractivo, preferencia y audio quedan pendientes de evaluación.
 
 Los puntos son recompensas de juego. El informe educativo distingue precisión inicial, resolución sin ayuda, pistas, correcciones y ritmo de respuesta. La web separa evolución por modalidad, contenido y nivel. Una posición, porcentaje o color no acredita aprendizaje ni equivale a calificación escolar.
 
@@ -26,7 +32,7 @@ Web, Windows y Android permiten hasta ocho perfiles locales con contraseña. Las
 
 En web, abre una vez con internet y espera «Lista sin conexión». Android incluye los recursos desde la instalación y funciona sin navegador ni WebView. Windows incluye su motor y recursos; es más pesado y no tiene certificado comercial. Borrar datos o desinstalar puede eliminar el progreso: guarda copias y comprueba su recuperación.
 
-La exportación docente manual está disponible en las tres ediciones. Web/Windows incorporan un cliente de entrega por invitación y un receptor local probado; **no existe servidor público ni se contrató alojamiento**. Android continúa con entrega manual. La administración escolar completa y el endurecimiento para producción siguen pendientes. [Servicio docente](docs/SERVICIO-DOCENTE.md).
+La exportación docente manual está disponible en las tres ediciones. La web incorpora entrega por invitación, recepción docente de proyectos, emisión y revocación de invitaciones y copia cifrada remota bajo control de versiones. Guardar y recuperar son acciones explícitas, sin fusión automática de cambios. El receptor está probado localmente; **no existe servidor público ni se contrató alojamiento**. Android continúa con entrega manual. La administración escolar completa y el endurecimiento para producción siguen pendientes. [Servicio docente](docs/SERVICIO-DOCENTE.md).
 
 ## Estado educativo y colaboración
 

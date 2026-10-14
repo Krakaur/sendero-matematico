@@ -1,3 +1,17 @@
+# Continuidad web 0.9.0 · paquetes 0.4.0
+
+Intervención secuencial del 14 de octubre: primero diversidad de razonamiento, después catálogo, legibilidad, cooperación, recuperación y continuidad. Leer `EVALUACION-WEB-0.9.0.md`, `qa-web-0.9.0/verification.json` y, tras la publicación, `qa-web-0.9.0/publication.json`. Ocho proyectos manipulables con justificación y nueva construcción tras error/ayuda, práctica escrita en cuatro rutas aritméticas, banco conservado con orientación antes de mostrar solución. No convertir las 6.630 variantes ni los ocho diseños en una cuenta de currículos completos.
+
+Cooperación de proyectos: dos personas en pantalla y dos a cuatro por enlace. Recuperación de invitado y anfitrión en la misma sesión de pestaña; liberación de plazas abandonadas. Las pruebas de cuatro conexiones usan un equipo físico. No hay migración a otro anfitrión ni TURN propio. El cierre de razonamiento no muestra posición ni tiempo. Se mantienen las carreras y circuitos anteriores.
+
+Los proyectos se exportan/importan por archivo sin servidor. La API docente 2 añade recepción voluntaria de proyectos y notas, emisión/revocación de invitaciones y copias cifradas con control de revisión. Probada con usuarios sintéticos; no existe un servidor público desplegado. Guardar/recuperar una copia no es sincronización automática ni cuenta con correo. El alojamiento adicional está pendiente; no presentar el panel local como aula pública disponible.
+
+74 pruebas Node. Recorridos de proyectos, catálogo y cooperación local en Chromium y Firefox; red real de cuatro participantes y recuperación de ambos extremos; interfaz de aula local en Firefox. Respaldo previo: `qa-private/public-web-backup-20261014-cycle7/`, 46 archivos HTTP coincidentes con la pública 0.8.0, ZIP con CRC verificado. Actualización pública y hashes se documentarán al verificar el despliegue. La autorización de publicar tras respaldo permanece vigente.
+
+Atractivo, preferencia, audio y paquetes Android/Windows continúan fuera del alcance. No afirmar superioridad global sobre Arcademics, eficacia educativa ni validación con niños. Conservar fuera de Git `CY8_TST_PISA2022_MS_Released_MAT_Items_FINAL_IH.pdf` y `docs/BASE-CURRICULAR-NEM-PISA.md`, ajenos a la intervención.
+
+## Historial de 0.8.0
+
 # Continuidad web 0.8.0 · paquetes 0.4.0
 
 Sexto incremento: análisis global, juego entre personas y circuitos con curvas. Leer primero `ANALISIS-GLOBAL-WEB-0.8.0.md`, `EVALUACION-WEB-0.8.0.md` y `MULTIJUGADOR-Y-CIRCUITOS.md`. Publicación verificada: fuente `d9452816dd9beabf6a6e93d76813ef9a0a66f2bf`, despliegue `42681384a74c790a55a8d450fb5e17459c24e98e`, Pages `38503084004` satisfactorio y 46 archivos públicos coincidentes. La actualización conservó historial y carrera pendiente de 0.7.0; se completó y se respondió una nueva carrera offline. Las salas públicas completaron recorridos de dos y cuatro participantes en contextos aislados de un mismo equipo. Registro: `qa-web-0.8.0/publication.json`.
