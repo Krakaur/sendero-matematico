@@ -1,6 +1,6 @@
 # Intervención secuencial del catálogo · Sendero web 0.9.0
 
-14 de octubre de 2026. Base: web 0.8.0, fuente `545fc4a`, sitio publicado desde `42681384a74c790a55a8d450fb5e17459c24e98e`. Objetivo: corregir primero el desequilibrio entre la carrera y el razonamiento; después, abordar las deficiencias funcionales restantes del análisis. La publicación efectiva y sus hashes se registran en `qa-web-0.9.0/publication.json` cuando concluye la comprobación pública.
+14 de octubre de 2026. Base: web 0.8.0, fuente `545fc4a`, sitio publicado desde `42681384a74c790a55a8d450fb5e17459c24e98e`. Objetivo: corregir primero el desequilibrio entre la carrera y el razonamiento; después, abordar las deficiencias funcionales restantes del análisis. La publicación efectiva y sus hashes se registran en `qa-web-0.9.0/publication.json` con la comprobación pública concluida.
 
 ## Primera pasada: diversidad de acciones matemáticas
 
@@ -42,3 +42,7 @@ Antes de sustituir la web se preservó `qa-private/public-web-backup-20261014-cy
 La web estática puede publicarse en GitHub Pages. Un aula remota requiere otro servidor, HTTPS, almacenamiento persistente y administración; no se ha contratado ni desplegado ese servicio. La implementación disponible permite prepararlo, pero no convierte una dependencia pendiente en una función pública operativa. Las cuentas con correo, recuperación administrativa, fusión automática de progreso, migración del anfitrión y TURN propio siguen ausentes.
 
 La intervención mejora acciones matemáticas y continuidad funcional; no demuestra superioridad global sobre Arcademics. Permanecen pendientes observación con niños, revisión didáctica independiente, cobertura curricular completa, aprendizaje y retención medidos, dispositivos físicos y redes diferentes. Atractivo, preferencia y audio se reservaron para otro turno. Android y Windows distribuidos continúan en 0.4.0.
+
+## Resultado de la publicación
+
+La PR #6 está integrada. Pages `38608484263` terminó correctamente: 52 archivos HTTP coinciden con la fuente `8fbb1bbea828d3c877fd2ee2cb07558f1ebe71cb`, publicada mediante `28938f73c98a1fdae6e9a0b762b7073c297177ef`. La actualización pública 0.8.0 → 0.9.0 conservó historial, rivales, intentos y tiempos de primera respuesta; se completó la carrera antigua, se respondió otra nueva sin conexión y se abrió y manipuló un proyecto sin conexión. Una sala en el origen público completó 32 proyectos con cuatro participantes, reconectó un invitado y mostró resultados coincidentes. El detalle verificable permanece en `qa-web-0.9.0/publication.json`.

@@ -107,6 +107,16 @@
       "sha256": "758f228c6dfc78d54c72fb5b21e40453208f3ebfc8e3b816eb9700ff9987c56b"
     },
     {
+      "file": "output/playwright/web-0.9.0/public-project-offline.png",
+      "bytes": 106992,
+      "sha256": "717026f473b1c880e76853225fa8a75c8d436e28fe2060c2870ecbf942d79f8f"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/public-upgraded-offline.png",
+      "bytes": 722307,
+      "sha256": "dcf3289a05bde4105762a6c04c8e07b7c5e15185a02a7d4b04757aab43f0336f"
+    },
+    {
       "file": "output/playwright/web-0.9.0/recovered-network-finish.png",
       "bytes": 78171,
       "sha256": "66ba696f716bc181c7a1fd66a5fe31b6b26514c4e528e689f2a925b6301dc557"
