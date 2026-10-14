@@ -286,6 +286,28 @@
 .player-console[data-seat="1"] {
   border-color: #9b87b4;
 }
+.player-console[data-seat="2"] {
+  border-color: #528d89;
+}
+.player-console[data-seat="3"] {
+  border-color: #bd7246;
+}
+.room-local-count {
+  display: grid;
+  gap: 8px;
+  max-width: 320px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.room-local-count select {
+  font: inherit;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid #8eafa1;
+  border-radius: 10px;
+  background: white;
+  color: #173e35;
+}
 .console-heading {
   display: flex;
   justify-content: space-between;
@@ -591,3 +613,37 @@
 
 .room-project{min-width:0;padding:16px}.room-project>fieldset{border:0;padding:0;min-width:0}.room-project>h2{font-size:1.3rem;margin-bottom:16px}.room-project .project-top,.room-project .project-map,.room-project .project-game>.micro,.room-project .project-discovery label,.room-project .project-discovery textarea{display:none}.room-project .project-task{padding:16px;box-shadow:none}.room-project .project-model{padding:12px}.room-project .project-steppers{flex-wrap:wrap}.room-project .project-task h2{font-size:1.15rem}.room-reasoning .room-scene{height:150px}.room-reasoning .room-map{max-height:55px}.room-project .project-discovery .primary{margin-top:12px}.room-project .project-baskets section{min-width:120px}.room-project .project-route{flex-wrap:wrap}.room-project .project-route section{min-width:90px}.room-reasoning .room-answers{align-items:start}
 @media(max-width:700px){.room-reasoning .room-answers{grid-template-columns:1fr}.room-project{padding:10px}.room-project .project-task{padding:10px}}
+
+/* Keep all four response areas visible together on a large shared screen. */
+@media (min-width: 1150px) {
+  .room-many-local:not(.room-reasoning) .room-answers {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .room-many-local:not(.room-reasoning) .room-answers[data-count="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .room-many-local:not(.room-reasoning) .room-scene {
+    height: 260px;
+  }
+  .room-many-local:not(.room-reasoning) .room-scene .competitor {
+    width: 56px;
+    height: 52px;
+    top: -36px;
+    margin-left: -28px;
+  }
+  .room-many-local:not(.room-reasoning) .room-scene .canoe-art {
+    width: 56px;
+    height: 52px;
+  }
+  .room-many-local:not(.room-reasoning) .room-scene .lane-label {
+    width: 100%;
+    left: 0;
+  }
+  .room-many-local:not(.room-reasoning) .player-console {
+    padding: 12px 10px;
+  }
+  .room-many-local:not(.room-reasoning) .console-answers {
+    gap: 5px;
+  }
+}

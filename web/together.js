@@ -1,3 +1,4 @@
+import { LOCAL_KEYS, createLocalMatch, localAnswer } from "./together-local.js";
 import {togetherProfiles} from './together-profiles.js';
 import {workshopHTML,workshopProgressHTML,workshopControlAction} from './workshop-view.js';
 import { TRAILS, VERSION } from "./core.js";
@@ -39,6 +40,8 @@ const main = document.querySelector("#main"),
           "'": "&#39;",
         })[c],
     );
+let localCount = 4;
+try { const saved = Number(sessionStorage.getItem("sendero.together.size")); if ([2, 3, 4].includes(saved)) localCount = saved; } catch {}
 let match = null,
   kind = null,
   localId = null,
@@ -88,6 +91,7 @@ function stopView() {
 }
 function reset(keepRecovery=false) {
   stopView();
+  document.body.classList.remove("room-many-local", "room-reasoning");
   link?.close();
   link = null;
   match = null;
@@ -116,7 +120,7 @@ function saveLocal() {
 function errorHTML() {
   return error ? `<p class="room-error" role="alert">${esc(error)}</p>` : "";
 }
-const profiles=togetherProfiles(localStorage,sessionStorage,()=>{if(match)render(true);else{const panel=main.querySelector('.room-profile-panel');if(panel)panel.outerHTML=profiles.panel();}});
+const profiles=togetherProfiles(localStorage,sessionStorage,()=>{if(match)render(true);else{const panel=main.querySelector('.room-profile-panel');if(panel)panel.outerHTML=profiles.panel(localCount);}});
 profiles.bind(main);
 function setup() {
   document.body.classList.remove('room-reasoning');
@@ -129,7 +133,7 @@ function setup() {
     error =
       "La invitación está incompleta. Pide que te compartan el enlace completo.";
   }
-  main.innerHTML = `<section class="room-intro"><div><span class="eyebrow">JUGAR, PENSAR Y COMPARTIR</span><h1>El río se disfruta<br>en compañía.</h1><p>Resuelvan los mismos ocho retos. Pueden competir o ayudar a que todo el equipo llegue a la meta.</p><p class="room-notice">Personajes diferentes, mismas condiciones: contenido, nivel y circuito compartidos. Cada persona responde sus propios retos.</p></div><div class="room-hero" aria-hidden="true"><strong>La copa compartida</strong>${canoeSVG(0)}${canoeSVG(1)}</div></section>${errorHTML()}<section class="room-setup">${profiles.panel()}<h2>Preparen el recorrido</h2><div class="room-fields"><label>Contenido<select id="room-trail">${["suma", "resta", "multi", "tablas20", "razonar"].map((t) => `<option value="${t}" ${t === "multi" ? "selected" : ""}>${TRAILS[t].short}</option>`).join("")}</select></label><label>Nivel de cantidades<select id="room-level">${[1, 2, 3, 4].map((l) => `<option value="${l}">Nivel ${l}</option>`).join("")}</select></label><label>Forma de jugar<select id="room-mode"><option value="race">Carrera amistosa</option><option value="coop">Llegar en equipo</option></select></label>${circuitPicker()}</div><div class="room-choices"><button class="primary" id="local-create" ${busy ? "disabled" : ""}>Dos en esta pantalla</button><button class="secondary" id="online-create" ${busy ? "disabled" : ""}>Crear sala por enlace</button></div><p class="room-notice">En esta pantalla: dos zonas de respuesta o teclas A S D F y J K L Ñ. Funciona sin internet cuando el juego está preparado. Por enlace: de dos a cuatro personas, cada una en su dispositivo.</p><details><summary>Cómo funcionan las salas privadas</summary><p class="room-notice">Solo entra quien tenga la invitación. Al crear o unirse, PeerJS conecta los navegadores y recibe datos técnicos de conexión; los retos y respuestas viajan entre participantes. No se envía tu perfil ni historial. No hay cámara, micrófono ni chat. Algunas redes impiden la conexión directa: si ocurre, prueben otra red o compartan pantalla. Mantén abierta la pestaña que creó la sala.</p></details><div class="room-join"><label for="invite-input">¿Te compartieron una invitación?</label><input id="invite-input" type="text" maxlength="500" placeholder="Pega aquí el enlace de la sala" value="${esc(incoming)}"><button class="secondary" id="online-join" ${busy ? "disabled" : ""}>Entrar en la sala</button></div><p id="connect-status" role="status" class="room-notice">${busy ? "Conectando…" : ""}</p></section><a class="room-return" href="./">Volver a mi aventura individual</a><p class="room-notice">Los perfiles vinculados conservan un registro multijugador separado: puede incluir colaboración y no verifica quién responde. Web ${VERSION}.</p>`;
+  main.innerHTML = `<section class="room-intro"><div><span class="eyebrow">JUGAR, PENSAR Y COMPARTIR</span><h1>El río se disfruta<br>en compañía.</h1><p>Resuelvan los mismos ocho retos. Pueden competir o ayudar a que todo el equipo llegue a la meta.</p><p class="room-notice">Personajes diferentes, mismas condiciones: contenido, nivel y circuito compartidos. Cada persona responde sus propios retos.</p></div><div class="room-hero" aria-hidden="true"><strong>La copa compartida</strong>${canoeSVG(0)}${canoeSVG(1)}</div></section>${errorHTML()}<section class="room-setup"><label class="room-local-count">Personas en esta pantalla<select id="local-count">${[2,3,4].map(n=>`<option value="${n}" ${n===localCount?"selected":""}>${n} estudiantes</option>`).join("")}</select></label>${profiles.panel(localCount)}<h2>Preparen el recorrido</h2><div class="room-fields"><label>Contenido<select id="room-trail">${["suma", "resta", "multi", "tablas20", "razonar"].map((t) => `<option value="${t}" ${t === "multi" ? "selected" : ""}>${TRAILS[t].short}</option>`).join("")}</select></label><label>Nivel de cantidades<select id="room-level">${[1, 2, 3, 4].map((l) => `<option value="${l}">Nivel ${l}</option>`).join("")}</select></label><label>Forma de jugar<select id="room-mode"><option value="race">Carrera amistosa</option><option value="coop">Llegar en equipo</option></select></label>${circuitPicker()}</div><div class="room-choices"><button class="primary" id="local-create" ${busy ? "disabled" : ""}>Jugar ${localCount} en esta pantalla</button><button class="secondary" id="online-create" ${busy ? "disabled" : ""}>Crear sala por enlace</button></div><p class="room-notice">En esta pantalla: de dos a cuatro zonas de respuesta. Cada participante puede tocar sus botones o usar su grupo de teclas. Para tres o cuatro, conviene una pantalla grande o táctil; en teléfonos pequeños, usen un dispositivo por persona. Funciona sin internet cuando el juego está preparado. Por enlace: de dos a cuatro personas, cada una en su dispositivo.</p><details><summary>Cómo funcionan las salas privadas</summary><p class="room-notice">Solo entra quien tenga la invitación. Al crear o unirse, PeerJS conecta los navegadores y recibe datos técnicos de conexión; los retos y respuestas viajan entre participantes. No se envía tu perfil ni historial. No hay cámara, micrófono ni chat. Algunas redes impiden la conexión directa: si ocurre, prueben otra red o compartan pantalla. Mantén abierta la pestaña que creó la sala.</p></details><div class="room-join"><label for="invite-input">¿Te compartieron una invitación?</label><input id="invite-input" type="text" maxlength="500" placeholder="Pega aquí el enlace de la sala" value="${esc(incoming)}"><button class="secondary" id="online-join" ${busy ? "disabled" : ""}>Entrar en la sala</button></div><p id="connect-status" role="status" class="room-notice">${busy ? "Conectando…" : ""}</p></section><a class="room-return" href="./">Volver a mi aventura individual</a><p class="room-notice">Los perfiles vinculados conservan un registro multijugador separado: puede incluir colaboración y no verifica quién responde. Web ${VERSION}.</p>`;
 }
 function roster() {
   return `<div class="room-roster">${match.players.map((p) => `<article class="room-person" data-ready="${p.ready}">${canoeSVG(p.seat)}<strong>${p.name}${p.id === localId && !local() ? " · Tú" : ""}</strong><small>${!p.connected ? "Sin conexión" : p.ready ? "Preparado para salir" : "Preparando el recorrido"}</small>${!p.connected&&authority()&&match.status==='lobby'?`<button class="soft-button" data-remove-waiting="${esc(p.id)}">Liberar esta plaza</button>`:""}${local() || p.id === localId ? `<button class="${p.ready ? "secondary" : "primary"}" data-ready="${esc(p.id)}" ${!p.connected ? "disabled" : ""}>${p.ready ? "Todavía no" : `Estoy listo · ${p.name}`}</button>` : ""}</article>`).join("")}</div>`;
@@ -163,7 +167,7 @@ function consoleHTML(p) {
     return `<article class="player-console" data-seat="${p.seat}"><strong>${p.name} llegó a la meta.</strong><p class="console-feedback">El recorrido continúa para las demás personas.${match.config.mode === "coop" ? " Puedes explicar una estrategia a tu equipo." : ""}</p><p>${p.questions.filter((q) => q.attempts[0] === q.answer).length}/8 aciertos iniciales.</p></article>`;
   const q = p.questions[p.index],
     failing = q.attempts.length > 0,
-    keys = p.seat === 0 ? ["A", "S", "D", "F"] : ["J", "K", "L", "Ñ"],
+    keys = LOCAL_KEYS[p.seat].map(k => k.toUpperCase()),
     waiting = match.status !== "running" || pendingUntil > now();
   return `<article class="player-console" data-seat="${p.seat}"><div class="console-heading"><strong>${p.name}${!local() ? " · Tú" : ""}</strong><span>Reto ${p.index + 1} / 8</span></div><div class="console-equation" tabindex="-1" aria-label="${q.a} ${match.config.trail === "suma" ? "más" : match.config.trail === "resta" ? "menos" : "por"} ${q.b}, ¿cuánto es?">${q.a} ${TRAILS[match.config.trail].symbol} ${q.b} = ${failing ? q.answer : "?"}</div><div class="console-answers">${q.options.map((v, i) => `<button data-room-answer="${v}" data-player="${esc(p.id)}" data-question="${p.index}" class="${failing && v === q.answer ? "correct" : ""} ${q.attempts.includes(v) ? "wrong" : ""}" ${waiting || q.attempts.includes(v) ? "disabled" : ""} aria-label="${p.name}: respuesta ${v}">${v}</button>`).join("")}</div><p class="console-feedback" role="status">${waiting ? "Esperando la salida…" : failing ? `La respuesta es ${q.answer}. Mira la explicación y selecciónala para continuar.` : "Cada respuesta correcta impulsa tu embarcación."}</p><div class="console-bottom"><span class="key-legend">${local() ? keys.map((k) => `<kbd>${k}</kbd>`).join(" ") : "Teclas 1 2 3 4"}</span><button class="soft-button" data-room-hint="${esc(p.id)}" data-question="${p.index}" ${waiting || q.hint ? "disabled" : ""}>${q.hint ? "Pista abierta" : "Una pista"}</button></div>${q.hint || failing ? mathSupportHTML(match.config.trail, q) : ""}</article>`;
 }
@@ -205,9 +209,10 @@ function updateConsoles() {
 }
 function play() {
   document.body.classList.toggle('room-reasoning',match.config.trail==='razonar');
+  document.body.classList.toggle("room-many-local",local() && match.players.length > 2);
   if (!main.querySelector(".room-scene")) {
     stopView();
-    main.innerHTML = `<div class="room-controls"><div><h1>${match.config.mode === "coop" ? "Llegamos en equipo" : "Carrera amistosa"}</h1><p>${TRAILS[match.config.trail].short} · Nivel ${match.config.level} · ${match.players.length} personas</p></div><button id="room-pause" class="soft-button">Pausar para todos</button></div>${sceneHTML()}<div class="room-progress"><span id="room-team-progress"></span>${mapHTML()}<strong id="room-clock">0.0 s</strong></div><div class="room-live-standings" aria-label="Retos completados por participante"></div><div class="room-answers ${local() ? "" : "solo"}"></div><p class="room-notice">${local() ? "Dos personas, dos zonas de respuesta." : "Mantén esta pestaña visible. Si alguien necesita salir, la partida se pausa para todos."}</p>`;
+    main.innerHTML = `<div class="room-controls"><div><h1>${match.config.mode === "coop" ? "Llegamos en equipo" : "Carrera amistosa"}</h1><p>${TRAILS[match.config.trail].short} · Nivel ${match.config.level} · ${match.players.length} personas</p></div><button id="room-pause" class="soft-button">Pausar para todos</button></div>${sceneHTML()}<div class="room-progress"><span id="room-team-progress"></span>${mapHTML()}<strong id="room-clock">0.0 s</strong></div><div class="room-live-standings" aria-label="Retos completados por participante"></div><div class="room-answers ${local() ? "" : "solo"}" data-count="${match.players.length}"></div><p class="room-notice">${local() ? `${match.players.length} personas, ${match.players.length} zonas de respuesta independientes. Las teclas de cada participante aparecen debajo de sus respuestas.` : "Mantén esta pestaña visible. Si alguien necesita salir, la partida se pausa para todos."}</p>`;
     view = new CircuitView(main.querySelector("canvas"), match.config.circuit);
     displayPositions = match.players.map((p) => ({
       position: p.index / 8,
@@ -510,6 +515,15 @@ async function joinOnline(value) {
     networkError(e.message);
   }
 }
+main.addEventListener("change", (e) => {
+  if (e.target.id !== "local-count") return;
+  const count = Number(e.target.value);
+  if (![2, 3, 4].includes(count)) return;
+  localCount = count;
+  try { sessionStorage.setItem("sendero.together.size", String(count)); } catch {}
+  main.querySelector(".room-profile-panel").outerHTML = profiles.panel(count);
+  main.querySelector("#local-create").textContent = `Jugar ${count} en esta pantalla`;
+});
 main.addEventListener("click", async (e) => {
   const b = e.target.closest("button");
   if (!b || b.disabled || e.detail > 1) return;
@@ -518,9 +532,7 @@ main.addEventListener("click", async (e) => {
     reset();
     kind = "local";
     localId = "local-0";
-    match = createMatch(config);
-    addPlayer(match, "local-0");
-    addPlayer(match, "local-1");
+    match = createLocalMatch(config, localCount);
     render(true);
   }
   if (b.id === "online-create") createOnline(configuration());
@@ -585,19 +597,18 @@ document.addEventListener("keydown", (e) => {
     ["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)
   )
     return;
-  const key = e.key.toLowerCase(),
-    keys = local()
-      ? ["a", "s", "d", "f", "j", "k", "l", "ñ"]
-      : ["1", "2", "3", "4"],
-    at = keys.indexOf(key);
-  if (at < 0) return;
-  const p = local()
-      ? match.players[Math.floor(at / 4)]
-      : match.players.find((p) => p.id === localId),
-    q = p?.questions[p.index];
-  if (!q) return;
+  if (local()) {
+    const input = localAnswer(match, e.key);
+    if (!input) return;
+    e.preventDefault();
+    act(input.player, input.action);
+    return;
+  }
+  const at = ["1", "2", "3", "4"].indexOf(e.key);
+  const p = match.players.find(p => p.id === localId), q = p?.questions[p.index];
+  if (at < 0 || !q) return;
   e.preventDefault();
-  act(p.id, { type: "answer", index: p.index, value: q.options[at % 4] });
+  act(p.id, { type: "answer", index: p.index, value: q.options[at] });
 });
 document.querySelector("#motion-toggle").addEventListener("click", (e) => {
   reduced = !reduced;
@@ -639,9 +650,10 @@ setInterval(() => {
 }, 100);
 try {
   const saved = JSON.parse(sessionStorage.getItem("sendero.together.local"));
-  if (saved && validSnapshot(saved) && saved.players.length === 2) {
+  if (saved && validSnapshot(saved) && [2, 3, 4].includes(saved.players.length) && saved.players.every(p => p.id === `local-${p.seat}`)) {
     match = saved;
     kind = "local";
+    localCount = match.players.length;
     localId = "local-0";
     match.lastTick = null;
     if (match.status !== "finished") {
