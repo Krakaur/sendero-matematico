@@ -17,3 +17,5 @@ native-android/local.properties
 output/
 
 server/private/
+.wrangler/
+.dev.vars*

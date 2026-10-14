@@ -1,4 +1,4 @@
-const VERSION = "0.9.0";
+const VERSION = "0.10.0";
 const CACHE = `sendero-${VERSION}-projects-v1`;
 const FILES = [
   "./",

@@ -232,7 +232,7 @@ function classroomHTML() {
 }
 async function syncClassroom() {
   if(syncBusy){syncQueued=true;return;}
-  if(!activeProfile||!state.classroom?.enabled||!navigator.onLine)return;
+  if(!activeProfile||!state.classroom?.enabled||!navigator.onLine||Date.now()<(state.classroom.retryAt||0))return;
   const id=state.profile,link=JSON.stringify(state.classroom),snapshot=structuredClone(state);
   syncBusy=true;
   try {
@@ -241,7 +241,7 @@ async function syncClassroom() {
     if(current?.classroom?.token!==snapshot.classroom.token)return;
     applyExchange(current,result);
     if(activeProfile?.id===id)save();else localStorage.setItem(profileKey(id),JSON.stringify(current));
-  }catch(e){if(activeProfile?.id===id&&JSON.stringify(state.classroom)===link){state.classroom.error=e.message;save();}}
+  }catch(e){if(activeProfile?.id===id&&JSON.stringify(state.classroom)===link){state.classroom.error=e.message;state.classroom.retryAt=Date.now()+(e.retryAfter||60)*1000;save();}}
   finally {syncBusy=false;if(activeProfile?.id===id&&location.hash==='#docentes')render(false);if(syncQueued){syncQueued=false;queueMicrotask(syncClassroom);}}
 }
 function bindClassroom() {
