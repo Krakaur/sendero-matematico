@@ -1,5 +1,5 @@
 const VERSION = "0.11.0";
-const CACHE = `sendero-${VERSION}-projects-v1`;
+const CACHE = `sendero-${VERSION}-school-v1`;
 const FILES = [
   "./",
   "./index.html", "./docentes.html",

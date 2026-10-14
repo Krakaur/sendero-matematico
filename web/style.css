@@ -1360,3 +1360,5 @@ th {
 .room-profile-grid form {padding:1rem;border:1px solid #b5c3b6;border-radius:14px;display:grid;gap:.75rem}
 .cohort-panel .table-wrap {overflow-x:auto;max-width:100%}
 .cohort-panel table {min-width:760px}
+
+.cohort-panel input,.cohort-panel select,.room-profile-grid input,.room-profile-grid select {font:inherit;min-height:48px;padding:10px 12px;width:100%;min-width:0;border:1px solid #8eafa1;border-radius:10px;background:white;color:#173e35}
