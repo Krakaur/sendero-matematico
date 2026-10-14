@@ -3,6 +3,10 @@ import { relative, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
+const outputDirectory = new URL(
+  "../qa-private/" + (process.argv[2] || "cloudflare-20261014") + "/",
+  import.meta.url,
+);
 const root = fileURLToPath(new URL("../web/", import.meta.url)),
   base = "https://krakaur.github.io/sendero-matematico/";
 async function walk(dir) {
@@ -48,11 +52,11 @@ const result = {
   allMatch: records.every((r) => r.matches),
   records,
 };
-await mkdir(new URL("../qa-private/cloudflare-20261014/", import.meta.url), {
+await mkdir(outputDirectory, {
   recursive: true,
 });
 await writeFile(
-  new URL("../qa-private/cloudflare-20261014/public-web.json", import.meta.url),
+  new URL("public-web.json", outputDirectory),
   JSON.stringify(result, null, 2),
 );
 console.log(

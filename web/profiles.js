@@ -1,3 +1,4 @@
+import {normalizeEnrollment} from './enrollment.js';
 // Local access control. Data is not encrypted at rest; never a server identity.
 export const PROFILE_INDEX = 'sendero.profiles.v1';
 export const LEGACY_KEY = 'sendero.state.v1';
@@ -27,10 +28,11 @@ export function migrateLegacy(storage) {
   storage.setItem(PROFILE_INDEX, JSON.stringify([p]));
   return p;
 }
-export async function createProfile(storage, name, password, role, state) {
+export async function createProfile(storage, name, password, role, state, enrollment={}) {
   name=name.trim();
   if(name.length<2 || name.length>24)throw Error('Usa un alias de 2 a 24 caracteres. No necesitas tu nombre completo.');
   if(!['student','teacher'].includes(role))throw Error('Tipo de perfil no válido.');
+  if(role==='student')state.enrollment=normalizeEnrollment(enrollment);
   const credential=await passwordRecord(password);
   const profiles=profileList(storage);
   if(profiles.length>=8)throw Error('Este dispositivo admite hasta ocho perfiles.');

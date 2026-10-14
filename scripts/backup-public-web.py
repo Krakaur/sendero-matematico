@@ -8,11 +8,12 @@ root = Path(__file__).resolve().parents[1]
 destination = Path(sys.argv[1]).resolve()
 base = 'https://krakaur.github.io/sendero-matematico/'
 destination.mkdir(parents=True, exist_ok=False)
-commit = subprocess.check_output(['git','rev-parse','origin/gh-pages'], cwd=root, text=True).strip()
-subprocess.run(['git','archive','--format=zip','--output='+str(destination/'published-branch.zip'),commit],cwd=root,check=True)
-files = subprocess.check_output(['git','ls-tree','-r','--name-only',commit],cwd=root,text=True).splitlines()
+commit = subprocess.check_output(['git','rev-parse',sys.argv[2] if len(sys.argv)>2 else 'origin/main'], cwd=root, text=True).strip()
+tree = commit + ':web'
+subprocess.run(['git','archive','--format=zip','--output='+str(destination/'published-branch.zip'),tree],cwd=root,check=True)
+files = subprocess.check_output(['git','ls-tree','-r','--name-only',tree],cwd=root,text=True).splitlines()
 def preserve(name):
-    expected = subprocess.check_output(['git','show',f'{commit}:{name}'],cwd=root)
+    expected = subprocess.check_output(['git','show',f'{commit}:web/{name}'],cwd=root)
     request = urllib.request.Request(base+name, headers={'Cache-Control':'no-cache'})
     with urllib.request.urlopen(request,timeout=45) as response:
         actual=response.read()
@@ -26,6 +27,6 @@ with ThreadPoolExecutor(max_workers=4) as pool:
 archive=destination/'published-branch.zip'
 manifest={'captured_utc':datetime.now(timezone.utc).isoformat(),'public_url':base,'source_commit':commit,'archive_sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),'files':records,'all_files_match_branch':all(r['matches_branch'] for r in records)}
 (destination/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-(destination/'RESTORE.txt').write_text('Published web backup before replacement.\nSource gh-pages commit: '+commit+'\nThe ZIP contains the full deployable web. Public-files contains the downloaded HTTP bytes.\nTo roll back, create a new gh-pages commit restoring the ZIP contents and push normally; do not rewrite branch history.\nProfile data lives in each browser and is not part of this server backup.\n',encoding='utf-8')
+(destination/'RESTORE.txt').write_text('Published web backup before replacement.\nSource main commit, web subtree: '+commit+'\nThe ZIP contains the full deployable web. Public-files contains the downloaded HTTP bytes.\nTo roll back, restore the ZIP contents into web/ in a new main commit; GitHub Actions publishes it. Do not rewrite branch history.\nProfile data lives in each browser and is not part of this server backup.\n',encoding='utf-8')
 print(json.dumps({'directory':str(destination),'source_commit':commit,'file_count':len(records),'all_files_match_branch':manifest['all_files_match_branch']}))
 if not manifest['all_files_match_branch']: sys.exit(2)

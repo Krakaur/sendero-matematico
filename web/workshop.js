@@ -1,3 +1,4 @@
+import {validEnrollment} from './enrollment.js';
 // Mathematical projects: construction, justification and a fresh check after support.
 // No speed score. The evidence belongs to this activity, not general mathematical ability.
 export const WORKSHOP_VERSION = 1;
@@ -557,6 +558,7 @@ function modelShape(m, x) {
   return true;
 }
 export function validWorkshop(s) {
+  if (s?.enrollment !== undefined && !validEnrollment(s.enrollment)) return false;
   if (
     !s ||
     s.schema !== "sendero.workshop.v1" ||

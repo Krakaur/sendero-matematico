@@ -15,9 +15,9 @@ export function classroomRosterHTML(state) {
   const link = state.classroom;
   if (!link) return "";
   if (link.role === "student")
-    return `<section class="panel"><label><input id="include-projects" type="checkbox" ${link.includeProjects ? "checked" : ""}> Compartir también los proyectos de razonamiento y sus notas con mi docente</label><p>Las construcciones, revisiones y notas opcionales se enviarán al aula al conectar. Desactivarlo detiene los envíos posteriores; no retira lo ya entregado.</p></section>`;
+    return `<section class="panel"><label><input id="include-projects" type="checkbox" ${link.includeProjects ? "checked" : ""}> Compartir también los proyectos de razonamiento y sus notas con mi docente</label><label><input id="include-multiplayer" type="checkbox" ${link.includeMultiplayer?"checked":""}> Compartir mis participaciones multijugador y su adscripción escolar con mi docente</label><p>Las participaciones se reciben por separado; no incluyen datos escolares de los oponentes ni notas libres de proyectos compartidos.</p>${link.capabilities?.includes('multiplayer')?'':'<p>El aula todavía no ha confirmado soporte para participaciones multijugador. Hasta entonces, se conservarán aquí y podrán exportarse.</p>'}<p>Las construcciones, revisiones y notas opcionales se enviarán al aula al conectar. Desactivarlo detiene los envíos posteriores; no retira lo ya entregado.</p></section>`;
   if (!link.capabilities?.includes("students")) return "";
-  return `<section class="panel"><h2>Participantes de esta aula</h2><p>Las invitaciones separan el acceso de cada estudiante. Se muestran códigos de perfil; no nombres personales.</p><button id="create-student-invitation" class="secondary">Crear una invitación de estudiante</button><p id="roster-status" role="status"></p>${(link.students || []).map((s) => `<div class="session-row"><span>${s.profile ? "Perfil " + esc(s.profile.slice(0, 8).toUpperCase()) : "Invitación aún sin vincular"} · ${esc(s.id.slice(0, 8))}</span><button class="soft-button" data-revoke-student="${esc(s.id)}">Revocar acceso</button></div>`).join("")}<p class="micro">La revocación impide nuevos accesos y elimina su copia remota cifrada. Los informes ya entregados permanecen en el aula.</p></section>`;
+  return `<section class="panel"><h2>Participantes de esta aula</h2><p>Las invitaciones separan el acceso de cada estudiante. Se muestran códigos de perfil; no nombres personales.</p><button id="create-student-invitation" class="secondary">Crear una invitación de estudiante</button><p id="roster-status" role="status"></p>${(link.students || []).map((s) => `<div class="session-row"><span>${s.profile ? "Perfil " + esc(s.profile.slice(0, 8).toUpperCase()) : "Invitación aún sin vincular"} · ${esc(s.id.slice(0, 8))}${s.enrollment?`<br><small>${[s.enrollment.school,s.enrollment.grade,s.enrollment.group,s.enrollment.listNumber===null?'':'Lista '+s.enrollment.listNumber].map(x=>esc(x||'Sin registrar')).join(' · ')}</small>`:''}</span><button class="soft-button" data-revoke-student="${esc(s.id)}">Revocar acceso</button></div>`).join("")}<p class="micro">La revocación impide nuevos accesos y elimina su copia remota cifrada. Los informes ya entregados permanecen en el aula.</p></section>`;
 }
 export function bindCloud(
   root,
@@ -29,6 +29,7 @@ export function bindCloud(
     if (isCurrent() && root.querySelector(id))
       root.querySelector(id).textContent = message;
   };
+  root.querySelector('#include-multiplayer')?.addEventListener('change',e=>{state.classroom.includeMultiplayer=e.target.checked;save();if(e.target.checked)sync();});
   root.querySelector("#include-projects")?.addEventListener("change", (e) => {
     state.classroom.includeProjects = e.target.checked;
     save();

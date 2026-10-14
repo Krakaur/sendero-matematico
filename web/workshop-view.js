@@ -1,3 +1,4 @@
+import {normalizeEnrollment} from './enrollment.js';
 import {
   PROJECTS,
   PROJECT_ORDER,
@@ -87,6 +88,7 @@ export function bindWorkshop(root, state, { save, render, bank, download }) {
         crypto.getRandomValues(new Uint32Array(1))[0],
         b.dataset.projectNew,
       );
+      state.workshop.enrollment=normalizeEnrollment(state.enrollment);
       save();
       render();
       window.scrollTo(0, 0);

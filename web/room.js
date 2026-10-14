@@ -138,6 +138,7 @@ export function startMatch(match, now) {
     !Number.isFinite(now)
   )
     return false;
+  match.startedAt ??= new Date().toISOString();
   match.status = "countdown";
   match.startAt = now + 2100;
   match.lastTick = null;

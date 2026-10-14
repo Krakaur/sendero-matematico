@@ -1,3 +1,4 @@
+import {togetherProfiles} from './together-profiles.js';
 import {workshopHTML,workshopProgressHTML,workshopControlAction} from './workshop-view.js';
 import { TRAILS, VERSION } from "./core.js";
 import {
@@ -115,6 +116,8 @@ function saveLocal() {
 function errorHTML() {
   return error ? `<p class="room-error" role="alert">${esc(error)}</p>` : "";
 }
+const profiles=togetherProfiles(localStorage,sessionStorage,()=>{if(match)render(true);else{const panel=main.querySelector('.room-profile-panel');if(panel)panel.outerHTML=profiles.panel();}});
+profiles.bind(main);
 function setup() {
   document.body.classList.remove('room-reasoning');
   stopView();
@@ -126,7 +129,7 @@ function setup() {
     error =
       "La invitación está incompleta. Pide que te compartan el enlace completo.";
   }
-  main.innerHTML = `<section class="room-intro"><div><span class="eyebrow">JUGAR, PENSAR Y COMPARTIR</span><h1>El río se disfruta<br>en compañía.</h1><p>Resuelvan los mismos ocho retos. Pueden competir o ayudar a que todo el equipo llegue a la meta.</p><p class="room-notice">Personajes diferentes, mismas condiciones: contenido, nivel y circuito compartidos. Cada persona responde sus propios retos.</p></div><div class="room-hero" aria-hidden="true"><strong>La copa compartida</strong>${canoeSVG(0)}${canoeSVG(1)}</div></section>${errorHTML()}<section class="room-setup"><h2>Preparen el recorrido</h2><div class="room-fields"><label>Contenido<select id="room-trail">${["suma", "resta", "multi", "tablas20", "razonar"].map((t) => `<option value="${t}" ${t === "multi" ? "selected" : ""}>${TRAILS[t].short}</option>`).join("")}</select></label><label>Nivel de cantidades<select id="room-level">${[1, 2, 3, 4].map((l) => `<option value="${l}">Nivel ${l}</option>`).join("")}</select></label><label>Forma de jugar<select id="room-mode"><option value="race">Carrera amistosa</option><option value="coop">Llegar en equipo</option></select></label>${circuitPicker()}</div><div class="room-choices"><button class="primary" id="local-create" ${busy ? "disabled" : ""}>Dos en esta pantalla</button><button class="secondary" id="online-create" ${busy ? "disabled" : ""}>Crear sala por enlace</button></div><p class="room-notice">En esta pantalla: dos zonas de respuesta o teclas A S D F y J K L Ñ. Funciona sin internet cuando el juego está preparado. Por enlace: de dos a cuatro personas, cada una en su dispositivo.</p><details><summary>Cómo funcionan las salas privadas</summary><p class="room-notice">Solo entra quien tenga la invitación. Al crear o unirse, PeerJS conecta los navegadores y recibe datos técnicos de conexión; los retos y respuestas viajan entre participantes. No se envía tu perfil ni historial. No hay cámara, micrófono ni chat. Algunas redes impiden la conexión directa: si ocurre, prueben otra red o compartan pantalla. Mantén abierta la pestaña que creó la sala.</p></details><div class="room-join"><label for="invite-input">¿Te compartieron una invitación?</label><input id="invite-input" type="text" maxlength="500" placeholder="Pega aquí el enlace de la sala" value="${esc(incoming)}"><button class="secondary" id="online-join" ${busy ? "disabled" : ""}>Entrar en la sala</button></div><p id="connect-status" role="status" class="room-notice">${busy ? "Conectando…" : ""}</p></section><a class="room-return" href="./">Volver a mi aventura individual</a><p class="room-notice">Estos recorridos compartidos no se incorporan al expediente individual: pueden incluir colaboración y no verifican quién responde. Web ${VERSION}.</p>`;
+  main.innerHTML = `<section class="room-intro"><div><span class="eyebrow">JUGAR, PENSAR Y COMPARTIR</span><h1>El río se disfruta<br>en compañía.</h1><p>Resuelvan los mismos ocho retos. Pueden competir o ayudar a que todo el equipo llegue a la meta.</p><p class="room-notice">Personajes diferentes, mismas condiciones: contenido, nivel y circuito compartidos. Cada persona responde sus propios retos.</p></div><div class="room-hero" aria-hidden="true"><strong>La copa compartida</strong>${canoeSVG(0)}${canoeSVG(1)}</div></section>${errorHTML()}<section class="room-setup">${profiles.panel()}<h2>Preparen el recorrido</h2><div class="room-fields"><label>Contenido<select id="room-trail">${["suma", "resta", "multi", "tablas20", "razonar"].map((t) => `<option value="${t}" ${t === "multi" ? "selected" : ""}>${TRAILS[t].short}</option>`).join("")}</select></label><label>Nivel de cantidades<select id="room-level">${[1, 2, 3, 4].map((l) => `<option value="${l}">Nivel ${l}</option>`).join("")}</select></label><label>Forma de jugar<select id="room-mode"><option value="race">Carrera amistosa</option><option value="coop">Llegar en equipo</option></select></label>${circuitPicker()}</div><div class="room-choices"><button class="primary" id="local-create" ${busy ? "disabled" : ""}>Dos en esta pantalla</button><button class="secondary" id="online-create" ${busy ? "disabled" : ""}>Crear sala por enlace</button></div><p class="room-notice">En esta pantalla: dos zonas de respuesta o teclas A S D F y J K L Ñ. Funciona sin internet cuando el juego está preparado. Por enlace: de dos a cuatro personas, cada una en su dispositivo.</p><details><summary>Cómo funcionan las salas privadas</summary><p class="room-notice">Solo entra quien tenga la invitación. Al crear o unirse, PeerJS conecta los navegadores y recibe datos técnicos de conexión; los retos y respuestas viajan entre participantes. No se envía tu perfil ni historial. No hay cámara, micrófono ni chat. Algunas redes impiden la conexión directa: si ocurre, prueben otra red o compartan pantalla. Mantén abierta la pestaña que creó la sala.</p></details><div class="room-join"><label for="invite-input">¿Te compartieron una invitación?</label><input id="invite-input" type="text" maxlength="500" placeholder="Pega aquí el enlace de la sala" value="${esc(incoming)}"><button class="secondary" id="online-join" ${busy ? "disabled" : ""}>Entrar en la sala</button></div><p id="connect-status" role="status" class="room-notice">${busy ? "Conectando…" : ""}</p></section><a class="room-return" href="./">Volver a mi aventura individual</a><p class="room-notice">Los perfiles vinculados conservan un registro multijugador separado: puede incluir colaboración y no verifica quién responde. Web ${VERSION}.</p>`;
 }
 function roster() {
   return `<div class="room-roster">${match.players.map((p) => `<article class="room-person" data-ready="${p.ready}">${canoeSVG(p.seat)}<strong>${p.name}${p.id === localId && !local() ? " · Tú" : ""}</strong><small>${!p.connected ? "Sin conexión" : p.ready ? "Preparado para salir" : "Preparando el recorrido"}</small>${!p.connected&&authority()&&match.status==='lobby'?`<button class="soft-button" data-remove-waiting="${esc(p.id)}">Liberar esta plaza</button>`:""}${local() || p.id === localId ? `<button class="${p.ready ? "secondary" : "primary"}" data-ready="${esc(p.id)}" ${!p.connected ? "disabled" : ""}>${p.ready ? "Todavía no" : `Estoy listo · ${p.name}`}</button>` : ""}</article>`).join("")}</div>`;
@@ -230,7 +233,7 @@ function finish() {
     )
     .join(
       "",
-    )}<p class="room-notice">La cooperación y la ayuda entre personas hacen que estos resultados tengan un contexto diferente al de la práctica individual. No se añaden al expediente individual.</p></section>`;
+    )}<p class="room-notice">La cooperación y la ayuda entre personas hacen que estos resultados tengan un contexto diferente al de la práctica individual. Se conservan por separado cuando se vinculó un perfil.</p>${profiles.status()}</section>`;
   announce(
     coop
       ? "Todo el equipo completó el recorrido."
@@ -248,6 +251,7 @@ function render(force = false) {
     knownStatus === match.status
   )
     return;
+  profiles.capture(match,kind,localId);
   knownRevision = match.revision;
   knownStatus = match.status;
   if (["lobby", "paused"].includes(match.status)) lobby();
