@@ -38,7 +38,7 @@ function wireData(conn, handler) {
       if (
         !data ||
         typeof data !== "object" ||
-        JSON.stringify(data).length > 40000
+        JSON.stringify(data).length > 524288
       )
         return;
       handler(data);
@@ -54,6 +54,7 @@ export class RoomLink {
     this.closed = false;
     this.host = false;
     this.lastSeen = new Map();
+    this.members = new Map();
   }
   async open(id) {
     const Peer = await library();
@@ -103,15 +104,18 @@ export class RoomLink {
       });
     });
   }
-  async create() {
+  async create(saved) {
     this.host = true;
-    this.key = crypto.randomUUID().replaceAll("-", "");
-    await this.open("sendero-" + crypto.randomUUID());
+    this.key = saved?.key || crypto.randomUUID().replaceAll("-", "");
+    this.members=new Map(saved?.members||[]);
+    await this.open(saved?.room || "sendero-" + crypto.randomUUID());
     this.peer.on("connection", (conn) => {
       if (
         conn.metadata?.protocol !== 1 ||
         conn.metadata?.key !== this.key ||
-        this.connections.size >= 3
+        (this.connections.size >= 3 && !this.connections.has(conn.peer)) ||
+        !/^[a-f0-9]{32}$/.test(conn.metadata?.identity||'') ||
+        (this.members.has(conn.peer)&&this.members.get(conn.peer)!==conn.metadata.identity)
       ) {
         conn.on("open", () => conn.close());
         return;
@@ -125,6 +129,7 @@ export class RoomLink {
           conn.close();
           return;
         }
+        this.members.set(conn.peer,conn.metadata.identity);
         this.connections.set(conn.peer, conn);
         this.lastSeen.set(conn.peer, performance.now());
         this.events.connected?.(conn.peer);
@@ -147,25 +152,33 @@ export class RoomLink {
           this.events.close?.(conn.peer);
         }
       });
-      conn.on("error", () => this.events.close?.(conn.peer));
+      conn.on("error", () => {
+        if(this.connections.get(conn.peer)===conn){this.connections.delete(conn.peer);conn.close();this.events.close?.(conn.peer);}
+      });
     });
     this.heartbeat = setInterval(() => {
       for (const conn of this.connections.values()) {
         this.ping(conn);
-        if (performance.now() - (this.lastSeen.get(conn.peer) || 0) > 7000)
-          this.events.slow?.(conn.peer);
+        if (performance.now() - (this.lastSeen.get(conn.peer) || 0) > 7000){
+          this.events.slow?.(conn.peer);this.connections.delete(conn.peer);conn.close();this.events.close?.(conn.peer);
+        }
       }
     }, 2000);
     const u = new URL("./juntos.html", location.href);
     u.hash = new URLSearchParams({ sala: this.id, llave: this.key }).toString();
     return u.href;
   }
+  hostRecovery(){return this.host?{room:this.id,key:this.key,members:[...this.members]}:null;}
   async join(invitation) {
-    await this.open();
+    const storageKey='sendero.room.identity.'+invitation.room;
+    let identity;try{identity=JSON.parse(sessionStorage.getItem(storageKey));}catch{}
+    if(!/^sendero-[a-f0-9-]{36}$/.test(identity?.id||'')||!/^[a-f0-9]{32}$/.test(identity?.token||''))identity={id:'sendero-'+crypto.randomUUID(),token:crypto.randomUUID().replaceAll('-','')};
+    try{sessionStorage.setItem(storageKey,JSON.stringify(identity));}catch{}
+    await this.open(identity.id);
     this.connection = this.peer.connect(invitation.room, {
       reliable: true,
       serialization: "json",
-      metadata: { protocol: 1, key: invitation.key },
+      metadata: { protocol: 1, key: invitation.key, identity:identity.token },
     });
     const conn = this.connection;
     wireData(conn, (data) => {
@@ -193,7 +206,7 @@ export class RoomLink {
         );
     });
     conn.on("error", () =>
-      this.events.error?.("Se interrumpió la conexión. Pide un enlace nuevo."),
+      this.events.error?.("Se interrumpió la conexión. Puedes reconectar desde esta pestaña y recuperar tu lugar."),
     );
     await new Promise((resolve, reject) => {
       const timer = setTimeout(

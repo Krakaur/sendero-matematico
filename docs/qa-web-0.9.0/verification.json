@@ -1,0 +1,90 @@
+{
+  "checked_utc": "2026-10-14T17:37:35.971152+00:00",
+  "version": "0.9.0",
+  "units": {
+    "passed": 74,
+    "failed": 0,
+    "mathematical_configurations": 3200,
+    "new_construction_after_support_cases": 640
+  },
+  "browser": {
+    "individual_projects": {
+      "chromium": 8,
+      "firefox": 8,
+      "reload_preserved": true,
+      "completion_deduplicated": true,
+      "overflow_at_320": false
+    },
+    "catalog": {
+      "chromium": [
+        "suma",
+        "resta",
+        "multi",
+        "tablas20",
+        "bank"
+      ],
+      "firefox": [
+        "suma",
+        "resta",
+        "multi",
+        "tablas20",
+        "bank"
+      ],
+      "written_error_and_help_preserved": true
+    },
+    "local_cooperation": {
+      "chromium": {
+        "people": 2,
+        "projects_each": 8
+      },
+      "firefox": {
+        "people": 2,
+        "projects_each": 8
+      },
+      "pause_reload_preserved": true,
+      "ranked": false
+    },
+    "network_reasoning": {
+      "browser": "Chromium",
+      "people": 4,
+      "projects_each": 8,
+      "identical_results": true,
+      "guest_reconnected": true,
+      "physical_machines": 1
+    },
+    "network_recovery": {
+      "browser": "Chromium",
+      "lobby_seat_released": true,
+      "replacement_joined": true,
+      "guest_reload_preserved": true,
+      "host_reload_preserved": true,
+      "completed_race": true,
+      "physical_machines": 1
+    },
+    "classroom": {
+      "browser": "Firefox",
+      "backend": "loopback HTTP, SQLite in memory, synthetic users",
+      "encrypted_copy_restored_in_another_context": true,
+      "pending_project_preserved": true,
+      "history_preserved": true,
+      "stale_write_rejected": true,
+      "teacher_received_projects": true,
+      "invitation_created_and_revoked": true,
+      "reasoning_task_created": true
+    },
+    "manual_project_files": {
+      "browser": "Chromium",
+      "export_import": true,
+      "duplicates_counted_once": true,
+      "server_required": false,
+      "errors": []
+    }
+  },
+  "limits": [
+    "No public classroom backend deployed",
+    "One physical test computer",
+    "No child preference or learning outcome study",
+    "No new audio evaluation",
+    "Android and Windows packages unchanged"
+  ]
+}

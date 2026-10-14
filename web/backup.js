@@ -1,3 +1,4 @@
+import {validWorkshop,mergeWorkshopReports} from './workshop.js';
 import {validateReport,SCHEMA,TRAILS} from './core.js';import {validBankQuestion} from './bank.js';
 import {profileList,profileKey,passwordRecord,PROFILE_INDEX} from './profiles.js';
 const bytes=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
@@ -6,6 +7,8 @@ const schema='sendero.backup.v1',iterations=210000;
 async function key(password,salt){if(typeof password!=='string'||password.length<10||password.length>128)throw Error('Usa una contraseña de respaldo de 10 a 128 caracteres.');const raw=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations,hash:'SHA-256'},raw,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
 export function validateSnapshot(data) {
  const p=data?.profile,s=data?.state;
+ if(s?.teacherProjects)mergeWorkshopReports([],s.teacherProjects);
+ if(s?.workshop&&!validWorkshop(s.workshop)||s?.workshopHistory&&(!Array.isArray(s.workshopHistory)||s.workshopHistory.length>5000||!s.workshopHistory.every(validWorkshop)))throw Error('Proyectos del respaldo no válidos.');
  if(!p||!s||typeof p.name!=='string'||p.name.length<2||p.name.length>24||!['student','teacher'].includes(p.role)||p.id!==s.profile)throw Error('Perfil de respaldo no válido.');
  validateReport({schema:SCHEMA,profile:s.profile,sessions:s.sessions});
  if(!Array.isArray(s.teacher)||s.teacher.length>5000||!s.adaptive||typeof s.adaptive!=='object')throw Error('Estado no válido.');
@@ -13,7 +16,7 @@ export function validateSnapshot(data) {
  if(s.current){
   const c=s.current;if(c.profile!==s.profile||!Object.hasOwn(TRAILS,c.trail)||!Number.isInteger(c.index)||c.index<0||c.index>7||!Array.isArray(c.questions)||!c.questions[c.index])throw Error('Partida pendiente no válida.');
   for(const q of c.questions){
-   if(!Number.isInteger(q.level)||q.level<1||q.level>4||!Array.isArray(q.attempts)||!Array.isArray(q.options)||q.options.length!==4||new Set(q.options).size!==4||!q.options.includes(q.answer)||!q.attempts.every(n=>q.options.includes(n))||!Number.isFinite(q.activeMs)||q.activeMs<0)throw Error('Ejercicio pendiente no válido.');
+   if(!Number.isInteger(q.level)||q.level<1||q.level>4||!Array.isArray(q.attempts)||!Array.isArray(q.options)||q.options.length!==4||new Set(q.options).size!==4||!q.options.includes(q.answer)||!q.attempts.every(n=>q.options.includes(n)||(q.responseMode==='write'&&Number.isInteger(n)&&n>=0&&n<=2500))||!Number.isFinite(q.activeMs)||q.activeMs<0)throw Error('Ejercicio pendiente no válido.');
    if(q.bankId){if(!validBankQuestion(q))throw Error('Banco incompatible.');}
    else {if(![q.a,q.b,q.answer,...q.options].every(n=>Number.isInteger(n)&&n>=0&&n<=2500)||q.a>50||q.b>50)throw Error('Cantidades inválidas.');const answer=c.trail==='suma'?q.a+q.b:c.trail==='resta'?q.a-q.b:q.a*q.b;if(q.answer!==answer)throw Error('Operación pendiente no válida.');}
   }

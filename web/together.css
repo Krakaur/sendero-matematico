@@ -588,3 +588,6 @@
     margin: 3px 0;
   }
 }
+
+.room-project{min-width:0;padding:16px}.room-project>fieldset{border:0;padding:0;min-width:0}.room-project>h2{font-size:1.3rem;margin-bottom:16px}.room-project .project-top,.room-project .project-map,.room-project .project-game>.micro,.room-project .project-discovery label,.room-project .project-discovery textarea{display:none}.room-project .project-task{padding:16px;box-shadow:none}.room-project .project-model{padding:12px}.room-project .project-steppers{flex-wrap:wrap}.room-project .project-task h2{font-size:1.15rem}.room-reasoning .room-scene{height:150px}.room-reasoning .room-map{max-height:55px}.room-project .project-discovery .primary{margin-top:12px}.room-project .project-baskets section{min-width:120px}.room-project .project-route{flex-wrap:wrap}.room-project .project-route section{min-width:90px}.room-reasoning .room-answers{align-items:start}
+@media(max-width:700px){.room-reasoning .room-answers{grid-template-columns:1fr}.room-project{padding:10px}.room-project .project-task{padding:10px}}

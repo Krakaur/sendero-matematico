@@ -5,3 +5,9 @@ test('Results separate precision from eligible speed and levels from one another
  const rows=resultGroups([s]);assert.equal(rows.length,2);assert.equal(rows[0].first,2);assert.equal(rows[0].errors,1);assert.equal(rows[0].fluency.n,2);assert.equal(rows[0].fluency.rate,15);
  const html=renderFluency([s]);assert(html.includes('Cómo se obtuvo este resultado'));assert(!/>[^<]*\bn=/.test(html));assert(html.includes('Pocos datos'));
 });
+test('Written answers do not share a rate series with multiple-choice practice or races',()=>{
+ const question={level:1,attempts:[2],answer:2,hint:false,timingProtocol:1,timingInterrupted:false,firstResponseMs:2000};
+ const base={trail:'suma',completedAt:'2026-10-14T01:00:00Z',questions:[question]};
+ const rows=resultGroups([base,{...base,responseMode:'write',questions:[{...question,firstResponseMs:4000}]},{...base,race:{}}]);
+ assert.deepEqual(rows.map(r=>[r.mode,r.total,r.fluency.rate]),[['calm',1,30],['written',1,15],['race',1,30]]);
+});

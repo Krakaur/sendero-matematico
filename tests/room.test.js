@@ -12,7 +12,10 @@ import {
   publicSnapshot,
   validSnapshot,
   matchResults,
+  reconnectPlayer,
+  removeWaitingPlayer,
 } from "../web/room.js";
+import {currentMission,solvedModel} from '../web/workshop.js';
 const config = {
   trail: "multi",
   level: 1,
@@ -20,6 +23,32 @@ const config = {
   mode: "race",
   seed: 431,
 };
+test('A departed lobby seat can be replaced or removed without leaving the start blocked',()=>{
+  const m=createMatch(config);addPlayer(m,'host');addPlayer(m,'left');disconnectPlayer(m,'left',0);
+  assert(addPlayer(m,'replacement'));assert.equal(m.players.length,2);assert.equal(m.players[1].id,'replacement');
+  for(const p of m.players)playerAction(m,p.id,{type:'ready'},0);
+  assert(startMatch(m,0));assert(validSnapshot(publicSnapshot(m,0)));
+  const other=createMatch(config);addPlayer(other,'host');addPlayer(other,'left');addPlayer(other,'stays');disconnectPlayer(other,'left',0);
+  assert(removeWaitingPlayer(other,'left'));assert.equal(other.players[1].seat,1);assert(validSnapshot(publicSnapshot(other,0)));
+});
+test('Reconnection keeps mathematical work and requires a deliberate shared restart',()=>{
+  const m=ready();playerAction(m,'p1',{type:'answer',index:0,value:m.players[1].questions[0].answer},3000);
+  disconnectPlayer(m,'p1',4000);const saved=structuredClone(m.players[1].questions);
+  assert(reconnectPlayer(m,'p1'));assert.equal(m.players[1].index,1);assert.deepEqual(m.players[1].questions,saved);
+  assert.equal(m.status,'paused');assert(!startMatch(m,5000));assert(!reconnectPlayer(m,'p1'));
+});
+test('Shared reasoning requires construction and explanation by every participant, without racing',()=>{
+  assert.throws(()=>createMatch({...config,trail:'razonar'}));
+  const m=ready(2,{trail:'razonar',mode:'coop'});
+  assert(!playerAction(m,'p0',{type:'answer',index:0,value:1},2200));
+  for(const p of m.players)for(let i=0;i<8;i++){
+    const task=currentMission(p.workshop);p.workshop.records[i].model=solvedModel(task);
+    for(const change of [{type:'check'},{type:'reason',value:task.reason},{type:'next'}])assert(playerAction(m,p.id,{type:'project',index:i,change},2500+i*1000));
+    assert(validSnapshot(publicSnapshot(m,2500+i*1000)));
+    if(p.id==='p0')assert.notEqual(m.status,'finished');
+  }
+  assert.equal(m.status,'finished');assert(matchResults(m).every(p=>p.place===null&&p.independent===8));
+});
 function ready(n = 2, c = {}) {
   const m = createMatch({ ...config, ...c }, "qa");
   for (let i = 0; i < n; i++) {

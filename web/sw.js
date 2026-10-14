@@ -1,5 +1,5 @@
-const VERSION = "0.8.0";
-const CACHE = `sendero-${VERSION}-social-circuit-v1`;
+const VERSION = "0.9.0";
+const CACHE = `sendero-${VERSION}-projects-v1`;
 const FILES = [
   "./",
   "./index.html", "./docentes.html",
@@ -10,10 +10,10 @@ const FILES = [
   "./race-motion.js", "./race-world.css", "./circuit.js", "./circuit.css", "./learning-review.js",
       "./juntos.html", "./together.css", "./together.js", "./room.js", "./room-link.js", "./vendor/peerjs-1.5.5.min.js",
   "./assets/forest-river-v1.png", "./assets/river-racers-v1.png",
-  "./app.js",
+  "./app.js", "./workshop.js", "./practice-view.js", "./workshop-view.js", "./workshop.css",
   "./profiles.js",
   "./backup.js", "./race.js",
-  "./classroom.js",
+  "./classroom.js", "./cloud.js", "./cloud-view.js",
   "./core.js",
   "./fluency.js",
   "./results.js",

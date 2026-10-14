@@ -67,7 +67,7 @@ test("Post-game review includes corrected and helped items without turning them 
   assert(html.includes("2 retos necesitaron"));
   assert(html.includes("corregido"));
   assert(html.includes("con ayuda"));
-  assert(html.includes("no mide comprensión"));
+  assert(html.includes("resolución independiente"));
   const bank = learningReviewHTML({
     trail: "razonar",
     questions: [

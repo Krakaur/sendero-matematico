@@ -1,5 +1,5 @@
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.8.0";
+export const VERSION = "0.9.0";
 export const SCHEMA = "sendero.report.v2";
 export const TRAILS = {
   suma: {
@@ -37,7 +37,9 @@ export function uid() {
 export function recordAttempt(question, value) {
   if (
     question.done ||
-    !question.options.includes(value) ||
+    (!question.options.includes(value) && question.responseMode!=='write') ||
+    !Number.isInteger(value) || value<0 || value>2500 ||
+    (question.attempts.length>=19&&value!==question.answer) ||
     question.attempts.includes(value)
   )
     return false;

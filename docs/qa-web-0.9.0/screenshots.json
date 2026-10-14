@@ -1,0 +1,140 @@
+{
+  "scope": "Synthetic profiles only; locally retained screenshots, not child data. Latest screenshots may be from Firefox.",
+  "files": [
+    {
+      "file": "output/playwright/web-0.9.0/calm-multi.png",
+      "bytes": 306899,
+      "sha256": "70140e228a6b7962334d01b42811b9ba0d55ed89ec5f395f853673961c7fce7c"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/calm-resta.png",
+      "bytes": 302087,
+      "sha256": "57db6c7ef873ecccbdf40735bcf8e631ff7e56bb56015fa928716acad779222c"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/calm-suma.png",
+      "bytes": 302248,
+      "sha256": "9fd9ca761c9b96f1891165fa709572c9b51e62420d4cc36775190deb55b5959a"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/calm-tablas20.png",
+      "bytes": 307250,
+      "sha256": "b6b17b9df57c27ecc55a98270308fc5b5265fcbf6ea3c4b2fe5c6e43990eb523"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/overflow.png",
+      "bytes": 79503,
+      "sha256": "4451a2f5f19f42653e8c5bda70b0ee00a11e8fd7b42e02e43d2e276c56689656"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-array-mobile.png",
+      "bytes": 60923,
+      "sha256": "c469a314478b3993d5374c792cdc95ac601b6f2c8e993cca6c5f79dc7a642be7"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-array.png",
+      "bytes": 79865,
+      "sha256": "c14f4b445b2ddbdbf60457b3ea08453697e2902e71c680bb35a6692cc2d16a8f"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-balance-mobile.png",
+      "bytes": 68364,
+      "sha256": "f7b9bc8a38973f03de6c6ace79fb1bdb65de7a444bc979e855accaade49b128f"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-balance.png",
+      "bytes": 86430,
+      "sha256": "1ca91b526bc2bd6959bd3b64b27343924ed5eb09623e48b839d8a5d35d2a1a4b"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-data-mobile.png",
+      "bytes": 67412,
+      "sha256": "15d8ad991d9aad9eb6f652d41dc29ec42c8a34ac6bc043ab6d6703eccce83859"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-data.png",
+      "bytes": 87589,
+      "sha256": "7e18c062d7b432575fe8484169bbf6d51710f3e8419a4665dec5efe5a8ccfe1c"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-fraction-mobile.png",
+      "bytes": 63298,
+      "sha256": "f777dd75621a0aaa6d2c90514505565367dc632c0dbff4a4537195f1dd1f8903"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-fraction.png",
+      "bytes": 77326,
+      "sha256": "80b63f5db3be320435b1385563ffcf60f9c86dcc903c17d3bf7cb147ebcb1e4f"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-measure-mobile.png",
+      "bytes": 73817,
+      "sha256": "c15b97c0054eaf7870f3d798622532dd2f71ed91e7913533ebd7442f3b256712"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-measure.png",
+      "bytes": 100829,
+      "sha256": "2e60eb4a4c50182dd4554377b2357f7150e9cea550f5d78486c7cf6997883061"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-pattern-mobile.png",
+      "bytes": 80332,
+      "sha256": "2d4f840dd22bb0c710b9862fd63286c9210f55585c88c522008f2301b053bce7"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-pattern.png",
+      "bytes": 88696,
+      "sha256": "13291af3993f5f48e7a12b7db601e3c7bf627ae502897491564dc2403e2bd433"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-route-mobile.png",
+      "bytes": 67219,
+      "sha256": "08b3d8e4b6962e6591bc93859b188e0661616e43d728c03278967afc028ff465"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-route.png",
+      "bytes": 85070,
+      "sha256": "9a62bcf7dc1a8b1a14b9a93f94cb08bfe7369d0029830389e4326071a051f853"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-sharing-mobile.png",
+      "bytes": 66865,
+      "sha256": "cd2ecd15133458c88144dfc8f5448fccfe67688dc3896934c24d50c6e05ab43b"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/project-sharing.png",
+      "bytes": 80142,
+      "sha256": "758f228c6dfc78d54c72fb5b21e40453208f3ebfc8e3b816eb9700ff9987c56b"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/recovered-network-finish.png",
+      "bytes": 78171,
+      "sha256": "66ba696f716bc181c7a1fd66a5fe31b6b26514c4e528e689f2a925b6301dc557"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/shared-projects-1280.png",
+      "bytes": 341104,
+      "sha256": "7db4c8e5cafe3c0ddf4af717338e41ac3a15c5c8a3997ad4fb94b141e736df56"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/shared-projects-320.png",
+      "bytes": 160922,
+      "sha256": "946782f1fc503d731ada852793637bf5668148f7a53b6469a20e166513c52e04"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/shared-projects-390.png",
+      "bytes": 179443,
+      "sha256": "f18b94ac03655c4840a971bbef30d3c627597b3c6658e7e494192654b54e6b90"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/shared-projects-854.png",
+      "bytes": 276691,
+      "sha256": "5c41a991f745885f3b0a59824382c4629824acd4470d28bb8a23f98311adedd8"
+    },
+    {
+      "file": "output/playwright/web-0.9.0/teacher-projects.png",
+      "bytes": 231169,
+      "sha256": "de038744baaa8a158a70f00223b455d6f229ed0a6b9dddf900d496ea842dfd51"
+    }
+  ]
+}
