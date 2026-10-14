@@ -1,0 +1,13 @@
+{
+  "transport": "Real PeerServer Cloud signaling and encrypted WebRTC data channels; four isolated browser contexts on one physical computer",
+  "twoPlayerFinish": true,
+  "equalFacts": true,
+  "remoteCorrection": true,
+  "sharedPause": true,
+  "rematch": true,
+  "fourPlayerFinish": true,
+  "identicalResults": true,
+  "disconnectStopsAll": true,
+  "hostClosurePreservesFinalResults": true,
+  "errors": []
+}

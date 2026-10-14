@@ -1,0 +1,235 @@
+{
+  "note": "Local inspection artifacts; images are intentionally outside public source distribution. Reference images identify their original capture cycle.",
+  "files": [
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/finish-final.png",
+      "bytes": 362649,
+      "sha256": "fc74de09f955753a4d2a60447045c7daa24c91b63c12c4855d6e56cbf7cc5d7e"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/finish-offline.png",
+      "bytes": 361636,
+      "sha256": "0c1ff5c6c1cbecc2123f693772b4ca13f32b6e73598b5cd7f33d77094e496c0e"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/preparation-1280.png",
+      "bytes": 783219,
+      "sha256": "6a0f5ce6139ea879b373efa7a6ebb5fbe943d8a30fc2213c5a07329c191c86fb"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/preparation-320.png",
+      "bytes": 115640,
+      "sha256": "4cdb42002e07eb220a2947573b0b6c476df12bd6b9301890309b4f167e95a2a0"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/preparation-360.png",
+      "bytes": 125876,
+      "sha256": "b9dc739c36507da2ed2fbe47b8c910e797e7a8101fdc61db790b680a37511e38"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/preparation-390.png",
+      "bytes": 228366,
+      "sha256": "664002bda88ab981afcac9aef76a92a6e464facc8670c4cd718cbee069461273"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/preparation-854.png",
+      "bytes": 388877,
+      "sha256": "3075e8845f153df47e80146158134a1174144e0eb1bc9088662afa468875fdb6"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/race-1280.png",
+      "bytes": 766651,
+      "sha256": "b6cabf6a0dd7da873e5313d78d2d61e13e37e3e43913a382ef46c716e635bad6"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/race-320.png",
+      "bytes": 142016,
+      "sha256": "ca3e23d14e89da485c8f1a4d8ef9452a829e203c4b577aa0a151c75593b599d9"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/race-360.png",
+      "bytes": 161652,
+      "sha256": "5002e526f93a50653de8c86bbd69695e8ec3217e79bfe1e40bb1122269a18bb9"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/race-390.png",
+      "bytes": 220310,
+      "sha256": "45c170a5b51eeea132ba4b8812a5ef99cc24533c38044c8afe342cfc1e99a97d"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/race-854.png",
+      "bytes": 283201,
+      "sha256": "65d2433c7d9eee66e136162c0f53dad675827c120c16bb3137a75fabee788da4"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/chromium/recovery-desktop.png",
+      "bytes": 862598,
+      "sha256": "26a50a0a79fd4a88dd5f35f282e276a5ce1813c2516fda2ff46f4e801298a76e"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/finish-final.png",
+      "bytes": 381554,
+      "sha256": "a509fa94a9c63dc472dd372b71c6f1c2ebe15a0d913319c479e95f1bec42c39d"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/finish-offline.png",
+      "bytes": 380912,
+      "sha256": "5da65f0a5940d7aebea4ddc4f35e0c56c92d5a5ad14143e93cb3823d92d2d374"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/preparation-1280.png",
+      "bytes": 874465,
+      "sha256": "1a11c00f6a3bb719824039a455c8e3be342f1f9e46b51438275c4a1b5ceb4098"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/preparation-320.png",
+      "bytes": 107775,
+      "sha256": "f3d57eee798a5a14f373118192a87312cf8c9c3ec12993a625ca81cb52f50990"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/preparation-360.png",
+      "bytes": 117983,
+      "sha256": "d5bb7cd4263ef0e2409af57f505c5372d20ecc5c447b40bcbb2c1d75e218a71f"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/preparation-390.png",
+      "bytes": 220445,
+      "sha256": "0ee2d895ef4acbc414bf42a844a10bcaacd6b884b546bbd366ca69810ed12573"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/preparation-854.png",
+      "bytes": 410482,
+      "sha256": "195a5fc5eefe7a450d6c6994e9b9f09aa2af31cd2d43248b638d59639599ca37"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/race-1280.png",
+      "bytes": 869329,
+      "sha256": "7b33625f7f3901e3a74502f04c531ccd45be118525132d0b46964881339421c2"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/race-320.png",
+      "bytes": 143167,
+      "sha256": "82c859efbed55173c4412a31ef4380ef537186932bab674105897023b98c2ee5"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/race-360.png",
+      "bytes": 163115,
+      "sha256": "05ccca5aba46d6c720e95187bc82b2497be98b7ab98b8cbb02dfbcbaa94093bf"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/race-390.png",
+      "bytes": 228106,
+      "sha256": "39723c28d5c7b7e2961300d8bff6e6357b9bcdd351c35d0c4cd056ffe1ac5981"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/race-854.png",
+      "bytes": 301427,
+      "sha256": "a26e87bfcb5e2f309a735dd5872920ae505f4dbc70a57f9dc8b1668ceb2901c2"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/firefox/recovery-desktop.png",
+      "bytes": 964480,
+      "sha256": "02f67159b1f77458fa711e2de1e63d7db99e5550a505c3ce11469708b4a2dab9"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/grand-prix-current.png",
+      "bytes": 145040,
+      "sha256": "4722b346d32801a03545e7ab96c5add24aa88a0fbe97de937a0287409a7fdb44"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/network-disconnected.png",
+      "bytes": 69975,
+      "sha256": "6879884016510f6835d36843572c48daa4d11273757228445c342fa8586eab58"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/network-four-finish.png",
+      "bytes": 79753,
+      "sha256": "2ec258a694698be6dc53cc19fb98e2e818fa7d80f0a7bbab10cea7fd42c9db20"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/network-four-race.png",
+      "bytes": 843417,
+      "sha256": "057f280570f42ee22b83b59e61b950c61d28b0004bb2d2568468e44367a8bbdb"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/network-two-finish.png",
+      "bytes": 74509,
+      "sha256": "b15e99f987cd64ff52d71368cad6bd791becb3631f9e8a1ec6376728ad031b6b"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/network-two-race.png",
+      "bytes": 833483,
+      "sha256": "28f56923f041afd08d9ab521840a0f04549d1f074cd8196021f6021e60b87572"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/public/network-disconnected.png",
+      "bytes": 69975,
+      "sha256": "6879884016510f6835d36843572c48daa4d11273757228445c342fa8586eab58"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/public/network-four-finish.png",
+      "bytes": 79622,
+      "sha256": "97920863b3d80fdc67ac368372f709316f1a01befa3d5f85bfaab1d64acf221d"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/public/network-four-race.png",
+      "bytes": 842308,
+      "sha256": "4f08448edc5b192aeedb731cb6c884206681e4cb5adcb1c712d98a921c189081"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/public/network-two-finish.png",
+      "bytes": 74276,
+      "sha256": "8924507c3ad915908615c192c699b5d35f3fc9a399ac55b875cefb3e6a275963"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/public/network-two-race.png",
+      "bytes": 828500,
+      "sha256": "db38f251d88c5c0dab6650daa647db6fab1efaf784c970e2bc566f5aadd93692"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/public-upgraded-offline.png",
+      "bytes": 720329,
+      "sha256": "6e2d0cd8c45302b0439af34c968a91b4eef572e176dbbb98f0677c536c7b0c4c"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/shared-1280.png",
+      "bytes": 691972,
+      "sha256": "c0e46b591caa539471c7954d41e2c6354a6d679d657559fec8f6408135cb65ad"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/shared-320.png",
+      "bytes": 108659,
+      "sha256": "74d6373ac5f7292fe93f5b2cb5d542483fdf9cd00b431e05dac817e9a72173f7"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/shared-360.png",
+      "bytes": 136054,
+      "sha256": "3a4ed45cd942a569a221fa6b387479a9e3175e689e1dfce885a5b571135bb8a8"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/shared-390.png",
+      "bytes": 200773,
+      "sha256": "8559e1927aff30a46ef4a8869055a4066223f1fa3ed2512ea5d818d995ea18ce"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/shared-854.png",
+      "bytes": 251399,
+      "sha256": "0705002bab9f62744d3a4e674933f1bb679305f3025278de533254a1776d229e"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/shared-bend.png",
+      "bytes": 695046,
+      "sha256": "9c09f50069248390258bbd9271507f72292a44fdb3acbcdd84793ee20615d2ef"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/shared-desktop.png",
+      "bytes": 690339,
+      "sha256": "e6c77f0e48559bc3c950667984d00789677473a0c7583c15d2ca41c1eb4e945c"
+    },
+    {
+      "path": "output/playwright/ciclo-web-6-20261014/shared-finish.png",
+      "bytes": 86244,
+      "sha256": "85df213dea061445572f985067c3799d78a4c041277bb05572b98ab1ea7f4301"
+    }
+  ]
+}

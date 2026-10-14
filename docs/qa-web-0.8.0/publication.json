@@ -1,0 +1,427 @@
+{
+  "checked_utc": "2026-10-14T02:51:30.258489+00:00",
+  "version": "0.8.0",
+  "public_url": "https://krakaur.github.io/sendero-matematico/",
+  "source_commit": "d9452816dd9beabf6a6e93d76813ef9a0a66f2bf",
+  "deployment_commit": "42681384a74c790a55a8d450fb5e17459c24e98e",
+  "previous_deployment": "1a1246e3431640a6612018271178230fc463f92b",
+  "files": [
+    {
+      "file": "actualizar.html",
+      "url": "https://krakaur.github.io/sendero-matematico/actualizar.html",
+      "status": 200,
+      "sha256": "a763f25c92624a44e54688f62c582f329242647185ac64bc75c03a1d9425be4c",
+      "expected_sha256": "a763f25c92624a44e54688f62c582f329242647185ac64bc75c03a1d9425be4c",
+      "matches_source": true
+    },
+    {
+      "file": "app.js",
+      "url": "https://krakaur.github.io/sendero-matematico/app.js",
+      "status": 200,
+      "sha256": "4392510ae39336103a1e085160425b6b9ecadd1d6edcb7ffb97209a6e2a91dda",
+      "expected_sha256": "4392510ae39336103a1e085160425b6b9ecadd1d6edcb7ffb97209a6e2a91dda",
+      "matches_source": true
+    },
+    {
+      "file": "assets/forest-river-v1.png",
+      "url": "https://krakaur.github.io/sendero-matematico/assets/forest-river-v1.png",
+      "status": 200,
+      "sha256": "2fbe26de4053b9c0956e0b06641aee8bc84192cdb04c9376e9e580f9185e395c",
+      "expected_sha256": "2fbe26de4053b9c0956e0b06641aee8bc84192cdb04c9376e9e580f9185e395c",
+      "matches_source": true
+    },
+    {
+      "file": "assets/river-racers-v1.png",
+      "url": "https://krakaur.github.io/sendero-matematico/assets/river-racers-v1.png",
+      "status": 200,
+      "sha256": "da9f1f4c768476a20c6c44ad8d168288fb16a96910c6b74f1001b25b149a9678",
+      "expected_sha256": "da9f1f4c768476a20c6c44ad8d168288fb16a96910c6b74f1001b25b149a9678",
+      "matches_source": true
+    },
+    {
+      "file": "backup.js",
+      "url": "https://krakaur.github.io/sendero-matematico/backup.js",
+      "status": 200,
+      "sha256": "028ad99a7dcf3a90038b6850e53248ab03627f1ec0cbdca2ba2a554bb0585be0",
+      "expected_sha256": "028ad99a7dcf3a90038b6850e53248ab03627f1ec0cbdca2ba2a554bb0585be0",
+      "matches_source": true
+    },
+    {
+      "file": "bank-data.js",
+      "url": "https://krakaur.github.io/sendero-matematico/bank-data.js",
+      "status": 200,
+      "sha256": "443e858a422e7c76acfc4a5285b8a06899f2fea11025da19a1b9f1fc0b473182",
+      "expected_sha256": "443e858a422e7c76acfc4a5285b8a06899f2fea11025da19a1b9f1fc0b473182",
+      "matches_source": true
+    },
+    {
+      "file": "bank-extra.js",
+      "url": "https://krakaur.github.io/sendero-matematico/bank-extra.js",
+      "status": 200,
+      "sha256": "0a768a040083313fb4600152d073bc2037e13386b45f02f6d9091c1cf59d5b84",
+      "expected_sha256": "0a768a040083313fb4600152d073bc2037e13386b45f02f6d9091c1cf59d5b84",
+      "matches_source": true
+    },
+    {
+      "file": "bank.js",
+      "url": "https://krakaur.github.io/sendero-matematico/bank.js",
+      "status": 200,
+      "sha256": "a11772f37b1135afa72db3f4510247da86842b733bf413c54dc6c19a9138de1a",
+      "expected_sha256": "a11772f37b1135afa72db3f4510247da86842b733bf413c54dc6c19a9138de1a",
+      "matches_source": true
+    },
+    {
+      "file": "circuit.css",
+      "url": "https://krakaur.github.io/sendero-matematico/circuit.css",
+      "status": 200,
+      "sha256": "9ae05eb536159129af5aae8d8d3ec1930d1bce2fbcb82083d9456631922d868d",
+      "expected_sha256": "9ae05eb536159129af5aae8d8d3ec1930d1bce2fbcb82083d9456631922d868d",
+      "matches_source": true
+    },
+    {
+      "file": "circuit.js",
+      "url": "https://krakaur.github.io/sendero-matematico/circuit.js",
+      "status": 200,
+      "sha256": "0751678ab59ecd5e7b097cee176bc334faceabb8cce5644e43bb18afd19218bc",
+      "expected_sha256": "0751678ab59ecd5e7b097cee176bc334faceabb8cce5644e43bb18afd19218bc",
+      "matches_source": true
+    },
+    {
+      "file": "classroom.js",
+      "url": "https://krakaur.github.io/sendero-matematico/classroom.js",
+      "status": 200,
+      "sha256": "87ef28bf16989e15922d4f8d243caffb58750f001dbb4d6836e9c63fa3f3b86c",
+      "expected_sha256": "87ef28bf16989e15922d4f8d243caffb58750f001dbb4d6836e9c63fa3f3b86c",
+      "matches_source": true
+    },
+    {
+      "file": "core.js",
+      "url": "https://krakaur.github.io/sendero-matematico/core.js",
+      "status": 200,
+      "sha256": "a71a2d66ac7870dc8562a8767847f364325cacd0d41e9de11bcb6c91aee3276a",
+      "expected_sha256": "a71a2d66ac7870dc8562a8767847f364325cacd0d41e9de11bcb6c91aee3276a",
+      "matches_source": true
+    },
+    {
+      "file": "docentes.html",
+      "url": "https://krakaur.github.io/sendero-matematico/docentes.html",
+      "status": 200,
+      "sha256": "faf88a7cb694306f457208237c14984967ecde435db4b3718427e97109812c8e",
+      "expected_sha256": "faf88a7cb694306f457208237c14984967ecde435db4b3718427e97109812c8e",
+      "matches_source": true
+    },
+    {
+      "file": "fluency.js",
+      "url": "https://krakaur.github.io/sendero-matematico/fluency.js",
+      "status": 200,
+      "sha256": "b0cb0c5d7945410b0f0af09ca74fdf3bb064b61ed10434f63164dc47ddfcb1f5",
+      "expected_sha256": "b0cb0c5d7945410b0f0af09ca74fdf3bb064b61ed10434f63164dc47ddfcb1f5",
+      "matches_source": true
+    },
+    {
+      "file": "icon-192.png",
+      "url": "https://krakaur.github.io/sendero-matematico/icon-192.png",
+      "status": 200,
+      "sha256": "716f9db3e48dc10cc3bbcae501bffbec6430d2339b4e37ef8319d4625b2f4631",
+      "expected_sha256": "716f9db3e48dc10cc3bbcae501bffbec6430d2339b4e37ef8319d4625b2f4631",
+      "matches_source": true
+    },
+    {
+      "file": "icon-512.png",
+      "url": "https://krakaur.github.io/sendero-matematico/icon-512.png",
+      "status": 200,
+      "sha256": "94f57012ece08b276048cb962220234e1764584f7674391898ba626b7f525008",
+      "expected_sha256": "94f57012ece08b276048cb962220234e1764584f7674391898ba626b7f525008",
+      "matches_source": true
+    },
+    {
+      "file": "icon.svg",
+      "url": "https://krakaur.github.io/sendero-matematico/icon.svg",
+      "status": 200,
+      "sha256": "1fb018a3ba24fba6960d0e403ec44a5439a1740596173048f38349029f937749",
+      "expected_sha256": "1fb018a3ba24fba6960d0e403ec44a5439a1740596173048f38349029f937749",
+      "matches_source": true
+    },
+    {
+      "file": "index.html",
+      "url": "https://krakaur.github.io/sendero-matematico/index.html",
+      "status": 200,
+      "sha256": "13a5cc9bbe141de57ed008a94d2dccbff9c6454dbfe23c553c06a3c9a549ae7e",
+      "expected_sha256": "13a5cc9bbe141de57ed008a94d2dccbff9c6454dbfe23c553c06a3c9a549ae7e",
+      "matches_source": true
+    },
+    {
+      "file": "juntos.html",
+      "url": "https://krakaur.github.io/sendero-matematico/juntos.html",
+      "status": 200,
+      "sha256": "26cfe963c680390e4d6197c0d237ce4142fda96b3c4547c39c1048e70f3d88cd",
+      "expected_sha256": "26cfe963c680390e4d6197c0d237ce4142fda96b3c4547c39c1048e70f3d88cd",
+      "matches_source": true
+    },
+    {
+      "file": "landscape.svg",
+      "url": "https://krakaur.github.io/sendero-matematico/landscape.svg",
+      "status": 200,
+      "sha256": "165214ddc7f9d00a36fd5f1fb6e4a66444ba96b9dcb659bdbe6d1327bceb5467",
+      "expected_sha256": "165214ddc7f9d00a36fd5f1fb6e4a66444ba96b9dcb659bdbe6d1327bceb5467",
+      "matches_source": true
+    },
+    {
+      "file": "learning-review.js",
+      "url": "https://krakaur.github.io/sendero-matematico/learning-review.js",
+      "status": 200,
+      "sha256": "5152baf8c47a5454e8c1d4b9d247417e53de89f2ef4cc8da1be358a533f64414",
+      "expected_sha256": "5152baf8c47a5454e8c1d4b9d247417e53de89f2ef4cc8da1be358a533f64414",
+      "matches_source": true
+    },
+    {
+      "file": "manifest.webmanifest",
+      "url": "https://krakaur.github.io/sendero-matematico/manifest.webmanifest",
+      "status": 200,
+      "sha256": "ae0dfce02d00d454fa3eb4850c10f975171803c45530face40b8f17e46274dd3",
+      "expected_sha256": "ae0dfce02d00d454fa3eb4850c10f975171803c45530face40b8f17e46274dd3",
+      "matches_source": true
+    },
+    {
+      "file": "narration.js",
+      "url": "https://krakaur.github.io/sendero-matematico/narration.js",
+      "status": 200,
+      "sha256": "33bb8bc516d836965792e259dbd891fb3a46aa554d46d4d2671a188101d943c6",
+      "expected_sha256": "33bb8bc516d836965792e259dbd891fb3a46aa554d46d4d2671a188101d943c6",
+      "matches_source": true
+    },
+    {
+      "file": "practice.js",
+      "url": "https://krakaur.github.io/sendero-matematico/practice.js",
+      "status": 200,
+      "sha256": "f11c040bc1c7435c7553a7dfe02b6d433fc52f78dd75a0682dc6171d8184037f",
+      "expected_sha256": "f11c040bc1c7435c7553a7dfe02b6d433fc52f78dd75a0682dc6171d8184037f",
+      "matches_source": true
+    },
+    {
+      "file": "profiles.js",
+      "url": "https://krakaur.github.io/sendero-matematico/profiles.js",
+      "status": 200,
+      "sha256": "979b4195a65faa2539192e346cde30fc4f9385013f35c5217bc0092080ec5926",
+      "expected_sha256": "979b4195a65faa2539192e346cde30fc4f9385013f35c5217bc0092080ec5926",
+      "matches_source": true
+    },
+    {
+      "file": "race-art.js",
+      "url": "https://krakaur.github.io/sendero-matematico/race-art.js",
+      "status": 200,
+      "sha256": "3c0cb9358d16b92d737c7f7d22e443c3cdf439c9c9cd3c30dbccef7c26621ef4",
+      "expected_sha256": "3c0cb9358d16b92d737c7f7d22e443c3cdf439c9c9cd3c30dbccef7c26621ef4",
+      "matches_source": true
+    },
+    {
+      "file": "race-audio.js",
+      "url": "https://krakaur.github.io/sendero-matematico/race-audio.js",
+      "status": 200,
+      "sha256": "8d1f00b604839eeed5760089c19752d60d84ca71ad9e08377e041b5600d50366",
+      "expected_sha256": "8d1f00b604839eeed5760089c19752d60d84ca71ad9e08377e041b5600d50366",
+      "matches_source": true
+    },
+    {
+      "file": "race-finish.js",
+      "url": "https://krakaur.github.io/sendero-matematico/race-finish.js",
+      "status": 200,
+      "sha256": "fb2d6bb7d99bd83195d5b8276335448f610237cca8f4625faef3204915159545",
+      "expected_sha256": "fb2d6bb7d99bd83195d5b8276335448f610237cca8f4625faef3204915159545",
+      "matches_source": true
+    },
+    {
+      "file": "race-motion.js",
+      "url": "https://krakaur.github.io/sendero-matematico/race-motion.js",
+      "status": 200,
+      "sha256": "582a99668ebb812ceb48c68dc4dd3ee32fc50196462847d17f7fffeaa9e85def",
+      "expected_sha256": "582a99668ebb812ceb48c68dc4dd3ee32fc50196462847d17f7fffeaa9e85def",
+      "matches_source": true
+    },
+    {
+      "file": "race-start.css",
+      "url": "https://krakaur.github.io/sendero-matematico/race-start.css",
+      "status": 200,
+      "sha256": "584ed808b578ad698b708bb0661422776999430f62436480fa80d4a87be1fdbf",
+      "expected_sha256": "584ed808b578ad698b708bb0661422776999430f62436480fa80d4a87be1fdbf",
+      "matches_source": true
+    },
+    {
+      "file": "race-start.js",
+      "url": "https://krakaur.github.io/sendero-matematico/race-start.js",
+      "status": 200,
+      "sha256": "584438aa1edf97e22455c6259c5b3f1849336cba7fbe7b26dfda3b860013e389",
+      "expected_sha256": "584438aa1edf97e22455c6259c5b3f1849336cba7fbe7b26dfda3b860013e389",
+      "matches_source": true
+    },
+    {
+      "file": "race-world.css",
+      "url": "https://krakaur.github.io/sendero-matematico/race-world.css",
+      "status": 200,
+      "sha256": "7f8f7f81c1989026a87691e9101798be9f4500b8a1e609c95f4567a88db4e163",
+      "expected_sha256": "7f8f7f81c1989026a87691e9101798be9f4500b8a1e609c95f4567a88db4e163",
+      "matches_source": true
+    },
+    {
+      "file": "race.js",
+      "url": "https://krakaur.github.io/sendero-matematico/race.js",
+      "status": 200,
+      "sha256": "459818b93301f83e4f9b19cc262e69c10ec6e187be52b9d8e9ae08c0ee435d57",
+      "expected_sha256": "459818b93301f83e4f9b19cc262e69c10ec6e187be52b9d8e9ae08c0ee435d57",
+      "matches_source": true
+    },
+    {
+      "file": "regatta.css",
+      "url": "https://krakaur.github.io/sendero-matematico/regatta.css",
+      "status": 200,
+      "sha256": "9318bbc43d60cb3816160fe06575c8accfc506bea136c7403ee0a930ca271af1",
+      "expected_sha256": "9318bbc43d60cb3816160fe06575c8accfc506bea136c7403ee0a930ca271af1",
+      "matches_source": true
+    },
+    {
+      "file": "results.js",
+      "url": "https://krakaur.github.io/sendero-matematico/results.js",
+      "status": 200,
+      "sha256": "ce84a8bb1873f5fc5fdf0aa7cfeb02e552c9d99ee66990aa4def11d5908c21ba",
+      "expected_sha256": "ce84a8bb1873f5fc5fdf0aa7cfeb02e552c9d99ee66990aa4def11d5908c21ba",
+      "matches_source": true
+    },
+    {
+      "file": "room-link.js",
+      "url": "https://krakaur.github.io/sendero-matematico/room-link.js",
+      "status": 200,
+      "sha256": "232e01c7fcdad06606090022407de9ad9553c74a38e934996639027e9c48c8f2",
+      "expected_sha256": "232e01c7fcdad06606090022407de9ad9553c74a38e934996639027e9c48c8f2",
+      "matches_source": true
+    },
+    {
+      "file": "room.js",
+      "url": "https://krakaur.github.io/sendero-matematico/room.js",
+      "status": 200,
+      "sha256": "f9215e7fd8b774dc05eb5d2ca48fc6448d5d1f7b2ec7c9f55b491528f57dcacc",
+      "expected_sha256": "f9215e7fd8b774dc05eb5d2ca48fc6448d5d1f7b2ec7c9f55b491528f57dcacc",
+      "matches_source": true
+    },
+    {
+      "file": "sitemap.xml",
+      "url": "https://krakaur.github.io/sendero-matematico/sitemap.xml",
+      "status": 200,
+      "sha256": "20a90de9b3ec6504e42457d35994cc25807d76ff2fbd99787328668bb2ac9044",
+      "expected_sha256": "20a90de9b3ec6504e42457d35994cc25807d76ff2fbd99787328668bb2ac9044",
+      "matches_source": true
+    },
+    {
+      "file": "social.png",
+      "url": "https://krakaur.github.io/sendero-matematico/social.png",
+      "status": 200,
+      "sha256": "2937311520ff9ecdedf2638ad12e46aaae28e6fdd4095844f744469c6c8d334a",
+      "expected_sha256": "2937311520ff9ecdedf2638ad12e46aaae28e6fdd4095844f744469c6c8d334a",
+      "matches_source": true
+    },
+    {
+      "file": "style.css",
+      "url": "https://krakaur.github.io/sendero-matematico/style.css",
+      "status": 200,
+      "sha256": "e33a4ef03f82537720f83d95cf84eae0d16123caaa3e6e7bd11c941d82ec2a26",
+      "expected_sha256": "e33a4ef03f82537720f83d95cf84eae0d16123caaa3e6e7bd11c941d82ec2a26",
+      "matches_source": true
+    },
+    {
+      "file": "sw.js",
+      "url": "https://krakaur.github.io/sendero-matematico/sw.js",
+      "status": 200,
+      "sha256": "8848be99229e25701b927540eba4bcad2919c82cfbec8d3dfef8bca1eb7a945b",
+      "expected_sha256": "8848be99229e25701b927540eba4bcad2919c82cfbec8d3dfef8bca1eb7a945b",
+      "matches_source": true
+    },
+    {
+      "file": "together.css",
+      "url": "https://krakaur.github.io/sendero-matematico/together.css",
+      "status": 200,
+      "sha256": "60197c90e85fecf21217e03da3308b7746fa1a2cdc1f8c9631b0aeaaa6993b38",
+      "expected_sha256": "60197c90e85fecf21217e03da3308b7746fa1a2cdc1f8c9631b0aeaaa6993b38",
+      "matches_source": true
+    },
+    {
+      "file": "together.js",
+      "url": "https://krakaur.github.io/sendero-matematico/together.js",
+      "status": 200,
+      "sha256": "19e781dc7c3be40d6bcf2f7b54c0abc9defb32aafa35586c7ac9ea9d2501d4fb",
+      "expected_sha256": "19e781dc7c3be40d6bcf2f7b54c0abc9defb32aafa35586c7ac9ea9d2501d4fb",
+      "matches_source": true
+    },
+    {
+      "file": "update.js",
+      "url": "https://krakaur.github.io/sendero-matematico/update.js",
+      "status": 200,
+      "sha256": "c5df13270e14a727eef68a447e9ff00e201e79481d4f7455af482b6f12a02e39",
+      "expected_sha256": "c5df13270e14a727eef68a447e9ff00e201e79481d4f7455af482b6f12a02e39",
+      "matches_source": true
+    },
+    {
+      "file": "vendor/peerjs-1.5.5.min.js",
+      "url": "https://krakaur.github.io/sendero-matematico/vendor/peerjs-1.5.5.min.js",
+      "status": 200,
+      "sha256": "7604d8c31bec4f134b0d15c2d80b1d095ea18af005354f439f14291fcd7b4168",
+      "expected_sha256": "7604d8c31bec4f134b0d15c2d80b1d095ea18af005354f439f14291fcd7b4168",
+      "matches_source": true
+    },
+    {
+      "file": "vendor/peerjs-LICENSE.txt",
+      "url": "https://krakaur.github.io/sendero-matematico/vendor/peerjs-LICENSE.txt",
+      "status": 200,
+      "sha256": "9407807dba7f47a79bfb3ac55759d63d77c9371ebd0616d5a093e97d3e810397",
+      "expected_sha256": "9407807dba7f47a79bfb3ac55759d63d77c9371ebd0616d5a093e97d3e810397",
+      "matches_source": true
+    }
+  ],
+  "all_files_match_source": true,
+  "status": "published_and_verified",
+  "closed_utc": "2026-10-14T02:53:35.946946+00:00",
+  "pull_request": "https://github.com/Krakaur/sendero-matematico/pull/5",
+  "pages_run": {
+    "conclusion": "success",
+    "createdAt": "2026-10-14T02:49:56Z",
+    "databaseId": 38503084004,
+    "headSha": "42681384a74c790a55a8d450fb5e17459c24e98e",
+    "status": "completed",
+    "updatedAt": "2026-10-14T02:50:47Z",
+    "url": "https://github.com/Krakaur/sendero-matematico/actions/runs/38503084004"
+  },
+  "public_file_count": 46,
+  "all_public_files_match_source": true,
+  "upgrade": {
+    "version": "0.8.0",
+    "historyPreserved": true,
+    "oldPendingProtocol": 3,
+    "oldRaceFinished": true,
+    "newRaceProtocol": 3,
+    "offlineArtAndAnswer": true,
+    "completedSessions": 2
+  },
+  "public_network": {
+    "transport": "Real PeerServer Cloud signaling and encrypted WebRTC data channels; four isolated browser contexts on one physical computer",
+    "twoPlayerFinish": true,
+    "equalFacts": true,
+    "remoteCorrection": true,
+    "sharedPause": true,
+    "rematch": true,
+    "fourPlayerFinish": true,
+    "identicalResults": true,
+    "disconnectStopsAll": true,
+    "hostClosurePreservesFinalResults": true,
+    "errors": []
+  },
+  "upgrade_scope": "Disposable public Chromium profile with nonempty history and pending protocol-3 race from 0.7.0. Preserved attempts and rivals, finished the old race and answered a new 0.8.0 race offline.",
+  "previous_version_backup": {
+    "path": "qa-private/public-web-backup-20261014-cycle6",
+    "version": "0.7.0",
+    "deployment_commit": "1a1246e3431640a6612018271178230fc463f92b",
+    "archive_sha256": "17954b8648589fede56059c37514c0afbf83315882d8ae166ce075ec6cecdae4",
+    "public_file_count": 36,
+    "all_files_matched_published_branch": true,
+    "archive_crc_verified": true,
+    "scope": "Published web distribution; no personal browser profiles."
+  },
+  "acceptance_scope": "Technical publication and four-participant public WebRTC integration on one physical computer. Distinct networks, physical phones and educational efficacy remain unverified. Attractiveness, preference and audio excluded by request."
+}

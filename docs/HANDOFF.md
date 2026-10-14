@@ -1,6 +1,6 @@
 # Continuidad web 0.8.0 · paquetes 0.4.0
 
-Sexto incremento: análisis global, juego entre personas y circuitos con curvas. Leer primero `ANALISIS-GLOBAL-WEB-0.8.0.md`, `EVALUACION-WEB-0.8.0.md` y `MULTIJUGADOR-Y-CIRCUITOS.md`. La publicación efectiva se registra en `qa-web-0.8.0/publication.json`; antes de ese registro, la versión es candidata comprobada localmente.
+Sexto incremento: análisis global, juego entre personas y circuitos con curvas. Leer primero `ANALISIS-GLOBAL-WEB-0.8.0.md`, `EVALUACION-WEB-0.8.0.md` y `MULTIJUGADOR-Y-CIRCUITOS.md`. Publicación verificada: fuente `d9452816dd9beabf6a6e93d76813ef9a0a66f2bf`, despliegue `42681384a74c790a55a8d450fb5e17459c24e98e`, Pages `38503084004` satisfactorio y 46 archivos públicos coincidentes. La actualización conservó historial y carrera pendiente de 0.7.0; se completó y se respondió una nueva carrera offline. Las salas públicas completaron recorridos de dos y cuatro participantes en contextos aislados de un mismo equipo. Registro: `qa-web-0.8.0/publication.json`.
 
 La nueva entrada `juntos.html` admite dos personas en un dispositivo, o dos a cuatro por enlace privado con PeerJS/WebRTC. Incluye cooperación, pausa común, mismos retos, validación de respuestas y separación del expediente individual. La señalización usa PeerServer Cloud y STUN externos; no hay TURN propio, migración de anfitrión ni prueba entre redes físicas diferentes. Las desconexiones detienen la carrera sin premiarlas; una sala ya terminada conserva resultados al cerrar. No confundir estas salas con un servidor docente desplegado.
 

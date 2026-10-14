@@ -1,6 +1,6 @@
 # Plan de mejora progresiva de Sendero Matemático
 
-Fecha: 13 de octubre de 2026. Dedicación acordada: 90 minutos por jornada. Primer ciclo: 20 jornadas, 30 horas. Estado: quinto incremento web 0.7.0 comprobado técnicamente; publicación y conservación de datos se documentan en `qa-web-0.7.0/publication.json`. Preparación, salida, llegada y repetición implementadas; nuevo arte, cámara e impulsos continuos, y calibración de rivales revisada. La aceptación perceptiva y las metas restantes siguen pendientes. Por instrucción del autor, el quinto incremento excluye el análisis sonoro y lo reserva para otro turno. Fuente de partida inspeccionada: `76c3cb3b20676047fff1b56054cd451af43e1115`, versión 0.4.0.
+Fecha: 13 de octubre de 2026. Dedicación acordada: 90 minutos por jornada. Primer ciclo: 20 jornadas, 30 horas. Estado: quinto incremento web 0.7.0 comprobado técnicamente; publicación y conservación de datos se documentan en `qa-web-0.8.0/publication.json`. Preparación, salida, llegada y repetición implementadas; nuevo arte, cámara e impulsos continuos, y calibración de rivales revisada. La aceptación perceptiva y las metas restantes siguen pendientes. Por instrucción del autor, el quinto incremento excluye el análisis sonoro y lo reserva para otro turno. Fuente de partida inspeccionada: `76c3cb3b20676047fff1b56054cd451af43e1115`, versión 0.4.0.
 
 ## Ampliación del sexto incremento
 
