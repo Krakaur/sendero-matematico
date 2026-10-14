@@ -1,6 +1,6 @@
-# Migración web 0.10.0 en curso · paquetes 0.4.0
+# Web 0.10.0 publicada · automatización del backend en verificación · paquetes 0.4.0
 
-14 de octubre de 2026: receptor Workers/D1 desplegado y probado en `https://sendero-aula.dirkhans.workers.dev`; leer `CLOUDFLARE.md`. No necesita un proceso Node local. GitHub Pages conserva el juego. La conexión de compilaciones automáticas y la publicación del cliente siguen en verificación. No confundir despliegue del receptor con publicación integral terminada. El acceso administrativo privado se guarda en `server/private/cloudflare-admin.json`, excluido de Git; nunca imprimir ni publicar su token.
+14 de octubre de 2026: receptor Workers/D1 desplegado y probado en `https://sendero-aula.dirkhans.workers.dev`; leer `CLOUDFLARE.md`. No necesita un proceso Node local. GitHub Pages conserva el juego. Cliente 0.10.0 publicado desde `281dd37695e42e3f3fc9a7dce9001d623d62ddf9`, ejecución `38623752895` satisfactoria, 52 archivos públicos coincidentes con Git. PR #7 integrada. La automatización del backend sigue en verificación. El acceso administrativo privado se guarda en `server/private/cloudflare-admin.json`, excluido de Git; nunca imprimir ni publicar su token.
 
 79 pruebas aprobadas, incluida D1 local con workerd. Ensayo remoto completo: 23 solicitudes, 143 filas leídas, 70 escritas; evidencias privadas en `qa-private/cloudflare-20261014/`. Un ensayo preliminar se detuvo por un alias sintético demasiado largo, sin error del servicio; se conservó su registro. El respaldo previo contiene los 52 archivos públicos de 0.9.0 coincidentes y ZIP verificado. Las cuotas gratuitas permanecen obligatorias; el cliente limita lotes, usa cursores y espera ante 429/503. No activar planes de pago ni R2.
 
