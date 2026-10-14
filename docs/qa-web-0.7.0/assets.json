@@ -1,0 +1,18 @@
+{
+  "assets": [
+    {
+      "file": "web/assets/forest-river-v1.png",
+      "bytes": 2771940,
+      "sha256": "2fbe26de4053b9c0956e0b06641aee8bc84192cdb04c9376e9e580f9185e395c",
+      "source": "built-in image_gen, original generated art"
+    },
+    {
+      "file": "web/assets/river-racers-v1.png",
+      "bytes": 1414213,
+      "sha256": "da9f1f4c768476a20c6c44ad8d168288fb16a96910c6b74f1001b25b149a9678",
+      "source": "built-in image_gen, original generated art"
+    }
+  ],
+  "total_art_bytes": 4186153,
+  "audio_source_unchanged": true
+}

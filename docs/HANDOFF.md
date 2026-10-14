@@ -1,4 +1,12 @@
-# Continuidad web 0.6.0 · paquetes 0.4.0
+# Continuidad web 0.7.0 · paquetes 0.4.0
+
+Quinto incremento, 13 de octubre de 2026: renovación de arte, movimiento y competencia. Leer `ANALISIS-ARCADEMICS-WEB-0.7.0.md`, `EVALUACION-WEB-0.7.0.md` y `qa-web-0.7.0/`. La publicación se confirma exclusivamente en `qa-web-0.7.0/publication.json`; el análisis y las pruebas por sí solos no acreditan despliegue. Hay respaldo íntegro de 0.6.0 en `qa-private/public-web-backup-20261014-0015/`.
+
+Ilustraciones originales mediante image_gen integrado: fondo y atlas CSS de cuatro personajes, 4,19 MB. Movimiento críticamente amortiguado y cámara/paralaje en `race-motion.js`; CSS en `race-world.css`. Protocolo 3 de rivales con tres intensidades, mediana del tiempo activo de resoluciones correctas, recuperación incluida, exclusión de pistas/interrupciones y referencia por nivel. Los protocolos 1 y 2 conservan trayectorias. Pasan 47 pruebas Node y recorridos de Chrome/Firefox en cinco viewports; la matriz contiene 4.800 configuraciones y 24.000 llegadas. La medición de Chromium contiene tres carreras de más de 64 s y cuarenta respuestas, p95 visual de 20,3 ms. Distinguir arranque de Firefox y escena estable en los registros; no trasladar una medida a otro dispositivo.
+
+Por instrucción expresa del autor, no se analizó el sonido en esta intervención; `race-audio.js` permanece intacto. La aceptación perceptiva, un teléfono físico y observación infantil siguen pendientes. No afirmar superioridad global sobre Arcademics: su circuito cambia de orientación y dispone de juego humano. Conservar la identidad del bosque; no regresar al arte vectorial simplificado como sustituto de esta dirección. Mantener fuera de Git el PDF PISA y `BASE-CURRICULAR-NEM-PISA.md`, ajenos a esta tarea. La autorización de publicar después de respaldo permanece vigente.
+
+## Publicación anterior: web 0.6.0
 
 13 de octubre de 2026: web 0.6.0 publicada y verificada. Fuente `0a647bb65e181ad190942ea3f9b7edfbe38c3981`, despliegue `176cd61ae9ba4dee65a2aafe198d5fdb2decc32a`, Pages `38481961224` satisfactorio. Los 32 archivos públicos coinciden con Git; actualización 0.5.1 con historial y partida pendiente conservados y nueva salida offline comprobada. PR #3 integrada. Cuarto incremento: preparación y salida de La copa del río. Leer primero `EVALUACION-WEB-0.6.0.md` y `qa-web-0.6.0/publication.json` para el estado efectivo de publicación. La implementación incluye muelle ilustrado, presentación de rivales, cuenta visual y sonora, salida directa con movimiento reducido, cancelación y conservación del tiempo educativo. Las carreras antiguas se reanudan sin preparación. Se corrigieron doble activación, reingreso al perfil y retorno a la página durante la cuenta.
 

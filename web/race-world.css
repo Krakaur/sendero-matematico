@@ -1,0 +1,118 @@
+/* Painted river, readable actors and motion in a shared world coordinate system. */
+.canoe-art { position:relative;display:block;width:100%;aspect-ratio:120 / 110; }
+.canoe-art .boat-bob { position:absolute;inset:0;transform-origin:50% 73%;will-change:transform; }
+.sprite-window { position:absolute;inset:0;overflow:hidden; }
+.racer-sprite { position:absolute;left:0;width:100%;height:109.091%;background-image:url('./assets/river-racers-v1.png');background-size:200% 200%;background-repeat:no-repeat; }
+.canoe-art .paddle-art { position:absolute!important;inset:0;width:100%!important;height:100%!important;overflow:visible; }
+.boat-water-shadow { position:absolute;left:10%;right:10%;top:84%;height:8%;background:#064f5f38;border-radius:50%; }
+.river-painting { overflow:hidden; background:#3abfb6; }
+.river-panorama { width:100%;height:100%;max-width:none;object-fit:cover;object-position:center;display:block; }
+.arcade-playing:has(.regatta-game) .profile-bar { display:none; }
+.river-glints { position:absolute;inset:25% -180px 15%;opacity:.28;background:radial-gradient(ellipse 22px 2px at 50% 50%,#f5ffdb 97%,transparent) 0 0/180px 47px;transform:translateX(var(--water-offset,0px));will-change:transform;pointer-events:none; }
+.arcade.regatta-game { grid-template-columns:minmax(0,1fr);grid-template-areas:'top' 'scene' 'question' 'hud' 'note';gap:10px; }
+.regatta-game .game-top { min-height:34px; }
+.regatta.competition { border:2px solid #306e60;border-radius:22px;box-shadow:0 5px 0 #cad8bf,0 12px 26px #214e3415; }
+.regatta .race-banner { padding:8px 18px;min-height:46px;background:#164e43;color:#fff7d6; }
+.regatta .race-banner strong { font-size:1rem;color:#fff7d6; }
+.regatta .regatta-kicker { color:#cee3bc;font-size:.52rem;margin-bottom:2px; }
+.route-pearls { display:flex;align-items:center;gap:10px;font-size:.8rem;font-weight:800; }
+.route-pearls>span:last-child { display:flex;gap:5px; }
+.route-pearl { width:9px;height:9px;display:block;border:1px solid #a7c1a4;border-radius:50%;background:#2d6958; }
+.route-pearl.passed { background:#ffda72;border-color:#ffe9a4;box-shadow:0 0 7px #fddd8b70; }
+.regatta .race-stage { padding:0;height:390px;contain:layout paint; }
+.regatta .river-panorama { width:140%;object-position:center 25%;will-change:transform; }
+.regatta .race-lane { position:absolute;inset:0;height:auto;display:block;pointer-events:none; }
+.regatta .lane-course { position:absolute;left:0;right:0;top:calc(22% + var(--lane)*20%);height:0;margin:0;border:0; }
+.regatta .competitor { position:absolute;left:0;top:-46px;width:106px;height:97px;margin-left:-53px;transition:none!important;will-change:transform;filter:none; }
+.regatta .player-lane .competitor { z-index:5; }
+.regatta .competitor .canoe-art { width:100%;height:100%;overflow:visible; }
+.regatta .lane-label { position:absolute;left:12%;right:12%;top:84px;display:flex;align-items:center;justify-content:center;gap:4px;padding:2px 5px;border-radius:12px;font-size:.58rem;line-height:1.2;max-width:none;background:#174f4bf2;border:1px solid #b5e6d2;box-shadow:0 2px 4px #003e4930; }
+.regatta .player-lane .lane-label { background:#ffe29b;color:#4b3319;border-color:#fff5d0; }
+.regatta [data-edge='ahead'] .edge-arrow::after { content:'→'; }
+.regatta [data-edge='behind'] .edge-arrow::after { content:'←'; }
+.regatta [data-edge]:not([data-edge='']) .lane-label { border-style:dashed; }
+.regatta .boat-wake { top:76px;left:-27px;height:10px;width:70px;border-color:#ddfff0;opacity:.65; }
+.regatta [data-racer='0'] .boat-wake { width:calc(45px + var(--boat-speed,0)*60px);opacity:calc(.25 + var(--boat-speed,0)*.6); }
+.regatta[data-moving='false'] [data-racer='0'] .racer-paddle { animation-duration:2.5s; }
+.regatta[data-moving='true'] [data-racer='0'] .racer-paddle { animation-duration:.8s; }
+.regatta .finish-ribbon { left:0;right:auto;top:25%;height:64%;width:10px;opacity:0;z-index:-1;will-change:transform; }
+.regatta .race-message { top:8px;bottom:auto;left:auto;right:10px;font-size:.68rem;padding:4px 13px;background:#fff8def2;box-shadow:0 2px 8px #164c4b28;max-width:65%; }
+.river-foreground { position:absolute;left:-5%;bottom:-2px;width:180%;height:30px;transform:translateX(var(--near-offset,0px));pointer-events:none;z-index:6; }
+.river-foreground i { position:absolute;left:9%;bottom:0;width:40px;height:12px;border-radius:100% 0;background:linear-gradient(15deg,#174f39,#6aaf6b);transform:rotate(-24deg);box-shadow:18px 5px 0 #33784e; }
+.river-foreground i:nth-child(2) { left:31%;width:22px;bottom:-3px; }
+.river-foreground i:nth-child(3) { left:55%;width:55px; }
+.river-foreground i:nth-child(4) { left:72%;width:30px; }
+.river-foreground i:nth-child(5) { left:95%; }
+.water-splash { position:absolute;top:90px;right:6px;pointer-events:none; }
+.water-splash i { position:absolute;width:4px;height:7px;border-radius:50%;background:#e4ffff;opacity:0; }
+.regatta[data-response='correct'] [data-racer='0'] .water-splash i,.regatta[data-response='recover'] [data-racer='0'] .water-splash i { animation:water-splash .6s ease-out both; }
+.water-splash i:nth-child(2) { margin-left:7px;animation-delay:.06s!important; }.water-splash i:nth-child(3) { margin-left:-6px;animation-delay:.12s!important; }
+@keyframes water-splash { 10% { opacity:1;transform:translateY(0); } 100% { opacity:0;transform:translate(-15px,-23px) scale(.5); } }
+.regatta .competition-score { padding:5px 14px;gap:20px; }
+.regatta .competition-score strong { font-size:.86rem; }
+.regatta .position-pill { padding:3px 9px;white-space:nowrap; }
+.course-map { position:relative;height:20px;flex:1;max-width:280px;border-radius:20px;background:linear-gradient(#92c8bb33,#92c8bb66);border-inline:2px solid #3b7563; }
+.course-map::after { content:'⚑';position:absolute;right:-10px;top:-5px;font-size:18px;color:#215543; }
+.course-map i { position:absolute;top:calc(2px + var(--map-lane)*4px);width:7px;height:4px;transform:translateX(-50%);background:var(--map-color);border:1px solid #456656;border-radius:3px; }
+.course-map i[data-map-racer='0'] { height:6px;z-index:2;border-color:#8e5518; }
+.regatta .virtual-note { padding:0 12px 5px!important;font-size:.56rem!important; }
+.regatta-game .question-card { padding:12px 22px;display:grid;grid-template-columns:minmax(180px,.9fr) minmax(0,1.7fr);gap:4px 22px;border:2px solid #e3cc8b;background:#fffcf1;border-radius:20px; }
+.regatta-game .question-meta { grid-column:1;grid-row:1;margin:0;font-size:.63rem; }
+.regatta-game .equation { grid-column:1;grid-row:2 / 4;font-size:clamp(2.2rem,3.8vw,3.5rem);margin:0;align-self:center;white-space:nowrap; }
+.regatta-game .answers { grid-column:2;grid-row:1 / 3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-self:center; }
+.regatta-game .answer { min-height:65px;font-size:1.9rem;background:linear-gradient(#fff8d8,#f7e8b7);border:2px solid #bc9650!important;box-shadow:0 4px 0 #ad8341!important;border-radius:14px;color:#3b452f; }
+.regatta-game .answer:hover:not(:disabled) { background:#ffe9a5; }
+.regatta-game .answer.correct { background:#d4efb8;border-color:#547c32!important; }
+.regatta-game .answer.wrong { background:#f1ded3;box-shadow:none!important; }
+.regatta-game .feedback { grid-column:2;grid-row:3;font-size:.67rem;margin:4px 0 0;min-height:1.4em; }
+.regatta-game .game-controls { grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;margin:0;font-size:.63rem; }
+.regatta-game .game-controls>span { width:auto; }.regatta-game .game-controls .soft-button { min-height:32px;padding:5px 12px; }
+.regatta-game .solution-callout { grid-column:1;grid-row:2 / 4;margin:0;padding:5px 10px; }.regatta-game .solution-callout strong { font-size:1.7rem; }
+.regatta-game .solution-callout>span,.regatta-game .solution-action { display:none; }.regatta-game .solution-callout p { margin:2px 0;font-size:.65rem; }
+.regatta-game .hint-box { grid-column:1 / -1; }
+.regatta-game .race-hud { padding:6px 4px; }.regatta-game .race-hud strong { font-size:.93rem; }.regatta-game .race-hud span { font-size:.59rem; }
+.regatta-game .game-note { font-size:.59rem; }
+.challenge-picker { border:0;padding:0;margin:8px 0 12px;min-width:0; }.challenge-picker legend { font-size:.7rem;font-weight:800;margin-bottom:6px;color:#315a48; }
+.challenge-picker>div { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px; }
+.challenge-picker button { border:1px solid #a9b999;border-radius:10px;background:#fffcf1;color:#365844;min-height:48px;padding:6px 4px;cursor:pointer; }
+.challenge-picker button[aria-pressed='true'] { background:#215d4b;color:#fff9da;border-color:#215d4b;box-shadow:0 2px 0 #123c2d; }
+.challenge-picker strong { display:block;font-size:.73rem; }.challenge-picker small { display:block;font-size:.55rem;margin-top:3px; }.challenge-picker p { font-size:.58rem;color:#52694e;margin:6px 0 0; }
+.launch-counting .challenge-picker { pointer-events:none;opacity:.5; }
+.race-launch .launch-brief { padding-top:22px;padding-bottom:18px; }.race-launch .launch-instructions { margin:12px 0; }
+.race-launch .launch-canopy { opacity:.3; }.race-launch .launch-dock { opacity:.9; }
+.race-launch .launch-boat svg { filter:drop-shadow(0 4px 2px #174f4b30); }
+.regatta-paused * { animation-play-state:paused!important; }
+.regatta-game .arrival-message { grid-column:1 / -1;padding:10px; }
+@media(max-width:650px) {
+ .regatta .race-stage { height:265px; }.regatta .race-banner { padding:6px 10px;min-height:38px; }.regatta .race-banner strong { font-size:.83rem; }
+ .regatta .regatta-kicker { font-size:.45rem; }.route-pearls { gap:5px;font-size:.65rem; }.route-pearl { width:6px;height:6px; }.route-pearls>span:last-child { gap:3px; }
+ .regatta .competitor { width:76px;height:70px;margin-left:-38px;top:-36px; }.regatta .lane-label { top:60px;font-size:.48rem;left:6%;right:6%;padding:2px 3px; }
+ .regatta .lane-course { top:calc(21% + var(--lane)*17.8%); }
+ .regatta .boat-wake { top:62px;width:45px;left:-18px; }.regatta [data-racer='0'] .boat-wake { width:calc(30px + var(--boat-speed,0)*30px); }.water-splash { top:61px; }
+ .regatta .race-message { font-size:.52rem;top:5px;bottom:auto;right:5px;padding:3px 8px; }.river-foreground { height:15px; }
+ .regatta .competition-score { gap:12px;padding:4px 10px; }.regatta .competition-score strong { font-size:.73rem; }.regatta .position-pill { font-size:.54rem;gap:4px; }.course-map { height:19px; }
+ .regatta .virtual-note { font-size:.48rem!important;padding-bottom:4px!important; }
+ .regatta-game .question-card { padding:10px 12px;grid-template-columns:1fr;gap:4px;border-radius:17px; }
+ .regatta-game .question-meta { grid-column:1;grid-row:1;font-size:.55rem; }.regatta-game .equation { grid-column:1;grid-row:2;text-align:center;font-size:2.2rem;margin:2px 0 5px; }
+ .regatta-game .answers { grid-column:1;grid-row:3;gap:8px; }.regatta-game .answer { min-height:48px;font-size:1.5rem;border-radius:11px; }
+ .regatta-game .feedback { grid-column:1;grid-row:4;font-size:.59rem;margin:4px 0 0;min-height:0; }.regatta-game .game-controls { grid-row:5;font-size:.55rem; }.regatta-game .game-controls .soft-button { min-height:44px;font-size:.63rem; }
+ .regatta-game .solution-callout { grid-column:1;grid-row:2;text-align:center;padding:4px; }.regatta-game .solution-callout strong { font-size:1.4rem; }.regatta-game .solution-callout p { font-size:.59rem; }
+ .race-launch .launch-brief { padding:14px 18px 12px; }.challenge-picker { margin:8px 0; }.challenge-picker legend { font-size:.61rem;margin-bottom:4px; }.challenge-picker button { min-height:44px; }.challenge-picker small { font-size:.49rem; }.challenge-picker p { display:none; }
+ .race-launch .launch-instructions { margin:8px 0; }
+}
+@media(max-width:650px) and (max-height:700px) {
+ .arcade-playing:has(.regatta-game) .profile-bar { display:none; }.arcade-playing:has(.regatta-game) .topbar { padding-block:3px; }
+ .regatta .race-stage { height:190px; }.regatta .competitor { width:58px;height:53px;margin-left:-29px;top:-29px; }.regatta .lane-label { top:45px;font-size:.43rem;padding:1px 3px; }.regatta .boat-wake { top:42px; }.water-splash { top:42px; }
+ .arcade.regatta-game { gap:7px; }.regatta-game .game-top { min-height:30px; }.regatta-game .game-top strong { font-size:.86rem; }.regatta-game .game-top small { font-size:.56rem; }
+ .regatta .race-banner { min-height:32px;padding-block:4px; }.regatta .race-banner strong { font-size:.76rem; }.regatta .regatta-kicker { display:none; }
+ .regatta-game .question-card { padding:7px 10px;gap:2px; }.regatta-game .equation { font-size:1.9rem;margin:1px 0 4px; }.regatta-game .answer { min-height:45px; }
+ .race-preparing .launch-scene { min-height:125px;height:125px; }.race-preparing .launch-brief { padding:10px 14px; }.race-preparing .launch-intro { margin:5px 0;font-size:.67rem; }.race-preparing .launch-instructions { display:none; }.race-preparing .launch-brief h1 { font-size:1.55rem;margin:5px 0; }.race-preparing .launch-controls { margin-top:8px; }
+}
+@media(min-width:651px) and (max-height:600px) {
+ .arcade-playing:has(.regatta-game) .topbar { padding-block:2px; }.arcade-playing:has(.regatta-game) .brand img { width:28px;height:28px; }
+ .regatta .race-stage { height:150px; }.regatta .competitor { width:58px;height:53px;margin-left:-29px;top:-29px; }.regatta .lane-label { top:45px;font-size:.43rem;padding:1px 3px; }.regatta .boat-wake { top:42px; }
+ .regatta-game .question-card { padding:8px 16px; }.regatta-game .answer { min-height:48px;font-size:1.5rem; }.regatta-game .game-top .soft-button { min-height:38px;padding:7px 12px; }
+ .race-launch .launch-instructions { display:none; }.race-launch .launch-brief { padding:12px 20px; }.challenge-picker { margin:6px 0; }
+}
+.reduced-motion .river-glints,.reduced-motion .river-foreground { transform:none!important; }
+@media(prefers-reduced-motion:reduce) { .river-glints,.river-foreground { transform:none!important; } }

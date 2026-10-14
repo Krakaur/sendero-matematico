@@ -1,0 +1,19 @@
+{
+  "browser": "headless Firefox",
+  "candidate": {
+    "n": 227,
+    "p50": 16.679999999993015,
+    "p95": 47.60000000000582
+  },
+  "empty": {
+    "n": 277,
+    "p50": 16.660000000000082,
+    "p95": 33.57999999999993
+  },
+  "baseline": {
+    "n": 274,
+    "p50": 16.659999999999854,
+    "p95": 33.399999999999636
+  },
+  "scope": "Five-second steady scene samples, no causal hardware attribution"
+}

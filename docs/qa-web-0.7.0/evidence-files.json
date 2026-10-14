@@ -1,0 +1,190 @@
+{
+  "note": "Local ignored image evidence, not bundled in the public game",
+  "files": [
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/finish-final.png",
+      "bytes": 360654,
+      "sha256": "2865a40ee81258af712ba3ce423253c2ccc6a5fb1775348287f47fe691fe8d3f"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/finish-offline.png",
+      "bytes": 359528,
+      "sha256": "ba57a72c83954965ce31447cd25a93918e1798112c6b9ba804f7ff44f8591447"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/preparation-1280.png",
+      "bytes": 725338,
+      "sha256": "bc23899d8129ed91f616e000b5d8eb7f7ba205e714d36e694d79a3ca539df367"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/preparation-320.png",
+      "bytes": 110847,
+      "sha256": "2f84299e97b6d6a794cf1f9b95077f5c1305124b2d95c4bdebed0361a6acb088"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/preparation-360.png",
+      "bytes": 130485,
+      "sha256": "9ace52c7e66cd98ea38991b1231fbd3bbce238633e1fd8b1bb3f4ce340034229"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/preparation-390.png",
+      "bytes": 232869,
+      "sha256": "2837f2444b818b5ea3bfe8f37993f0050aeab6e5f3911fc187b59ac2998e1406"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/preparation-854.png",
+      "bytes": 385823,
+      "sha256": "0241804fd8dba10e98cd01ed40d6ddf3044ad1e1cc9f634661c9c7ea832f4eb3"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/race-1280.png",
+      "bytes": 747248,
+      "sha256": "4599d281182807c874cedb22729d321d23af6da420171d4d9f8c6be28af547f6"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/race-320.png",
+      "bytes": 152852,
+      "sha256": "5e6c6bfcc02e299a025404b42eaf7b5446ed99c9e987944ae998f4062cba4a08"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/race-360.png",
+      "bytes": 171671,
+      "sha256": "93b0229538389b450d73e14ad86d8e21f691570f004a7534ede0cd83e7de79c7"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/race-390.png",
+      "bytes": 253980,
+      "sha256": "f5a4357149e4e9659bb998de12089c4d454daac33782fcd4299807e779f12dc8"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/race-854.png",
+      "bytes": 261958,
+      "sha256": "c778c2fdc4aa4896992a5f37eee9dbaf4addd3c2e9fad6f33a01a6c31c57a412"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/chromium/recovery-desktop.png",
+      "bytes": 744830,
+      "sha256": "c5c75271dd9078cac7dd75c82943d48a166a245470e367d7ba6e28b593f97c65"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/finish-offline.png",
+      "bytes": 380417,
+      "sha256": "3319b868e9be118d42e70ca213feba964f97ff245b7732b2bbad2543a43b8a08"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/finish-sustained.png",
+      "bytes": 381322,
+      "sha256": "1c1a2a7b47c6f39eae765b9ea379405a42a7a02c166db1343a2c1d995c5eb234"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/preparation-1280.png",
+      "bytes": 795420,
+      "sha256": "3f2e2839c633bb789f29a8d8e51a7ddba3a2ccdd0aa8ff101eb2d24c413e67b8"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/preparation-320.png",
+      "bytes": 106531,
+      "sha256": "0dfb3350252ca959a982b91c61cc106b5236999b170dd94cfdf30a5411efe456"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/preparation-360.png",
+      "bytes": 125535,
+      "sha256": "69bba122e4a2809c29b512934236088c5fdd5855b3482e548ecb68944b3d187f"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/preparation-390.png",
+      "bytes": 226315,
+      "sha256": "7bbf22d15cba8c9ab00f70937f337f4edbcc1f226ce3e7d32d9466f93dd1a330"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/preparation-854.png",
+      "bytes": 410324,
+      "sha256": "1c99d43880d94374f18685c3e709b830aa6528e71fc8e050e32b733e14629e4d"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/race-1280.png",
+      "bytes": 910841,
+      "sha256": "8e4cdc795585670df3dfca6f26fbf4670d71a25117962e842b941ce3854bc581"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/race-320.png",
+      "bytes": 162422,
+      "sha256": "8fc96e17483f997cfa49c00355c7cba39c36d3a1057db2a773c06de15ede4373"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/race-360.png",
+      "bytes": 178603,
+      "sha256": "152e339acd8779e0b4169bb25b848101dccc80e01860b1f93c40c0f39d669461"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/race-390.png",
+      "bytes": 267325,
+      "sha256": "112df871cfd6d330cc62e0821440dcd2dbccb9dc1bcbca67043d58b98449e4cb"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/race-854.png",
+      "bytes": 291056,
+      "sha256": "45d30aabc4cfcfc098626ea1c359bbcb8bb8b8f77787b7bfc6a9848553e857d8"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/firefox/recovery-desktop.png",
+      "bytes": 905033,
+      "sha256": "858f18ef22e8e254aa5722f3bba97118a189fce0fbb443afe2856bcf15a2a590"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/showcase-finish.png",
+      "bytes": 358895,
+      "sha256": "c8a818e9477555cc352713780b3c81703c9fd000d03e745850b2e1aa0b302a12"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/showcase-preparation.png",
+      "bytes": 722597,
+      "sha256": "19ab4c8f8c75e956642f696d1181b00463230b9bd945faa58746ed526bda62f8"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/showcase-race-4.png",
+      "bytes": 748792,
+      "sha256": "afa6dcbe8a9da85c2521c39fd951b79536eee0a6356e04b1ec0c14a2f5630c24"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/showcase-race-6.png",
+      "bytes": 749294,
+      "sha256": "ce09cb5d46b5e760fcf607f183eacf0e0af06f328575f4de09dc7188e8a18264"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/showcase-recovery.png",
+      "bytes": 746664,
+      "sha256": "a02a5aaa6276ea30b55165d48a0df59dd93f884a5814a8985620f6c44c77bc49"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/sendero-0.7.0-race.webm",
+      "bytes": 23921386,
+      "sha256": "340f221eee193433428bc5d0c4abeb4b58ce56e91a39a7b4d64719111e51b312"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/baseline-0.6.0-desktop.png",
+      "bytes": 154945,
+      "sha256": "e06137c4c8893c16d087311e94755ac0c5bc6dac9538eaeb0a858055d82abcb1"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/grand-prix-motion-13.png",
+      "bytes": 89012,
+      "sha256": "9830d46ab0b3fd5d2576eb9437f594e76f25d21c05d074d3b039fc3764260bc5"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/grand-prix-error.png",
+      "bytes": 64171,
+      "sha256": "5be70e51d953494e19a074371ce67e0a6a618459e81ca4197137c07649779f00"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/grand-prix-active-result.png",
+      "bytes": 123202,
+      "sha256": "7ebb0a410c0602f04338bdef39c08347293fb194df3ad0cf67e13e10a1b23348"
+    },
+    {
+      "file": "output/playwright/ciclo-web-5-20261014/grand-prix-active-race.webm",
+      "bytes": 14368964,
+      "sha256": "f3ce1e133853c50a0361882c260514a697dd760a1c97a3dfe131cd8d7c6aec31"
+    }
+  ]
+}

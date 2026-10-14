@@ -1,0 +1,233 @@
+{
+  "version": "0.7.0",
+  "browser": "firefox",
+  "layouts": [
+    {
+      "scene": "preparation",
+      "width": 1280,
+      "height": 800,
+      "scrollWidth": 1280,
+      "bottom": 547.6166687011719,
+      "touchHeight": 52,
+      "uncovered": true
+    },
+    {
+      "scene": "preparation",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "bottom": 627.13330078125,
+      "touchHeight": 48,
+      "uncovered": true
+    },
+    {
+      "scene": "preparation",
+      "width": 360,
+      "height": 640,
+      "scrollWidth": 360,
+      "bottom": 412.2833251953125,
+      "touchHeight": 48,
+      "uncovered": true
+    },
+    {
+      "scene": "preparation",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "bottom": 458.2833251953125,
+      "touchHeight": 48,
+      "uncovered": true
+    },
+    {
+      "scene": "preparation",
+      "width": 854,
+      "height": 480,
+      "scrollWidth": 854,
+      "bottom": 377.066650390625,
+      "touchHeight": 52,
+      "uncovered": true
+    },
+    {
+      "scene": "race",
+      "width": 1280,
+      "height": 800,
+      "scrollWidth": 1280,
+      "buttons": [
+        {
+          "bottom": 730.5999755859375,
+          "width": 169.3666534423828,
+          "height": 65,
+          "uncovered": true
+        },
+        {
+          "bottom": 730.5999755859375,
+          "width": 169.36666870117188,
+          "height": 65,
+          "uncovered": true
+        },
+        {
+          "bottom": 730.5999755859375,
+          "width": 169.36666870117188,
+          "height": 65,
+          "uncovered": true
+        },
+        {
+          "bottom": 730.5999755859375,
+          "width": 169.36666870117188,
+          "height": 65,
+          "uncovered": true
+        }
+      ]
+    },
+    {
+      "scene": "race",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "buttons": [
+        {
+          "bottom": 626.4500122070312,
+          "width": 78.5,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 626.4500122070312,
+          "width": 78.5,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 626.4500122070312,
+          "width": 78.5,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 626.4500122070312,
+          "width": 78.5,
+          "height": 49,
+          "uncovered": true
+        }
+      ]
+    },
+    {
+      "scene": "race",
+      "width": 360,
+      "height": 640,
+      "scrollWidth": 360,
+      "buttons": [
+        {
+          "bottom": 519.6166687011719,
+          "width": 72,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 518.1499938964844,
+          "width": 72,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 519.6166687011719,
+          "width": 72,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 519.6166687011719,
+          "width": 72,
+          "height": 49,
+          "uncovered": true
+        }
+      ]
+    },
+    {
+      "scene": "race",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "buttons": [
+        {
+          "bottom": 519.6166687011719,
+          "width": 62,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 519.6166687011719,
+          "width": 62,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 519.6166687011719,
+          "width": 62,
+          "height": 49,
+          "uncovered": true
+        },
+        {
+          "bottom": 519.6166687011719,
+          "width": 62,
+          "height": 49,
+          "uncovered": true
+        }
+      ]
+    },
+    {
+      "scene": "race",
+      "width": 854,
+      "height": 480,
+      "scrollWidth": 854,
+      "buttons": [
+        {
+          "bottom": 449.1499938964844,
+          "width": 116.73333740234375,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 449.1499938964844,
+          "width": 116.73333740234375,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 449.1499938964844,
+          "width": 116.73333740234375,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 449.1499938964844,
+          "width": 116.73332214355469,
+          "height": 48,
+          "uncovered": true
+        }
+      ]
+    }
+  ],
+  "performance": {
+    "samples": 132,
+    "medianFrameMs": 23,
+    "p95FrameMs": 50.02000000000044,
+    "framesOver50ms": 7,
+    "firstVisibleMovementMs": 24
+  },
+  "challengeDoesNotChangeMath": true,
+  "wrongAnswerNoDistance": true,
+  "correctionPreserved": true,
+  "pauseFreezes": true,
+  "syntheticVisibilityEventFreezes": true,
+  "reloadKeepsRivals": true,
+  "offlineArtAndFullRace": true,
+  "cachedFiles": 34,
+  "reducedMotion": {
+    "position": 0.125,
+    "background": "none",
+    "animations": 0
+  },
+  "completedSessions": 1,
+  "errors": []
+}
