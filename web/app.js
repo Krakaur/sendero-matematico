@@ -1,4 +1,5 @@
-import {newRace,raceStats,raceLevel,rivalEffort,competitionHTML} from "./race.js";
+import {newRace,raceStats,raceLevel,rivalEffort,competitionHTML,CHALLENGES} from "./race.js";
+import {RiverMotion} from "./race-motion.js";
 import {RiverAudio} from "./race-audio.js";
 import {raceFinishHTML} from "./race-finish.js";
 import {needsRaceStart,releaseRace,countdownNumber,COUNTDOWN_BEAT_MS,raceStartHTML} from "./race-start.js";
@@ -152,6 +153,21 @@ function bindRaceSettings() {
   });
 }
 let raceMove = null;
+let riverMotion=null,riverFrame=null,arrivalMotion=null;
+function disposeMotion(){cancelAnimationFrame(riverFrame);riverFrame=null;riverMotion?.dispose();riverMotion=null;arrivalMotion=null;}
+function drawRiver(){
+ riverFrame=null;
+ if(!riverMotion?.scene.isConnected)return;
+ if(arrivalMotion){
+   const elapsed=arrivalMotion.session.race.elapsedMs+performance.now()-arrivalMotion.at;
+   riverMotion.draw(raceStats(arrivalMotion.session),elapsed,reducedMotion(),true);
+ }else{
+   if(!state.current?.race||location.hash!=='#jugar'||document.hidden)return;
+   riverMotion.draw(raceStats(state.current,raceElapsed()),raceElapsed(),reducedMotion());
+   if(timerStart===null)return;
+ }
+ riverFrame=requestAnimationFrame(drawRiver);
+}
 function raceElapsed(){return (state.current?.race?.elapsedMs||0)+(timerStart===null?0:Math.min(60000,Math.max(0,performance.now()-timerStart)));}
 function updateRace(){
  if(!state.current?.race||document.hidden||location.hash!=='#jugar'){raceObservation=null;return;}
@@ -159,8 +175,11 @@ function updateRace(){
  if(!scene)return;
  scene.classList.toggle('regatta-paused',timerStart===null);
  const ms=raceElapsed(),r=raceStats(state.current,ms);
- scene.querySelectorAll('[data-racer]').forEach(el=>{const i=Number(el.dataset.racer);el.style.left=100*(i?r.bots[i-1]:r.progress)+'%';if(i)el.dataset.effort=rivalEffort(state.current.race,i,ms);});
- if(raceObservation?.scene===scene && r.rank<raceObservation.rank && r.progress>raceObservation.progress){
+ if(riverMotion?.scene!==scene){disposeMotion();riverMotion=new RiverMotion(scene,r.progress);}
+ if(riverFrame===null)drawRiver();
+ r.rank=1+r.bots.filter(p=>p>riverMotion.position).length;
+ scene.querySelectorAll('[data-racer]').forEach(el=>{const i=Number(el.dataset.racer);if(i)el.dataset.effort=rivalEffort(state.current.race,i,ms);});
+ if(raceObservation?.scene===scene && r.rank<raceObservation.rank && riverMotion.velocity>0){
    const gained=raceObservation.rank-r.rank;
    const message=r.rank===1?'¡Vas en cabeza!':`¡Adelantas ${gained===1?'un puesto':gained+' puestos'}!`;
    raceReact('pass',message);
@@ -613,7 +632,7 @@ function render(persistState = true) {
     for (const selector of ['.game-top','.race-hud','.question-card','.game-note']) {
       main.querySelector(selector).replaceWith(updated.content.querySelector(selector));
     }
-  } else main.innerHTML = content;
+  } else {disposeMotion();main.innerHTML = content;}
   document.querySelectorAll("[data-nav]").forEach((a) => {
     const active = a.dataset.nav === route;
     a.classList.toggle("active", active);
@@ -647,6 +666,13 @@ function render(persistState = true) {
   });
   main.querySelector("#next")?.addEventListener("click", next);
   $('#race-ready')?.addEventListener('click',launchRace);
+  main.querySelectorAll('[data-challenge]').forEach(button=>button.addEventListener('click',()=>{
+    if(!needsRaceStart(state.current)||launchCountdown||!Object.hasOwn(CHALLENGES,button.dataset.challenge))return;
+    const old=state.current.race;
+    state.raceChallenge=button.dataset.challenge;
+    state.current.race={...newRace(state.sessions,state.current.trail,old.level,old.seed,state.raceChallenge),launch:'ready'};
+    save();render(false);main.querySelector(`[data-challenge="${state.raceChallenge}"]`)?.focus({preventScroll:true});
+  }));
   $('#launch-cancel')?.addEventListener('click',event=>{
     // The cancel action occupies the start button's place. A double activation
     // must not immediately cancel the countdown it just started; Escape is immediate.
@@ -715,7 +741,7 @@ function begin(trail) {
   state.current = trail === "razonar" ? {id:uid(),profile:state.profile,trail,level:a.level,version:VERSION,startedAt:new Date().toISOString(),completedAt:null,index:0,questions:[bankQuestion(state,a.level)]} : newSession(trail, a.level, state.profile);
   if(trail !== "razonar")state.current.questions[0]=practiceQuestion(state,trail,a.level);
   state.current.adaptation = { ...a };
-  if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race={...newRace(state.sessions,trail,a.level),launch:'ready'};
+  if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race={...newRace(state.sessions,trail,a.level,undefined,state.raceChallenge),launch:'ready'};
   save();
   goGame();
 }
@@ -769,7 +795,8 @@ function showRaceArrival(session) {
   clearTimeout(reactionTimer);clearTimeout(passSoundTimer);
   scene.classList.add('regatta-arriving');
   scene.dataset.response='finish';
-  scene.querySelector('[data-racer="0"]').style.left='100%';
+  arrivalMotion={session,at:performance.now()};
+  if(riverFrame===null)drawRiver();
   scene.querySelector('#race-message').textContent='¡Ocho retos completados!';
   scene.querySelector('#race-position').textContent=raceStats(session).rank+' / 4';
   scene.querySelector('#race-clock').textContent=(session.race.elapsedMs/1000).toFixed(1)+' s';
@@ -1006,7 +1033,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-launch-release-v3`);
+    const cache = await caches.open(`sendero-${VERSION}-painted-river-v1`);
     const files = [
       "./index.html",
       "./app.js",
@@ -1015,6 +1042,8 @@ async function offline() {
       "./regatta.css", "./race.js", "./race-art.js", "./race-audio.js",
       "./race-finish.js",
       "./race-start.js", "./race-start.css",
+      "./race-motion.js", "./race-world.css",
+      "./assets/forest-river-v1.png", "./assets/river-racers-v1.png",
       "./landscape.svg",
       "./icon.svg",
       "./fluency.js",

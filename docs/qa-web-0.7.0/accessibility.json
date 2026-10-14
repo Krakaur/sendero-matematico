@@ -1,0 +1,464 @@
+{
+  "version": "0.7.0",
+  "minimumContrast": 5.426281599751602,
+  "contrast": [
+    {
+      "text": "Luma · Tú",
+      "foreground": [
+        89,
+        64,
+        21
+      ],
+      "background": [
+        255,
+        227,
+        160
+      ],
+      "ratio": 7.721339001922399
+    },
+    {
+      "text": "Nube",
+      "foreground": [
+        253,
+        248,
+        231
+      ],
+      "background": [
+        32,
+        91,
+        80
+      ],
+      "ratio": 7.389569383190166
+    },
+    {
+      "text": "Rayo",
+      "foreground": [
+        253,
+        248,
+        231
+      ],
+      "background": [
+        32,
+        91,
+        80
+      ],
+      "ratio": 7.389569383190166
+    },
+    {
+      "text": "Chispa",
+      "foreground": [
+        253,
+        248,
+        231
+      ],
+      "background": [
+        32,
+        91,
+        80
+      ],
+      "ratio": 7.389569383190166
+    },
+    {
+      "text": "UNA NUEVA AVENTURA",
+      "foreground": [
+        87,
+        110,
+        84
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 5.426281599751602
+    },
+    {
+      "text": "La copa del río",
+      "foreground": [
+        37,
+        79,
+        67
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 8.964712885761811
+    },
+    {
+      "text": "Multiplicación",
+      "foreground": [
+        105,
+        80,
+        33
+      ],
+      "background": [
+        249,
+        227,
+        166
+      ],
+      "ratio": 5.980417386278971
+    },
+    {
+      "text": "Nivel 4",
+      "foreground": [
+        67,
+        94,
+        64
+      ],
+      "background": [
+        234,
+        240,
+        220
+      ],
+      "ratio": 6.176178591629476
+    },
+    {
+      "text": "8 retos",
+      "foreground": [
+        67,
+        94,
+        64
+      ],
+      "background": [
+        234,
+        240,
+        220
+      ],
+      "ratio": 6.176178591629476
+    },
+    {
+      "text": "Cadencia 90667, tú remas con Luma. Llega a la meta resolviendo los ocho retos.",
+      "foreground": [
+        72,
+        98,
+        72
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 6.553690464349251
+    },
+    {
+      "text": "Cadencia 90667, tú remas con Luma.",
+      "foreground": [
+        40,
+        85,
+        66
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 8.273962555655798
+    },
+    {
+      "text": "Cada acierto te impulsa.",
+      "foreground": [
+        80,
+        104,
+        94
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 5.8637480904108035
+    },
+    {
+      "text": "Elige una respuesta y avanza por el río.",
+      "foreground": [
+        82,
+        103,
+        75
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 6.005810904509322
+    },
+    {
+      "text": "Si fallas, puedes corregir.",
+      "foreground": [
+        80,
+        104,
+        94
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 5.8637480904108035
+    },
+    {
+      "text": "Mira la solución y sigue remando.",
+      "foreground": [
+        82,
+        103,
+        75
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 6.005810904509322
+    },
+    {
+      "text": "El ritmo de tus rivales",
+      "foreground": [
+        49,
+        90,
+        72
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 7.601538244725135
+    },
+    {
+      "text": "Paseo",
+      "foreground": [
+        54,
+        88,
+        68
+      ],
+      "background": [
+        255,
+        252,
+        241
+      ],
+      "ratio": 7.755945871429844
+    },
+    {
+      "text": "Más margen para pensar",
+      "foreground": [
+        54,
+        88,
+        68
+      ],
+      "background": [
+        255,
+        252,
+        241
+      ],
+      "ratio": 7.755945871429844
+    },
+    {
+      "text": "Carrera",
+      "foreground": [
+        255,
+        249,
+        218
+      ],
+      "background": [
+        33,
+        93,
+        75
+      ],
+      "ratio": 7.252786912027309
+    },
+    {
+      "text": "Rivales a tu ritmo",
+      "foreground": [
+        255,
+        249,
+        218
+      ],
+      "background": [
+        33,
+        93,
+        75
+      ],
+      "ratio": 7.252786912027309
+    },
+    {
+      "text": "Desafío",
+      "foreground": [
+        54,
+        88,
+        68
+      ],
+      "background": [
+        255,
+        252,
+        241
+      ],
+      "ratio": 7.755945871429844
+    },
+    {
+      "text": "Un poco más de velocidad",
+      "foreground": [
+        54,
+        88,
+        68
+      ],
+      "background": [
+        255,
+        252,
+        241
+      ],
+      "ratio": 7.755945871429844
+    },
+    {
+      "text": "¡A la salida! →",
+      "foreground": [
+        255,
+        251,
+        232
+      ],
+      "background": [
+        40,
+        100,
+        78
+      ],
+      "ratio": 6.687204432028527
+    },
+    {
+      "text": "♪ Activar sonidos",
+      "foreground": [
+        63,
+        94,
+        65
+      ],
+      "background": [
+        237,
+        241,
+        226
+      ],
+      "ratio": 6.328387403333424
+    },
+    {
+      "text": "Elegir otro camino",
+      "foreground": [
+        60,
+        101,
+        78
+      ],
+      "background": [
+        255,
+        252,
+        239
+      ],
+      "ratio": 6.455449418596493
+    },
+    {
+      "text": "Nube",
+      "foreground": [
+        37,
+        79,
+        67
+      ],
+      "background": [
+        243,
+        242,
+        223
+      ],
+      "ratio": 8.15472916603542
+    },
+    {
+      "text": "Sale con energía",
+      "foreground": [
+        80,
+        103,
+        71
+      ],
+      "background": [
+        243,
+        242,
+        223
+      ],
+      "ratio": 5.508997327452853
+    },
+    {
+      "text": "Rayo",
+      "foreground": [
+        37,
+        79,
+        67
+      ],
+      "background": [
+        243,
+        242,
+        223
+      ],
+      "ratio": 8.15472916603542
+    },
+    {
+      "text": "Alterna sus impulsos",
+      "foreground": [
+        80,
+        103,
+        71
+      ],
+      "background": [
+        243,
+        242,
+        223
+      ],
+      "ratio": 5.508997327452853
+    },
+    {
+      "text": "Chispa",
+      "foreground": [
+        37,
+        79,
+        67
+      ],
+      "background": [
+        243,
+        242,
+        223
+      ],
+      "ratio": 8.15472916603542
+    },
+    {
+      "text": "Acelera al final",
+      "foreground": [
+        80,
+        103,
+        71
+      ],
+      "background": [
+        243,
+        242,
+        223
+      ],
+      "ratio": 5.508997327452853
+    },
+    {
+      "text": "Sonido y movimiento",
+      "foreground": [
+        70,
+        98,
+        71
+      ],
+      "background": [
+        243,
+        242,
+        223
+      ],
+      "ratio": 5.995632075260869
+    }
+  ],
+  "longAliasVisible": {
+    "startBottom": 440.046875,
+    "height": 568,
+    "overflow": false
+  },
+  "unplayedTrailChangeWithoutDiscardDialog": true,
+  "startedRaceRequestsDiscardConfirmation": true,
+  "confirmationMethod": "Instrumented window.confirm returning false; native dialog appearance not evaluated",
+  "doubleStartKeepsOneSession": true,
+  "errors": []
+}

@@ -1,6 +1,12 @@
 # Seguimiento de la mejora progresiva
 
-Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: cuarto incremento web 0.6.0 comprobado técnicamente; estado de publicación en `qa-web-0.6.0/publication.json`. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
+Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: quinto incremento web 0.7.0 comprobado técnicamente; estado efectivo de publicación en `qa-web-0.7.0/publication.json`. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
+
+## Registro del quinto incremento
+
+La instrucción del autor prioriza estética, cromática, complejidad de figuras, velocidad del jugador, entorno y rivales; reserva el análisis sonoro para otro turno. Se renovó el arte con ilustraciones originales, se incorporó cámara con varios planos, se sustituyó el salto CSS del jugador por impulso continuo y se corrigió la calibración de NPC. El análisis comparativo contiene dieciséis factores y distingue observación directa, comprobación lógica y aceptación perceptiva.
+
+Las evidencias de 0.7.0 incluyen 47 pruebas Node, 4.800 configuraciones de competición, 24.000 llegadas simuladas, cinco viewports en Chromium y Firefox, contraste funcional mínimo muestreado de 5,43:1, continuidad offline y regresión de modos alternativos. En tres carreras prolongadas de Chromium el p95 entre cuadros fue 17,0–17,1 ms; cuarenta respuestas dieron p95 de respuesta visual de 20,3 ms. Conservar por separado los registros de arranque y escena estable en Firefox. La rúbrica del autor, preferencia infantil, teléfono físico y sonido no se consideran aprobados por estos resultados. Ver `EVALUACION-WEB-0.7.0.md`.
 
 ## Tablero de jornadas
 

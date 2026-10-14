@@ -17,4 +17,6 @@ test('The offline indicator checks the worker cache and the complete local modul
     for(const dependency of read(file).matchAll(/(?:from\s*|import\s*)["']\.\/([^"']+)["']/g)) pending.push(dependency[1]);
   }
   for(const stylesheet of read('index.html').matchAll(/rel="stylesheet" href="\.\/([^"]+)"/g)) assert(files.has(stylesheet[1]),'Uncached stylesheet '+stylesheet[1]);
+  for(const image of read('race-art.js').matchAll(/(?:src|href)="\.\/(assets\/[^"`]+)"/g))assert(files.has(image[1]),'Uncached illustration '+image[1]);
+  for(const image of read('race-world.css').matchAll(/url\(['"]\.\/(assets\/[^'"]+)['"]\)/g))assert(files.has(image[1]),'Uncached sprite '+image[1]);
 });

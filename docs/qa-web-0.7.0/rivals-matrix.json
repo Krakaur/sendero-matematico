@@ -1,0 +1,1887 @@
+{
+  "version": "0.7.0",
+  "uniqueConfigurations": 4800,
+  "simulatedFinishes": 24000,
+  "scenarios": {
+    "faster": 0.9,
+    "reference": 1,
+    "recovery": 1.1,
+    "slower": 1.2,
+    "verySlow": 1.6
+  },
+  "interpretation": "Synthetic total-time scenarios; not observed child performance. Recovery includes one corrected error and 10% extra total time.",
+  "rows": [
+    {
+      "trail": "suma",
+      "level": 1,
+      "mode": "gentle",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 1,
+      "mode": "balanced",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 1,
+      "mode": "challenge",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 2,
+      "mode": "gentle",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 2,
+      "mode": "balanced",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 2,
+      "mode": "challenge",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 3,
+      "mode": "gentle",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 3,
+      "mode": "balanced",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          99,
+          1,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 3,
+      "mode": "challenge",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 4,
+      "mode": "gentle",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 4,
+      "mode": "balanced",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "suma",
+      "level": 4,
+      "mode": "challenge",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 1,
+      "mode": "gentle",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 1,
+      "mode": "balanced",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 1,
+      "mode": "challenge",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 2,
+      "mode": "gentle",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 2,
+      "mode": "balanced",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 2,
+      "mode": "challenge",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 3,
+      "mode": "gentle",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 3,
+      "mode": "balanced",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          99,
+          1,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 3,
+      "mode": "challenge",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 4,
+      "mode": "gentle",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 4,
+      "mode": "balanced",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "resta",
+      "level": 4,
+      "mode": "challenge",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 1,
+      "mode": "gentle",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 1,
+      "mode": "balanced",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 1,
+      "mode": "challenge",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 2,
+      "mode": "gentle",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 2,
+      "mode": "balanced",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 2,
+      "mode": "challenge",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 3,
+      "mode": "gentle",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 3,
+      "mode": "balanced",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          99,
+          1,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 3,
+      "mode": "challenge",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 4,
+      "mode": "gentle",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 4,
+      "mode": "balanced",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "multi",
+      "level": 4,
+      "mode": "challenge",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 1,
+      "mode": "gentle",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 1,
+      "mode": "balanced",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 1,
+      "mode": "challenge",
+      "referencePaceMs": 8000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 2,
+      "mode": "gentle",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 2,
+      "mode": "balanced",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 2,
+      "mode": "challenge",
+      "referencePaceMs": 10000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 3,
+      "mode": "gentle",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 3,
+      "mode": "balanced",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          99,
+          1,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 3,
+      "mode": "challenge",
+      "referencePaceMs": 12000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 4,
+      "mode": "gentle",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "slower": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 4,
+      "mode": "balanced",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "recovery": [
+          0,
+          100,
+          0,
+          0
+        ],
+        "slower": [
+          0,
+          0,
+          100,
+          0
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    },
+    {
+      "trail": "tablas20",
+      "level": 4,
+      "mode": "challenge",
+      "referencePaceMs": 15000,
+      "seeds": 100,
+      "ranks": {
+        "faster": [
+          100,
+          0,
+          0,
+          0
+        ],
+        "reference": [
+          0,
+          67,
+          33,
+          0
+        ],
+        "recovery": [
+          0,
+          0,
+          82,
+          18
+        ],
+        "slower": [
+          0,
+          0,
+          0,
+          100
+        ],
+        "verySlow": [
+          0,
+          0,
+          0,
+          100
+        ]
+      }
+    }
+  ]
+}
