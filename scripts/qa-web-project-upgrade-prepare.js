@@ -12,4 +12,3 @@ async(page)=>{
  const result=await page.evaluate(()=>{const before=JSON.parse(localStorage.getItem('sendero.profile.'+sessionStorage.getItem('sendero.active')));sessionStorage.setItem('sendero.qa.projectsUpgrade',JSON.stringify(before));return {sourceVersion:before.current.version,protocol:before.current.race.protocol,index:before.current.index,completedSessions:before.sessions.length,expectedStored:true};});
  await page.goto('about:blank');return result;
 }
-

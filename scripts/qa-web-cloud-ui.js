@@ -21,4 +21,3 @@ async(page)=>{
   return {remoteProfileRestored:true,pendingProjectPreserved:true,historyPreserved:true,conflictPreventedOverwrite:true,teacherProjectReceived:true,invitationCreatedAndRevoked:true,reasoningTaskPublished:true,backend:'synthetic loopback',errors};
  }finally{for(const c of contexts)await c.close();}
 }
-
