@@ -61,16 +61,26 @@ export async function classroomRequest(link, path, body, fetcher = fetch) {
     redirect: "error",
     signal: AbortSignal.timeout(15000),
   });
-  if (!r.ok)
-    throw Error(
-      r.status === 409
-        ? "Hay una versión remota más reciente o se alcanzó el límite del aula. Conserva tu copia local antes de recuperar la remota."
-        : r.status === 404
-          ? "No existe todavía una copia remota para esta invitación."
-          : r.status === 401
-            ? "La invitación ha caducado o fue revocada."
-            : "El aula no pudo confirmar la operación. Se reintentará al volver a conectar.",
+  if (!r.ok) {
+    const error = Error(
+      [429, 503].includes(r.status)
+        ? "El aula ha pausado la sincronización por su límite de uso o disponibilidad. Tu progreso sigue guardado en este dispositivo."
+        : r.status === 409
+          ? "Hay una versión remota más reciente o se alcanzó el límite del aula. Conserva tu copia local antes de recuperar la remota."
+          : r.status === 404
+            ? "No existe todavía una copia remota para esta invitación."
+            : r.status === 401
+              ? "La invitación ha caducado o fue revocada."
+              : "El aula no pudo confirmar la operación. Se reintentará al volver a conectar.",
     );
+    error.retryAfter = [429, 503].includes(r.status)
+      ? Math.min(
+          86400,
+          Math.max(300, Number(r.headers.get("Retry-After")) || 3600),
+        )
+      : 60;
+    throw error;
+  }
   const text = await r.text();
   if (text.length > 10 * 1024 * 1024)
     throw Error("Respuesta demasiado grande.");
@@ -82,24 +92,52 @@ export async function exchangeClassroom(state, fetcher = fetch) {
   const tasks = validateTasks(
     (await classroomRequest(link, "/tasks", null, fetcher)).tasks,
   );
-  let capabilities = [];
-  try {
-    const features = (
-      await classroomRequest(link, "/capabilities", null, fetcher)
-    ).features;
-    if (Array.isArray(features))
-      capabilities = features.filter((f) =>
-        ["projects", "vault", "students"].includes(f),
-      );
-  } catch {}
+  let capabilities = link.capabilities || [];
+  let capabilitiesAt = link.capabilitiesAt || 0;
+  if (!link.capabilitiesAt || Date.now() - link.capabilitiesAt > 3600000)
+    try {
+      const features = (
+        await classroomRequest(link, "/capabilities", null, fetcher)
+      ).features;
+      if (Array.isArray(features))
+        capabilities = features.filter((f) =>
+          [
+            "projects",
+            "vault",
+            "students",
+            "paged-reports",
+            "chunked-vault",
+          ].includes(f),
+        );
+      capabilitiesAt = Date.now();
+    } catch (error) {
+      if (error.retryAfter > 60) throw error;
+    }
+  const paged = capabilities.includes("paged-reports");
   if (link.role === "teacher") {
-    const data = await classroomRequest(link, "/reports", null, fetcher);
+    const data = await classroomRequest(
+      link,
+      "/reports" + (paged ? "?after=" + (link.reportCursor || 0) : ""),
+      null,
+      fetcher,
+    );
     if (!Array.isArray(data.reports)) throw Error("Informes no válidos.");
+    if (
+      paged &&
+      (!Number.isSafeInteger(data.cursor) ||
+        data.cursor < (link.reportCursor || 0))
+    )
+      throw Error("Cursor de informes no válido.");
     const sessions = data.reports.flatMap((r) => validateReport(r).sessions);
     let projects = [],
       students = [];
     if (capabilities.includes("projects")) {
-      const response = await classroomRequest(link, "/projects", null, fetcher);
+      const response = await classroomRequest(
+        link,
+        "/projects" + (paged ? "?after=" + (link.projectCursor || 0) : ""),
+        null,
+        fetcher,
+      );
       if (
         !Array.isArray(response.reports) ||
         response.reports.some(
@@ -111,6 +149,14 @@ export async function exchangeClassroom(state, fetcher = fetch) {
       )
         throw Error("Proyectos no válidos.");
       projects = response.reports;
+      if (paged) {
+        if (
+          !Number.isSafeInteger(response.cursor) ||
+          response.cursor < (link.projectCursor || 0)
+        )
+          throw Error("Cursor de proyectos no válido.");
+        link.projectCursor = response.cursor;
+      }
     }
     if (capabilities.includes("students")) {
       students = (await classroomRequest(link, "/students", null, fetcher))
@@ -133,14 +179,18 @@ export async function exchangeClassroom(state, fetcher = fetch) {
       projects,
       students,
       capabilities,
+      capabilitiesAt,
+      ...(paged
+        ? { reportCursor: data.cursor, projectCursor: link.projectCursor || 0 }
+        : {}),
       at: new Date().toISOString(),
     };
   }
   let projectReceived = [];
   if (link.includeProjects && capabilities.includes("projects")) {
-    const pendingProjects = (state.workshopHistory || []).filter(
-      (p) => !link.projectReceived?.includes(p.id),
-    );
+    const pendingProjects = (state.workshopHistory || [])
+      .filter((p) => !link.projectReceived?.includes(p.id))
+      .slice(0, paged ? 1 : 5000);
     if (pendingProjects.length) {
       const receipt = await classroomRequest(
         link,
@@ -158,13 +208,16 @@ export async function exchangeClassroom(state, fetcher = fetch) {
       projectReceived = receipt.accepted;
     }
   }
-  const pending = state.sessions.filter((s) => !link.received?.includes(s.id));
+  const pending = state.sessions
+    .filter((s) => !link.received?.includes(s.id))
+    .slice(0, paged ? 4 : 5000);
   if (!pending.length)
     return {
       tasks,
       received: [],
       projectReceived,
       capabilities,
+      capabilitiesAt,
       at: new Date().toISOString(),
     };
   const report = { schema: SCHEMA, profile: state.profile, sessions: pending };
@@ -182,6 +235,7 @@ export async function exchangeClassroom(state, fetcher = fetch) {
     received: receipt.accepted,
     projectReceived,
     capabilities,
+    capabilitiesAt,
     at: receipt.receivedAt,
   };
 }
@@ -193,7 +247,14 @@ export function applyExchange(state, result) {
       result.projects,
     );
   if (result.students) state.classroom.students = result.students;
-  if (result.capabilities) state.classroom.capabilities = result.capabilities;
+  if (result.capabilities) {
+    state.classroom.capabilities = result.capabilities;
+    state.classroom.capabilitiesAt = result.capabilitiesAt || 0;
+  }
+  if (Number.isSafeInteger(result.reportCursor) && result.reportCursor >= 0)
+    state.classroom.reportCursor = result.reportCursor;
+  if (Number.isSafeInteger(result.projectCursor) && result.projectCursor >= 0)
+    state.classroom.projectCursor = result.projectCursor;
   if (result.projectReceived)
     state.classroom.projectReceived = [
       ...new Set([
@@ -210,4 +271,5 @@ export function applyExchange(state, result) {
       ...new Set([...(state.classroom.received || []), ...result.received]),
     ];
   state.classroom.error = null;
+  delete state.classroom.retryAt;
 }

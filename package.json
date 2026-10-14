@@ -1,6 +1,6 @@
 {
   "name": "sendero-matematico",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Exploración matemática con práctica sin conexión y registro docente local",
   "private": true,
   "type": "module",
@@ -35,6 +35,7 @@
   "devDependencies": {
     "electron": "^44.4.0",
     "electron-builder": "^26.15.3",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.6",
+    "wrangler": "4.151.0"
   }
 }

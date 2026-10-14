@@ -1,5 +1,5 @@
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.9.0";
+export const VERSION = "0.10.0";
 export const SCHEMA = "sendero.report.v2";
 export const TRAILS = {
   suma: {

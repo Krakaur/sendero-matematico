@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><meta name="referrer" content="no-referrer" /><title>
+    Administración de Sendero</title
+  ><link rel="stylesheet" href="/style.css" />
+  <main>
+    <h1>Administración de Sendero Matemático</h1>
+    <p>
+      Crear aulas y consultar el consumo del servicio gratuito. Este acceso no
+      es una cuenta de estudiante.
+    </p>
+    <section>
+      <label
+        >Archivo privado de administración
+        <input id="access" type="file" accept=".json,application/json"
+      /></label>
+      <p>
+        La clave permanece en la memoria de esta pestaña. Cierra la pestaña al
+        terminar y conserva el archivo en un lugar privado.
+      </p>
+      <button id="logout">Cerrar acceso</button>
+    </section>
+    <section>
+      <h2>Crear aula</h2>
+      <form id="create">
+        <label
+          >Nombre del aula
+          <input
+            name="name"
+            required
+            maxlength="100"
+            autocomplete="off"
+            placeholder="Aula de pruebas" /></label
+        ><button>Crear y descargar invitación docente</button>
+      </form>
+      <p>
+        Usa un nombre de grupo, sin datos personales. El docente podrá emitir
+        hasta 60 invitaciones de estudiantes desde el juego. Guarda su
+        invitación: no se muestra de nuevo.
+      </p>
+    </section>
+    <section>
+      <h2>Uso y aulas</h2>
+      <button id="refresh">Consultar</button>
+      <pre id="usage"></pre>
+      <ul id="rooms"></ul>
+      <p>
+        Los contadores miden solicitudes autenticadas de la aplicación. El panel
+        de Cloudflare muestra el consumo real de Workers/D1, incluidos accesos
+        rechazados y preconsultas CORS.
+      </p>
+    </section>
+    <p id="status" role="status" aria-live="polite"></p>
+    <p>
+      <a href="https://krakaur.github.io/sendero-matematico/" rel="noreferrer"
+        >Abrir Sendero Matemático</a
+      >
+    </p>
+  </main>
+  <script src="/admin.js" type="module"></script>
+</html>
