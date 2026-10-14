@@ -1,3 +1,4 @@
+import {newWorkshop,applyWorkshopAction,validWorkshop,workshopSummary} from './workshop.js';
 import { makeQuestion, recordAttempt } from "./core.js";
 import { CIRCUITS } from "./circuit.js";
 export const ROOM_PROTOCOL = 1;
@@ -14,12 +15,13 @@ export function seededRandom(seed) {
 export function validConfig(c) {
   return (
     !!c &&
-    ["suma", "resta", "multi", "tablas20"].includes(c.trail) &&
+    ["suma", "resta", "multi", "tablas20", "razonar"].includes(c.trail) &&
     Number.isInteger(c.level) &&
     c.level >= 1 &&
     c.level <= 4 &&
     Object.hasOwn(CIRCUITS, c.circuit) &&
     ["race", "coop"].includes(c.mode) &&
+    (c.trail!=="razonar"||c.mode==="coop") &&
     Number.isInteger(c.seed) &&
     c.seed >= 0 &&
     c.seed <= 4294967295
@@ -27,6 +29,7 @@ export function validConfig(c) {
 }
 export function sharedDeck(config) {
   if (!validConfig(config)) throw Error("Configuración de partida no válida.");
+  if(config.trail==='razonar')return [];
   const rng = seededRandom(config.seed),
     deck = [],
     seen = new Set();
@@ -60,14 +63,15 @@ export function createMatch(config, id = crypto.randomUUID()) {
 export function addPlayer(match, id) {
   if (
     match.status !== "lobby" ||
-    match.players.length >= 4 ||
+    (match.players.length >= 4 && !match.players.some(p=>!p.connected)) ||
     typeof id !== "string" ||
     id.length > 80 ||
     match.players.some((p) => p.id === id)
   )
     return false;
-  const seat = match.players.length;
-  match.players.push({
+  const vacant=match.players.findIndex(p=>!p.connected);
+  const seat=vacant>=0?vacant:match.players.length;
+  const player={
     id,
     seat,
     name: PLAYER_NAMES[seat],
@@ -76,6 +80,7 @@ export function addPlayer(match, id) {
     index: 0,
     finishedMs: null,
     lastInputMs: -1000,
+    ...(match.config.trail==='razonar'?{workshop:newWorkshop(match.config.level,match.config.seed)}:{}),
     questions: sharedDeck(match.config).map((q, i) => ({
       ...q,
       options: [
@@ -83,9 +88,18 @@ export function addPlayer(match, id) {
         ...q.options.slice(0, (seat + i) % 4),
       ],
     })),
-  });
+  };
+  if(vacant>=0)match.players[vacant]=player;else match.players.push(player);
   match.revision++;
   return true;
+}
+export function reconnectPlayer(match,id){
+  const p=match.players.find(p=>p.id===id);if(!p||p.connected)return false;
+  p.connected=true;p.ready=false;p.lastInputMs=-1000;match.revision++;return true;
+}
+export function removeWaitingPlayer(match,id){
+  if(match.status!=='lobby')return false;const at=match.players.findIndex(p=>p.id===id&&!p.connected);
+  if(at<0)return false;match.players.splice(at,1);match.players.forEach((p,i)=>{p.seat=i;p.name=PLAYER_NAMES[i];});match.revision++;return true;
 }
 export function tickMatch(match, now) {
   if (!Number.isFinite(now)) return;
@@ -99,7 +113,7 @@ export function tickMatch(match, now) {
   match.lastTick = now;
   match.elapsedMs += dt;
   for (const p of match.players)
-    if (p.index < 8) p.questions[p.index].activeMs += dt;
+    if (p.index < 8 && p.questions[p.index]) p.questions[p.index].activeMs += dt;
 }
 export function pauseMatch(match, reason, now) {
   tickMatch(match, now);
@@ -142,6 +156,13 @@ export function playerAction(match, id, action, now) {
   }
   if (action.type === "pause")
     return pauseMatch(match, `${p.name} ha pedido una pausa.`, now);
+  if(action.type==='project'&&match.config.trail==='razonar'){
+    if(match.status!=='running'||p.index>=8||action.index!==p.index||!applyWorkshopAction(p.workshop,action.change))return false;
+    p.index=p.workshop.completedAt?8:p.workshop.index;
+    if(p.index===8)p.finishedMs=match.elapsedMs;
+    if(match.players.every(p=>p.index===8)){match.status='finished';match.lastTick=null;}
+    match.revision++;return true;
+  }
   if (
     match.status !== "running" ||
     p.index >= 8 ||
@@ -150,6 +171,7 @@ export function playerAction(match, id, action, now) {
   )
     return false;
   const q = p.questions[p.index];
+  if(!q)return false;
   if (action.type === "hint") {
     if (q.hint) return false;
     q.hint = true;
@@ -188,6 +210,7 @@ export function disconnectPlayer(match, id, now) {
   match.revision++;
 }
 export function matchResults(match) {
+  if(match.config.trail==='razonar')return match.players.map(p=>{const s=workshopSummary(p.workshop);return {id:p.id,name:p.name,seat:p.seat,finishedMs:p.finishedMs,completed:s.completed,first:p.workshop.records.filter(r=>r.checks[0]?.correct).length,independent:s.independent,corrected:8-s.independent,hints:p.workshop.records.filter(r=>r.hint).length,place:null};});
   const arrived = match.players
       .filter((p) => p.finishedMs !== null)
       .sort((a, b) => a.finishedMs - b.finishedMs),
@@ -275,7 +298,7 @@ export function validSnapshot(s) {
       p.index < 0 ||
       p.index > 8 ||
       !Array.isArray(p.questions) ||
-      p.questions.length !== 8 ||
+      p.questions.length !== (s.config.trail==='razonar'?0:8) ||
       typeof p.ready !== "boolean" ||
       typeof p.connected !== "boolean" ||
       !(
@@ -287,6 +310,7 @@ export function validSnapshot(s) {
     )
       return false;
     ids.add(p.id);
+    if(s.config.trail==='razonar')return validWorkshop(p.workshop)&&p.workshop.level===s.config.level&&p.workshop.seed===s.config.seed&&p.index===(p.workshop.completedAt?8:p.workshop.index);
     return p.questions.every(
       (q, j) =>
         q.a === deck[j].a &&
