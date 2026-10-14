@@ -1,5 +1,5 @@
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.7.0";
+export const VERSION = "0.8.0";
 export const SCHEMA = "sendero.report.v2";
 export const TRAILS = {
   suma: {
@@ -74,6 +74,15 @@ export function adapt(state, question) {
   }
   return next;
 }
+export function arithmeticOptions(trail,a,b,answer,rng=Math.random) {
+  const plausible=trail==='multi'||trail==='tablas20'?[a+b,(a-1)*b,(a+1)*b,a*(b-1),a*(b+1)]:trail==='resta'?[a+b,answer-1,answer+1,answer-10,answer+10]:[Math.abs(a-b),answer-1,answer+1,answer-10,answer+10];
+  const candidates=[...new Set(plausible.filter(n=>Number.isInteger(n)&&n>=0&&n!==answer))];
+  for(let i=candidates.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[candidates[i],candidates[j]]=[candidates[j],candidates[i]];}
+  const options=new Set([answer,...candidates.slice(0,3)]);
+  for(let d=1;options.size<4;d++)options.add(answer+d);
+  const values=[...options];for(let i=values.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[values[i],values[j]]=[values[j],values[i]];}
+  return values;
+}
 export function makeQuestion(trail, level, rng = Math.random) {
   const int = (min, max) => min + Math.floor(rng() * (max - min + 1));
   let a, b, answer;
@@ -88,16 +97,7 @@ export function makeQuestion(trail, level, rng = Math.random) {
     if (trail === "resta" && a < b) [a, b] = [b, a];
     answer = trail === "resta" ? a - b : a + b;
   }
-  const options = new Set([answer]);
-  while (options.size < 4) {
-    const candidate = answer + int(-Math.min(answer, 5), 5);
-    options.add(candidate);
-  }
-  const values = [...options];
-  for (let i = values.length - 1; i > 0; i--) {
-    const j = int(0, i);
-    [values[i], values[j]] = [values[j], values[i]];
-  }
+  const values = arithmeticOptions(trail,a,b,answer,rng);
   return {
     a,
     b,

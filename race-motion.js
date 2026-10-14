@@ -1,4 +1,5 @@
 // Presentation only. Earned distance, response timing and finish order live in race.js.
+import {CircuitView,coursePoint} from './circuit.js';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 
 // Exact critically damped response: continuous velocity across new impulses,
@@ -19,6 +20,7 @@ export function projectCourse(progress,player,width,boatWidth) {
 export class RiverMotion {
   constructor(scene,progress=0) {
     this.scene=scene;this.stage=scene.querySelector('.race-stage');
+    this.circuit=new CircuitView(scene.querySelector('.circuit-canvas'),scene.dataset.circuit||'bosque');
     this.boats=[...scene.querySelectorAll('[data-racer]')];
     this.dots=[...scene.querySelectorAll('[data-map-racer]')];
     this.map=scene.querySelector('.course-map');
@@ -42,13 +44,15 @@ export class RiverMotion {
     else Object.assign(this,advanceBoat(this.position,this.velocity,stats.progress,dt,arriving?10:1.05));
     const positions=[this.position,...stats.bots],w=this.width;
     if(!w)return;
-    const course=projectCourse(this.position,this.position,w,this.boatWidth);
+    const cam=this.circuit.draw(this.position,w,this.stage.clientHeight,reduced);
     this.boats.forEach((boat,i)=>{
-      const projected=projectCourse(positions[i],this.position,w,this.boatWidth);
-      boat.style.transform=`translate3d(${projected.x.toFixed(2)}px,0,0)`;
+      const projected=this.circuit.project(positions[i],i,cam,w,this.stage.clientHeight,this.boatWidth);
+      boat.style.transform=`translate3d(${projected.x.toFixed(2)}px,${projected.y.toFixed(2)}px,0)`;
+      boat.querySelector('.canoe-art').style.rotate=`${projected.angle.toFixed(2)}deg`;
       if(boat.dataset.edge!==projected.edge)boat.dataset.edge=projected.edge;
       boat.dataset.progress=positions[i].toFixed(5);
-      this.dots[i].style.transform=`translate3d(${positions[i]*this.mapWidth-3.5}px,0,0)`;
+      const point=coursePoint(this.circuit.course.id,positions[i],i);
+      this.dots[i].style.transform=`translate3d(${point.x/3200*this.mapWidth-3.5}px,${point.y/this.circuit.course.height*this.map.clientHeight-2}px,0)`;
     });
     const speed=clamp(this.velocity*20,0,1);
     // Keep per-frame values on the affected leaf, not inherited by every sprite.
@@ -57,15 +61,11 @@ export class RiverMotion {
     const moving=speed>.03?'true':'false';
     if(this.scene.dataset.moving!==moving)this.scene.dataset.moving=moving;
     this.flow+=dt*(10+speed*120);
-    this.background.style.transform=reduced?'none':`translate3d(${-course.camera*.24}px,0,0)`;
-    this.glints.style.transform=reduced?'none':`translate3d(${-(this.flow%180).toFixed(2)}px,0,0)`;
-    this.foreground.style.transform=reduced?'none':`translate3d(${-course.camera*.5}px,0,0)`;
-    this.ribbon.style.transform=`translate3d(${w*.17+w*2.1-course.camera}px,0,0)`;
-    this.ribbon.style.opacity=stats.progress>=.5?'1':'0';
+    this.ribbon.style.opacity='0';
     const segment=this.position<.34?'El bosque de luz':this.position<.7?'El jardín del río':'Rumbo a la cascada',steps=Math.round(stats.progress*8);
     if(segment!==this.lastSegment){this.segment.textContent=segment;this.lastSegment=segment;}
     if(steps!==this.lastSteps){this.steps.textContent=`${steps} / 8`;this.pearls.forEach((el,i)=>el.classList.toggle('passed',i<steps));this.lastSteps=steps;}
     return 1+stats.bots.filter(p=>p>this.position).length;
   }
-  dispose(){this.resize.disconnect();}
+  dispose(){this.resize.disconnect();this.circuit.dispose();}
 }

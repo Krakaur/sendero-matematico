@@ -1,0 +1,199 @@
+.circuit-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+.curved-regatta .lane-course {
+  top: 0 !important;
+}
+.curved-regatta .competitor {
+  width: 88px;
+  height: 81px;
+  top: -62px;
+  margin-left: -44px;
+}
+.curved-regatta .canoe-art {
+  transform-origin: 50% 75%;
+}
+.curved-regatta .regatta-landscape,
+.curved-regatta .river-foreground,
+.curved-regatta .finish-ribbon {
+  display: none;
+}
+.curved-regatta .race-lane {
+  z-index: 2;
+}
+.curved-regatta .race-message {
+  z-index: 4;
+}
+.curved-regatta .competitor[data-edge="bend"] .edge-arrow:after {
+  content: "↪";
+}
+.circuit-picker {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #244f43;
+  margin: 6px 0 10px;
+}
+.circuit-picker select {
+  display: block;
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #a9b999;
+  border-radius: 9px;
+  background: #fffcf1;
+  color: #244f43;
+  font: inherit;
+  min-height: 44px;
+  margin-top: 4px;
+}
+.together-invitation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.together-invitation h2 {
+  margin: 4px 0;
+}
+.together-invitation p {
+  margin: 5px 0;
+  font-size: 0.85rem;
+}
+.together-invitation .primary {
+  white-space: nowrap;
+}
+.learning-review {
+  background: #f6f3df;
+  border: 1px solid #d3c495;
+  border-radius: 15px;
+  padding: 15px 18px;
+  margin: 16px 0;
+}
+.learning-review h2 {
+  font-size: 1.15rem;
+  margin: 0 0 8px;
+}
+.learning-review p {
+  font-size: 0.85rem;
+}
+.learning-review summary {
+  font-weight: 700;
+  padding: 9px 0;
+  cursor: pointer;
+}
+.learning-review details {
+  border-top: 1px solid #d5d8bf;
+}
+.learning-review .math-support {
+  margin: 6px 0;
+  background: #fffdf3;
+  padding: 12px;
+  border-radius: 12px;
+}
+.math-support p {
+  margin: 4px 0;
+  font-size: 0.86rem;
+}
+.math-support .math-relation {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #214d40;
+}
+.math-array {
+  display: grid;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  gap: 3px;
+  width: min(100%, 360px);
+  margin: 10px auto;
+}
+.math-array i {
+  height: 10px;
+  border-radius: 3px;
+  background: #4b9b87;
+}
+.math-array i.partition {
+  background: #ce9b43;
+}
+.number-route {
+  display: block;
+  width: min(100%, 360px);
+  height: auto;
+  margin: 8px auto;
+}
+.number-route text {
+  font: 12px sans-serif;
+  fill: #244f43;
+}
+@media (max-width: 600px) {
+  .together-invitation {
+    display: block;
+  }
+  .together-link {
+    font-size: 0.7rem !important;
+    padding: 6px !important;
+  }
+  .curved-regatta .competitor {
+    width: 68px;
+    height: 63px;
+    margin-left: -34px;
+    top: -48px;
+  }
+  .circuit-picker {
+    font-size: 0.64rem;
+    margin: 3px 0 6px;
+  }
+  .circuit-picker select {
+    padding: 5px;
+    min-height: 44px;
+  }
+  .race-launch .launch-intro {
+    margin: 5px 0;
+  }
+  .race-launch .launch-instructions {
+    margin: 3px 0;
+  }
+}
+@media (max-height: 600px) and (min-width: 600px) {
+  .circuit-picker {
+    margin: 2px 0;
+    font-size: 0.6rem;
+  }
+  .circuit-picker select {
+    padding: 3px;
+    min-height: 36px;
+  }
+  .race-launch .launch-instructions {
+    display: none;
+  }
+}
+
+.curved-regatta .course-map {
+  height: 34px;
+  max-width: 310px;
+  border: 0;
+  background: transparent;
+}
+.curved-regatta .course-map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.curved-regatta .course-map svg path {
+  fill: none;
+  stroke: #79aa96;
+  stroke-width: 45;
+  stroke-linecap: round;
+}
+.curved-regatta .course-map i {
+  top: 0;
+  left: 0;
+}
+.curved-regatta .course-map:after {
+  display: none;
+}

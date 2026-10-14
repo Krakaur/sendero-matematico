@@ -1,4 +1,5 @@
 import {canoeSVG, riverLandscape} from './race-art.js';
+import {courseMapHTML} from './circuit.js';
 // Game rewards and simulated competition are independent of educational fluency.
 export const CHALLENGES={gentle:{name:'Paseo',description:'Más margen para pensar',factors:[1.25,1.36,1.51]},balanced:{name:'Carrera',description:'Rivales a tu ritmo',factors:[1.04,1.12,1.23]},challenge:{name:'Desafío',description:'Un poco más de velocidad',factors:[.93,1.01,1.11]}};
 export function newRace(sessions,trail,level,seed=Math.floor(Math.random()*4294967296),challenge='balanced') {
@@ -19,7 +20,7 @@ export function newRace(sessions,trail,level,seed=Math.floor(Math.random()*42949
  for(let i=2;i>0;i--){const j=Math.floor(random()*(i+1));[factors[i],factors[j]]=[factors[j],factors[i]];}
  const finishMs=factors.map(f=>Math.round(target*f));
  const cadence=[.3,0,-.3].map((launch,i)=>({launch,swing:(i===1?.48:.2)+random()*.04,phase:random()*Math.PI*2,waves:i===1?2:1}));
- return {protocol:3,seed:Number(seed)>>>0,elapsedMs:0,level,challenge,calibrationN:calibrated?times.length:0,paceSource:calibrated?source:'initial-level',referencePaceMs:target/8,targetMs:target,finishMs,cadence,names:['Nube','Rayo','Chispa']};
+ return {protocol:3,seed:Number(seed)>>>0,elapsedMs:0,level,challenge,circuit:'bosque',calibrationN:calibrated?times.length:0,paceSource:calibrated?source:'initial-level',referencePaceMs:target/8,targetMs:target,finishMs,cadence,names:['Nube','Rayo','Chispa']};
 }
 export function rivalProgress(race,index,elapsed) {
  const t=Math.max(0,Math.min(1,elapsed/race.finishMs[index]));
@@ -54,12 +55,12 @@ export function racerSVG(color,kind=0) {
 export function competitionHTML(session,escape=s=>s,alias='Tú') {
  const r=raceStats(session),names=[alias,...session.race.names],colors=['#f6b94f','#b6a0d6','#e48a70','#8eb98e'];
  const finished=!!session.completedAt;
- return `<section class="competition regatta ${finished?'regatta-finished':''}" data-race-id="${escape(session.id)}" aria-label="Carrera con tres rivales virtuales">
+ return `<section class="competition regatta curved-regatta ${finished?'regatta-finished':''}" data-race-id="${escape(session.id)}" data-circuit="${escape(session.race.circuit||'bosque')}" aria-label="Carrera con tres rivales virtuales">
  <div class="race-banner"><div><span class="regatta-kicker">COPA DEL RÍO</span><strong id="route-segment">El bosque de luz</strong></div><div class="route-pearls" aria-label="Retos completados"><span id="route-steps">${Math.round(r.progress*8)} / 8</span><span aria-hidden="true">${Array.from({length:8},(_,i)=>`<i class="route-pearl ${i<r.progress*8?'passed':''}"></i>`).join('')}</span></div></div>
- <div class="race-stage">${riverLandscape()}<div class="finish-ribbon" aria-hidden="true"><span>META</span></div>
+ <div class="race-stage">${riverLandscape()}<canvas class="circuit-canvas" aria-hidden="true"></canvas><div class="finish-ribbon" aria-hidden="true"><span>META</span></div>
  ${names.map((name,i)=>`<div class="race-lane ${i?'':'player-lane'}" style="--lane:${i?i-1:3}"><div class="lane-course"><div class="competitor" data-racer="${i}" data-effort="${finished?'finished':'steady'}" style="--racer-delay:${-i*.37}s"><span class="boat-wake" aria-hidden="true"></span>${racerSVG(colors[i],i)}<span class="lane-label"><span class="lane-name" title="${escape(name)}">${i?escape(name):'Tú · Luma'}</span><span class="edge-arrow" aria-hidden="true"></span></span><span class="race-spark" aria-hidden="true">✦</span><span class="water-splash" aria-hidden="true"><i></i><i></i><i></i></span></div></div></div>`).join('')}
  <div class="river-foreground" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
  <div class="race-message" id="race-message">${finished?'¡Una aventura más, una nueva conquista!':'Cada respuesta te lleva más lejos'}</div></div>
- <div class="competition-score"><span class="position-pill"><strong id="race-position">${r.rank} / 4</strong> <span>posición</span></span><div class="course-map" aria-label="Recorrido de los cuatro participantes">${names.map((name,i)=>`<i data-map-racer="${i}" style="--map-color:${colors[i]};--map-lane:${i};left:${100*(i?r.bots[i-1]:r.progress)}%" title="${escape(name)}"></i>`).join('')}</div><span class="race-time"><strong id="race-clock">${(session.race.elapsedMs/1000).toFixed(1)} s</strong></span></div>
+ <div class="competition-score"><span class="position-pill"><strong id="race-position">${r.rank} / 4</strong> <span>posición</span></span><div class="course-map" aria-label="Recorrido de los cuatro participantes">${courseMapHTML(session.race.circuit)}${names.map((name,i)=>`<i data-map-racer="${i}" style="--map-color:${colors[i]};--map-lane:${i};left:${100*(i?r.bots[i-1]:r.progress)}%" title="${escape(name)}"></i>`).join('')}</div><span class="race-time"><strong id="race-clock">${(session.race.elapsedMs/1000).toFixed(1)} s</strong></span></div>
  <p class="virtual-note">Nube, Rayo y Chispa son competidores del juego · ${CHALLENGES[session.race.challenge]?.name||'Carrera'}</p></section>`;
 }
