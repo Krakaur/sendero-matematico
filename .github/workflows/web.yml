@@ -45,9 +45,37 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: web
-  publish:
+  publish-backend:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Migrate D1 and deploy Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: "30acbd7233fbc58d3bff528ede80fb1b"
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Missing restricted Cloudflare deployment token"
+            exit 1
+          fi
+          npx wrangler d1 migrations apply sendero-aula-db --remote --config cloudflare/wrangler.jsonc
+          npx wrangler deploy --config cloudflare/wrangler.jsonc
+  publish:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: [verify, publish-backend]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

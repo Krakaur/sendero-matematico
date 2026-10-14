@@ -1,6 +1,6 @@
 # Servicio docente: Workers/D1 y receptor local
 
-Actualización del 14 de octubre de 2026: el receptor de nube está desplegado en `https://sendero-aula.dirkhans.workers.dev`, con una API 3 adaptada a D1, consultas incrementales y copias cifradas por fragmentos. Leer `CLOUDFLARE.md` para el estado de publicación y operación. Los apartados siguientes describen el receptor Node/API 2 y la evaluación que precedió a la migración; sus referencias a alojamiento pendiente son históricas. No se requiere ejecutar Node localmente para usar el receptor de nube. La web publicada todavía debe actualizarse y verificarse con los cambios de esta migración.
+Actualización del 14 de octubre de 2026: el receptor de nube está desplegado en `https://sendero-aula.dirkhans.workers.dev`, con una API 3 adaptada a D1, consultas incrementales y copias cifradas por fragmentos. Leer `CLOUDFLARE.md` para el estado de publicación y operación. Los apartados siguientes describen el receptor Node/API 2 y la evaluación que precedió a la migración; sus referencias a alojamiento pendiente son históricas. No se requiere ejecutar Node localmente para usar el receptor de nube. La web 0.10.0 está publicada y sus 52 archivos coinciden con el contenido de Git.
 
 ## Receptor Node/API 2 conservado para pruebas locales
 
