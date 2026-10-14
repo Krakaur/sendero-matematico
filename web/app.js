@@ -1046,7 +1046,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-school-v1`);
+    const cache = await caches.open(`sendero-${VERSION}-four-local-v1`);
     const files = [
       "./index.html",
       "./app.js",
