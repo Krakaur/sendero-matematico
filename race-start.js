@@ -1,4 +1,5 @@
 import {canoeSVG,riverLandscape} from './race-art.js';
+import {CHALLENGES} from './race.js';
 
 // Only newly prepared races opt in. Existing races resume with their original timing.
 export function needsRaceStart(session) {
@@ -32,6 +33,7 @@ export function raceStartHTML(session,escape,alias,trailName,sound,reducedMotion
     <div class="launch-brief"><span class="launch-eyebrow">UNA NUEVA AVENTURA</span><h1 id="launch-title" tabindex="-1">La copa del río</h1><div class="launch-chips"><span>${escape(trailName)}</span><span>Nivel ${session.race.level}</span><span>8 retos</span></div>
       <p class="launch-intro"><strong>${escape(alias)}, tú remas con Luma.</strong> Llega a la meta resolviendo los ocho retos.</p>
       <div class="launch-instructions"><p><span aria-hidden="true">↗</span><span><strong>Cada acierto te impulsa.</strong><small>Elige una respuesta y avanza por el río.</small></span></p><p><span aria-hidden="true">↻</span><span><strong>Si fallas, puedes corregir.</strong><small>Mira la solución y sigue remando.</small></span></p></div>
+      ${session.race.protocol>=3?`<fieldset class="challenge-picker"><legend>El ritmo de tus rivales</legend><div>${Object.entries(CHALLENGES).map(([id,c])=>`<button type="button" data-challenge="${id}" aria-pressed="${session.race.challenge===id}"><strong>${c.name}</strong><small>${c.description}</small></button>`).join('')}</div><p>El nivel de matemáticas se mantiene. Elige cómo quieres competir.</p></fieldset>`:''}
       <div class="launch-controls"><button id="race-ready" class="primary">¡A la salida! <span aria-hidden="true">→</span></button><button id="launch-cancel" class="secondary" hidden>Volver a preparar</button><p id="launch-promise">${reducedMotion?'Salida directa · movimiento reducido':'3, 2, 1… ¡al río!'}</p><button id="launch-sound" class="launch-sound" aria-pressed="${!!sound}">${sound?'♪ Sonido activado':'♪ Activar sonidos'}</button><a class="launch-back" href="#explorar">Elegir otro camino</a></div>
     </div>
     <div class="launch-rivals" aria-label="Tus rivales virtuales"><div class="launch-rivals-heading"><strong>Conoce a tus rivales</strong><span>Son personajes del juego</span></div>${session.race.names.map((name,i)=>`<div class="launch-rival"><span class="rival-portrait" aria-hidden="true">${canoeSVG(i+1,colors[i+1])}</span><span><strong>${escape(name)}</strong><small>${['Sale con energía','Alterna sus impulsos','Acelera al final'][i]}</small></span></div>`).join('')}</div>
