@@ -1,0 +1,233 @@
+{
+  "version": "0.8.0",
+  "browser": "chromium",
+  "layouts": [
+    {
+      "scene": "preparation",
+      "width": 1280,
+      "height": 800,
+      "scrollWidth": 1280,
+      "bottom": 679.015625,
+      "touchHeight": 52,
+      "uncovered": true
+    },
+    {
+      "scene": "preparation",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "bottom": 723.453125,
+      "touchHeight": 48,
+      "uncovered": true
+    },
+    {
+      "scene": "preparation",
+      "width": 360,
+      "height": 640,
+      "scrollWidth": 360,
+      "bottom": 541.390625,
+      "touchHeight": 48,
+      "uncovered": true
+    },
+    {
+      "scene": "preparation",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "bottom": 541.390625,
+      "touchHeight": 48,
+      "uncovered": true
+    },
+    {
+      "scene": "preparation",
+      "width": 854,
+      "height": 480,
+      "scrollWidth": 854,
+      "bottom": 439.03125,
+      "touchHeight": 52,
+      "uncovered": true
+    },
+    {
+      "scene": "race",
+      "width": 1280,
+      "height": 800,
+      "scrollWidth": 1280,
+      "buttons": [
+        {
+          "bottom": 750.515625,
+          "width": 169.359375,
+          "height": 65,
+          "uncovered": true
+        },
+        {
+          "bottom": 750.515625,
+          "width": 169.375,
+          "height": 65,
+          "uncovered": true
+        },
+        {
+          "bottom": 750.515625,
+          "width": 169.359375,
+          "height": 65,
+          "uncovered": true
+        },
+        {
+          "bottom": 750.515625,
+          "width": 169.375,
+          "height": 65,
+          "uncovered": true
+        }
+      ]
+    },
+    {
+      "scene": "race",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "buttons": [
+        {
+          "bottom": 654.21875,
+          "width": 78.5,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 654.21875,
+          "width": 78.5,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 654.21875,
+          "width": 78.5,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 654.21875,
+          "width": 78.5,
+          "height": 48,
+          "uncovered": true
+        }
+      ]
+    },
+    {
+      "scene": "race",
+      "width": 360,
+      "height": 640,
+      "scrollWidth": 360,
+      "buttons": [
+        {
+          "bottom": 540.375,
+          "width": 72,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 540.375,
+          "width": 72,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 540.375,
+          "width": 72,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 540.375,
+          "width": 72,
+          "height": 48,
+          "uncovered": true
+        }
+      ]
+    },
+    {
+      "scene": "race",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "buttons": [
+        {
+          "bottom": 540.375,
+          "width": 62,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 540.375,
+          "width": 62,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 538.3755493164062,
+          "width": 62,
+          "height": 47.999969482421875,
+          "uncovered": true
+        },
+        {
+          "bottom": 540.375,
+          "width": 62,
+          "height": 48,
+          "uncovered": true
+        }
+      ]
+    },
+    {
+      "scene": "race",
+      "width": 854,
+      "height": 480,
+      "scrollWidth": 854,
+      "buttons": [
+        {
+          "bottom": 469.0625,
+          "width": 116.734375,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 469.0625,
+          "width": 116.734375,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 467.0625,
+          "width": 116.734375,
+          "height": 48,
+          "uncovered": true
+        },
+        {
+          "bottom": 469.0625,
+          "width": 116.734375,
+          "height": 48,
+          "uncovered": true
+        }
+      ]
+    }
+  ],
+  "performance": {
+    "samples": 177,
+    "medianFrameMs": 16.69999999999891,
+    "p95FrameMs": 17.299999999999272,
+    "framesOver50ms": 0,
+    "firstVisibleMovementMs": 22.299999952316284
+  },
+  "challengeDoesNotChangeMath": true,
+  "wrongAnswerNoDistance": true,
+  "correctionPreserved": true,
+  "pauseFreezes": true,
+  "syntheticVisibilityEventFreezes": true,
+  "reloadKeepsRivals": true,
+  "offlineArtAndFullRace": true,
+  "cachedFiles": 43,
+  "reducedMotion": {
+    "position": 0.125,
+    "background": "",
+    "animations": 0
+  },
+  "completedSessions": 1,
+  "errors": []
+}

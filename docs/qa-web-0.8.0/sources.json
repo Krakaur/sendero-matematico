@@ -1,0 +1,61 @@
+{
+  "captured_utc": "2026-10-14T02:23:34.331646+00:00",
+  "sources": [
+    {
+      "name": "Arcademics-Grand-Prix.html",
+      "url": "https://www.arcademics.com/games/grand-prix",
+      "local": "qa-private/ciclo-web-6-20261014/sources/Arcademics-Grand-Prix.html",
+      "bytes": 15221,
+      "sha256": "24f2b0b5b181cf587185f49c5ff4c2fb42d14805ab3889c506f6406c62500975",
+      "status": "downloaded"
+    },
+    {
+      "name": "Arcademics-how-it-works.html",
+      "url": "https://www.arcademics.com/how-it-works",
+      "local": "qa-private/ciclo-web-6-20261014/sources/Arcademics-how-it-works.html",
+      "bytes": 16149,
+      "sha256": "048ca2a47a221370927e1514f38b75d7ba2937d5c81c9477c52f5f93ed7c4297",
+      "status": "downloaded"
+    },
+    {
+      "name": "Arcademics-FAQ.html",
+      "url": "https://www.arcademics.com/faq",
+      "local": "qa-private/ciclo-web-6-20261014/sources/Arcademics-FAQ.html",
+      "bytes": 14612,
+      "sha256": "259bd52f33a2b5cbcc7eaaf065df37b1a2dee8f90f98e75afe7ebb6dce465e01",
+      "status": "downloaded"
+    },
+    {
+      "name": "IES-WWC-2021.html",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/26",
+      "local": "qa-private/ciclo-web-6-20261014/sources/IES-WWC-2021.html",
+      "bytes": 70877,
+      "sha256": "cef3ad8c781fc30f0a4f8ee7dc34ac77228dda3d004bba4075548c90d3d3b385",
+      "status": "downloaded"
+    },
+    {
+      "name": "IES-WWC-2021.pdf",
+      "url": "https://ies.ed.gov/ncee/wwc/Docs/PracticeGuide/WWC2021006-Math-PG.pdf",
+      "local": "qa-private/ciclo-web-6-20261014/sources/IES-WWC-2021.pdf",
+      "bytes": 2034019,
+      "sha256": "98c03aed4a280ea2d0936226b54eb54a531aa4d832077c5b6c295ef4ac69f435",
+      "status": "downloaded"
+    },
+    {
+      "name": "WebRTC-peer-connections.html",
+      "url": "https://webrtc.org/getting-started/peer-connections",
+      "local": "qa-private/ciclo-web-6-20261014/sources/WebRTC-peer-connections.html",
+      "bytes": 70713,
+      "sha256": "0e71b752e9e56fed3ddbda004d676a870ebfb1e63c743d38a641e43553483b41",
+      "status": "downloaded"
+    },
+    {
+      "name": "PeerJS.html",
+      "url": "https://peerjs.com/client/getting-started",
+      "local": "qa-private/ciclo-web-6-20261014/sources/PeerJS.html",
+      "bytes": 37571,
+      "sha256": "5a875d94891ffa28380d6dad6f12fbaaccbbae6c981266bc4f3fe80be39e5880",
+      "status": "downloaded"
+    }
+  ]
+}

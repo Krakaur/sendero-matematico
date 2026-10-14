@@ -1,4 +1,6 @@
 import {newRace,raceStats,raceLevel,rivalEffort,competitionHTML,CHALLENGES} from "./race.js";
+import {CIRCUITS} from './circuit.js';
+import {learningReviewHTML,mathSupportHTML} from './learning-review.js';
 import {RiverMotion} from "./race-motion.js";
 import {RiverAudio} from "./race-audio.js";
 import {raceFinishHTML} from "./race-finish.js";
@@ -386,10 +388,10 @@ function dimensionsHTML(sessions) {
       const band =
         type === "performance" && den
           ? pct < 50
-            ? "0–59%"
+            ? "0–49%"
             : pct < 80
-              ? "60–84%"
-              : "85–100%"
+              ? "50–79%"
+              : "80–100%"
           : "Descriptivo";
       return `<div class="dimension"><div class="dimension-title"><strong>${name}</strong><span>${den ? `${num}/${den} · ${pct}%` : "Sin observaciones"}</span></div><div class="dimension-bar ${color}" ${den ? `role="meter" aria-label="${name}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"` : ""}><span style="width:${pct}%"></span></div><p>${desc} <span class="range-label">${den ? band : ""}</span></p></div>`;
     })
@@ -399,7 +401,7 @@ function dimensionsHTML(sessions) {
 }
 function home() {
   const total = state.sessions.length;
-  return `<section class="hero fade-in"><div class="hero-copy"><span class="eyebrow">Pequeños pasos. Grandes descubrimientos.</span><h1>Las matemáticas<br>te llevan <em>lejos.</em></h1><p>Practica cálculo y resuelve situaciones con Luma. Compite en el río o practica con calma. Tú eliges cómo jugar.</p><button class="primary" id="quick-start">${state.current ? "Continuar mi aventura" : "Comenzar aventura"} <span aria-hidden="true">↗</span></button><span class="micro">8 desafíos · Sin anuncios · También sin internet</span></div><div class="hero-art"><img src="./landscape.svg" alt="Luma, una pequeña zorra con bufanda, explora un sendero entre montañas, árboles y una casita."><div class="art-label"><strong>Tu próxima aventura está aquí</strong>${total ? `${total} ${total === 1 ? "sendero recorrido" : "senderos recorridos"}` : "Todo comienza con un pequeño paso"}</div></div></section><section class="mode-picker" aria-label="Forma de jugar"><div><span class="eyebrow">ELIGE TU EXPERIENCIA</span><h2>¿Carrera o exploración?</h2></div><div class="mode-options"><button data-mode="race" class="mode-card ${(state.playMode||'race')==='race'?'selected':''}" aria-pressed="${(state.playMode||'race')==='race'}"><strong>⚑ Carrera del río</strong><span>Tres rivales virtuales · puntos · tu propio reto</span></button><button data-mode="calm" class="mode-card ${state.playMode==='calm'?'selected':''}" aria-pressed="${state.playMode==='calm'}"><strong>✧ A mi ritmo</strong><span>Explora sin competir · todas las ayudas</span></button></div><p class="micro">El taller de razonamiento siempre va sin carrera. La elección se aplica a la siguiente aventura.</p></section><section aria-labelledby="trails-title"><div class="section-header"><h2 id="trails-title">Elige tu camino</h2><span class="micro">La dificultad crece contigo</span></div><div class="trail-grid">${Object.entries(
+  return `<section class="hero fade-in"><div class="hero-copy"><span class="eyebrow">Pequeños pasos. Grandes descubrimientos.</span><h1>Las matemáticas<br>te llevan <em>lejos.</em></h1><p>Practica cálculo y resuelve situaciones con Luma. Compite en el río o practica con calma. Tú eliges cómo jugar.</p><button class="primary" id="quick-start">${state.current ? "Continuar mi aventura" : "Comenzar aventura"} <span aria-hidden="true">↗</span></button><span class="micro">8 desafíos · Sin anuncios · También sin internet</span></div><div class="hero-art"><img src="./landscape.svg" alt="Luma, una pequeña zorra con bufanda, explora un sendero entre montañas, árboles y una casita."><div class="art-label"><strong>Tu próxima aventura está aquí</strong>${total ? `${total} ${total === 1 ? "sendero recorrido" : "senderos recorridos"}` : "Todo comienza con un pequeño paso"}</div></div></section><section class="together-invitation panel"><div><span class="eyebrow">COMPARTE EL RECORRIDO</span><h2>Jugar con otras personas</h2><p>Dos en esta pantalla o de dos a cuatro por enlace. Carrera y cooperación, con los mismos retos.</p></div><a class="primary" href="./juntos.html">Jugar juntos ↗</a></section><section class="mode-picker" aria-label="Forma de jugar"><div><span class="eyebrow">ELIGE TU EXPERIENCIA</span><h2>¿Carrera o exploración?</h2></div><div class="mode-options"><button data-mode="race" class="mode-card ${(state.playMode||'race')==='race'?'selected':''}" aria-pressed="${(state.playMode||'race')==='race'}"><strong>⚑ Carrera del río</strong><span>Tres rivales virtuales · puntos · tu propio reto</span></button><button data-mode="calm" class="mode-card ${state.playMode==='calm'?'selected':''}" aria-pressed="${state.playMode==='calm'}"><strong>✧ A mi ritmo</strong><span>Explora sin competir · todas las ayudas</span></button></div><p class="micro">El taller de razonamiento siempre va sin carrera. La elección se aplica a la siguiente aventura.</p></section><section aria-labelledby="trails-title"><div class="section-header"><h2 id="trails-title">Elige tu camino</h2><span class="micro">La dificultad crece contigo</span></div><div class="trail-grid">${Object.entries(
     TRAILS,
   )
     .map(
@@ -481,7 +483,7 @@ function importedProfiles() {
     .join("");
 }
 function about() {
-  return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje. Cada reto completado da puntos; el acierto inicial sin ayuda añade una bonificación.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. La entrega al docente solo se activa al vincular una invitación. No tiene publicidad ni recopila datos para investigación.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p><a href="./docentes.html" target="_blank" rel="noopener">Guía breve para familias y docentes</a></p><p>Desarrollo: Dirk Hans Krakaur Floranes. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales en SVG. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas permanecen en este dispositivo salvo exportación manual o vinculación explícita con un servidor docente. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
+  return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje. Cada reto completado da puntos; el acierto inicial sin ayuda añade una bonificación.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. La entrega al docente solo se activa al vincular una invitación. No tiene publicidad ni recopila datos para investigación.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p><a href="./docentes.html" target="_blank" rel="noopener">Guía breve para familias y docentes</a></p><p>Desarrollo: Dirk Hans Krakaur Floranes. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales y circuito con curvas. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas de la aventura individual permanecen en este dispositivo salvo exportación manual o vinculación explícita con un servidor docente. Si eliges una sala por enlace, los retos, respuestas y tiempos de esa partida se comparten con sus participantes. La conexión utiliza PeerJS y servidores STUN; no se comparte tu perfil ni historial. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
 }
 function stopTimer(interrupted = false) {
   if (interrupted && !needsRaceStart(state.current)) interruptTiming(state.current?.questions[state.current.index]);
@@ -546,36 +548,9 @@ function reasoningGame(s,q) {
 }
 function hintHTML(s, q) {
   if(q.bankId)return `<aside class="hint-box"><p>${esc(q.hintText)}</p></aside>`;
-  const dots = (n, alt = false, cross = 0) =>
-    Array.from(
-      { length: n },
-      (_, i) =>
-        `<span class="bead ${alt ? "alt" : ""} ${i >= n - cross ? "crossed" : ""}"></span>`,
-    ).join("");
-  let text, visual;
-  if (s.trail === "suma") {
-    text = `Empieza en ${q.a} y avanza ${q.b} pasos. Junta los dos grupos.`;
-    visual =
-      q.a + q.b <= 40
-        ? `<div class="bead-group">${dots(q.a)}</div><b>+</b><div class="bead-group">${dots(q.b, true)}</div>`
-        : `<strong>${q.a} + ${Math.floor(q.b / 10) * 10} + ${q.b % 10}</strong>`;
-  }
-  if (s.trail === "resta") {
-    text = `Empieza con ${q.a} y quita ${q.b}. Cuenta lo que queda.`;
-    visual =
-      q.a <= 30
-        ? `<div class="bead-group" style="max-width:230px">${dots(q.a, false, q.b)}</div>`
-        : `<strong>${q.a} − ${Math.floor(q.b / 10) * 10} − ${q.b % 10}</strong>`;
-  }
-  if (s.trail === "multi" || s.trail === "tablas20") {
-    text = `Son ${q.a} grupos de ${q.b}. Puedes sumar ${q.b} varias veces.`;
-    visual = Array.from(
-      { length: q.a },
-      () => `<div class="bead-group">${dots(q.b)}</div>`,
-    ).join("");
-  }
-  return `<aside class="hint-box"><p>${text}</p><div class="bead-groups" aria-hidden="true">${visual}</div></aside>`;
+  return mathSupportHTML(s.trail,q);
 }
+
 function solutionHTML(s, q) {
   if(q.bankId)return `<section class="solution-callout" tabindex="-1" aria-label="Solución del ejercicio"><strong>¡${esc(q.solution)}!</strong><p>${esc(q.explanation)}</p><p>${q.done ? "Ya puedes continuar." : "Elige la respuesta para practicarla."}</p></section>`;
   const explanation =
@@ -590,8 +565,8 @@ function finished() {
   const s = state.sessions.at(-1);
   if (!s) return home();
   const r = summarize([s]);
-  if(s.race)return raceFinishHTML(s,esc,activeProfile.name,state.adaptive[s.trail]?.level||s.race.level,TRAILS[s.trail].short,statsHTML(r)+fluencyHTML([s]));
-  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ocho ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">Otra aventura ↗</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
+  if(s.race)return raceFinishHTML(s,esc,activeProfile.name,state.adaptive[s.trail]?.level||s.race.level,TRAILS[s.trail].short,learningReviewHTML(s)+statsHTML(r)+fluencyHTML([s]));
+  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ocho ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${learningReviewHTML(s)}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">Otra aventura ↗</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
 }
 function render(persistState = true) {
   cancelLaunch();
@@ -666,11 +641,12 @@ function render(persistState = true) {
   });
   main.querySelector("#next")?.addEventListener("click", next);
   $('#race-ready')?.addEventListener('click',launchRace);
+  $('#circuit-select')?.addEventListener('change',e=>{if(needsRaceStart(state.current)&&Object.hasOwn(CIRCUITS,e.target.value)){state.current.race.circuit=e.target.value;state.raceCircuit=e.target.value;save();}});
   main.querySelectorAll('[data-challenge]').forEach(button=>button.addEventListener('click',()=>{
     if(!needsRaceStart(state.current)||launchCountdown||!Object.hasOwn(CHALLENGES,button.dataset.challenge))return;
     const old=state.current.race;
     state.raceChallenge=button.dataset.challenge;
-    state.current.race={...newRace(state.sessions,state.current.trail,old.level,old.seed,state.raceChallenge),launch:'ready'};
+    state.current.race={...newRace(state.sessions,state.current.trail,old.level,old.seed,state.raceChallenge),circuit:old.circuit||'bosque',launch:'ready'};
     save();render(false);main.querySelector(`[data-challenge="${state.raceChallenge}"]`)?.focus({preventScroll:true});
   }));
   $('#launch-cancel')?.addEventListener('click',event=>{
@@ -741,7 +717,7 @@ function begin(trail) {
   state.current = trail === "razonar" ? {id:uid(),profile:state.profile,trail,level:a.level,version:VERSION,startedAt:new Date().toISOString(),completedAt:null,index:0,questions:[bankQuestion(state,a.level)]} : newSession(trail, a.level, state.profile);
   if(trail !== "razonar")state.current.questions[0]=practiceQuestion(state,trail,a.level);
   state.current.adaptation = { ...a };
-  if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race={...newRace(state.sessions,trail,a.level,undefined,state.raceChallenge),launch:'ready'};
+  if(trail!=="razonar"&&(state.playMode||"race")==="race")state.current.race={...newRace(state.sessions,trail,a.level,undefined,state.raceChallenge),circuit:state.raceCircuit||'bosque',launch:'ready'};
   save();
   goGame();
 }
@@ -1033,7 +1009,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-painted-river-v1`);
+    const cache = await caches.open(`sendero-${VERSION}-social-circuit-v1`);
     const files = [
       "./index.html",
       "./app.js",
@@ -1042,7 +1018,8 @@ async function offline() {
       "./regatta.css", "./race.js", "./race-art.js", "./race-audio.js",
       "./race-finish.js",
       "./race-start.js", "./race-start.css",
-      "./race-motion.js", "./race-world.css",
+      "./race-motion.js", "./race-world.css", "./circuit.js", "./circuit.css", "./learning-review.js",
+      "./juntos.html", "./together.css", "./together.js", "./room.js", "./room-link.js", "./vendor/peerjs-1.5.5.min.js",
       "./assets/forest-river-v1.png", "./assets/river-racers-v1.png",
       "./landscape.svg",
       "./icon.svg",

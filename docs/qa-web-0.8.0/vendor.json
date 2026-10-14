@@ -1,0 +1,20 @@
+{
+  "name": "peerjs",
+  "version": "1.5.5",
+  "license": "MIT",
+  "source": "https://registry.npmjs.org/peerjs/-/peerjs-1.5.5.tgz",
+  "integrity": "sha512-viMUCPDL6CSfOu0ZqVcFqbWRXNHIbv2lPqNbrBIjbFYrflebOjItJ4hPfhjnuUCstqciHVu9vVJ7jFqqKi/EuQ==",
+  "files": [
+    {
+      "file": "peerjs-1.5.5.min.js",
+      "bytes": 86948,
+      "sha256": "7604d8c31bec4f134b0d15c2d80b1d095ea18af005354f439f14291fcd7b4168"
+    },
+    {
+      "file": "peerjs-LICENSE.txt",
+      "bytes": 1108,
+      "sha256": "9407807dba7f47a79bfb3ac55759d63d77c9371ebd0616d5a093e97d3e810397"
+    }
+  ],
+  "activation": "Only after user chooses online room creation or join. No audio, video, analytics or account APIs are used."
+}

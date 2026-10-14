@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#163e35" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://0.peerjs.com wss://0.peerjs.com; object-src 'none'; base-uri 'self'; form-action 'none'"
+    />
+    <title>Sendero · Jugar juntos</title>
+    <link rel="icon" href="./icon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./regatta.css" />
+    <link rel="stylesheet" href="./race-world.css" />
+    <link rel="stylesheet" href="./circuit.css" />
+    <link rel="stylesheet" href="./together.css" />
+  </head>
+  <body class="together">
+    <a class="skip" href="#main">Ir al juego</a>
+    <header class="together-top">
+      <a href="./" class="brand"
+        ><img src="./icon.svg" width="34" height="34" alt="" />sendero<span
+          class="brand-dot"
+          >.</span
+        ></a
+      ><span>La copa compartida</span
+      ><button id="motion-toggle" class="soft-button" aria-pressed="false">
+        Reducir movimiento
+      </button>
+    </header>
+    <main id="main" tabindex="-1"></main>
+    <p id="room-announcer" class="sr-only" role="status" aria-live="polite"></p>
+    <script type="module" src="./together.js"></script>
+  </body>
+</html>

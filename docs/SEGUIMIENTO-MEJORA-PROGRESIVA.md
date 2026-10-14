@@ -1,6 +1,12 @@
 # Seguimiento de la mejora progresiva
 
-Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: quinto incremento web 0.7.0 publicado y comprobado técnicamente; registro de publicación en `qa-web-0.7.0/publication.json`. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
+Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: sexto incremento web 0.8.0 comprobado localmente; publicación efectiva en `qa-web-0.8.0/publication.json`. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
+
+## Registro del sexto incremento
+
+La ampliación solicitada prioriza análisis global, valor pedagógico, didáctica, gamificación, juego humano y curvas. Se implementan tres trazados, dos personas en pantalla, salas de dos a cuatro, cooperación, pausa común y revisión matemática. El banco conserva 6.630 enunciados; la auditoría distingue cantidad de variantes y diversidad de plantillas. 61 pruebas Node y recorridos Chromium/Firefox verifican reglas y funcionamiento. No se convierten esos resultados en eficacia educativa, atractivo o preferencia. Audio y valoración perceptiva permanecen fuera de esta intervención.
+
+Los archivos `ANALISIS-GLOBAL-WEB-0.8.0.md` y `EVALUACION-WEB-0.8.0.md` sustituyen el diagnóstico anterior para estas funciones. El estado público se documenta en `qa-web-0.8.0/publication.json` al concluir el despliegue. El alcance rebasa una sola jornada presupuestaria; no se inventan minutos ni tokens consumidos. Mantener pendientes la observación infantil, el teléfono físico y las conexiones entre redes heterogéneas.
 
 ## Registro del quinto incremento
 

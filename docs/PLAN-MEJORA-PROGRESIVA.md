@@ -2,6 +2,10 @@
 
 Fecha: 13 de octubre de 2026. Dedicación acordada: 90 minutos por jornada. Primer ciclo: 20 jornadas, 30 horas. Estado: quinto incremento web 0.7.0 comprobado técnicamente; publicación y conservación de datos se documentan en `qa-web-0.7.0/publication.json`. Preparación, salida, llegada y repetición implementadas; nuevo arte, cámara e impulsos continuos, y calibración de rivales revisada. La aceptación perceptiva y las metas restantes siguen pendientes. Por instrucción del autor, el quinto incremento excluye el análisis sonoro y lo reserva para otro turno. Fuente de partida inspeccionada: `76c3cb3b20676047fff1b56054cd451af43e1115`, versión 0.4.0.
 
+## Ampliación del sexto incremento
+
+Se adelantan juego humano en el mismo dispositivo y por enlace, cooperación, tres circuitos con curvas, revisión matemática y auditoría global. Las metas verificables son igualdad del conjunto de ocho retos, pausa y reloj comunes, conservación de intentos, ausencia de victorias por desconexión, conclusión independiente de cada participante y geometría continua. Su comprobación se documenta en `EVALUACION-WEB-0.8.0.md`; no equivale a aceptación perceptiva o eficacia educativa. La evaluación de atractivo, preferencia y audio se reserva para un turno posterior por instrucción expresa del autor.
+
 ## Propósito y resultado esperado
 
 Convertir la carrera de multiplicación en una experiencia con identidad gráfica, movimiento expresivo, retroalimentación sonora y competencia comprensible contra tres rivales virtuales. El resultado del primer ciclo será una carrera completa candidata a evaluación: entrada, preparación, desarrollo, error y recuperación, llegada y repetición. El referente es la experiencia dentro de [Grand Prix Multiplication](https://www.arcademics.com/games/grand-prix), no la página que lo aloja.
