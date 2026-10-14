@@ -1,6 +1,6 @@
 # Seguimiento de la mejora progresiva
 
-Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: quinto incremento web 0.7.0 comprobado técnicamente; estado efectivo de publicación en `qa-web-0.7.0/publication.json`. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
+Plan asociado: [PLAN-MEJORA-PROGRESIVA.md](PLAN-MEJORA-PROGRESIVA.md). Preparado el 13 de octubre de 2026. Presupuesto acordado: 20 jornadas de 90 minutos, 30 horas. Estado: quinto incremento web 0.7.0 publicado y comprobado técnicamente; registro de publicación en `qa-web-0.7.0/publication.json`. El autor eligió desarrollar el bosque ilustrado y autorizó la publicación después del siguiente incremento y su respaldo local. Algunas tareas posteriores se adelantaron durante estas entregas; sus números no representan jornadas de 90 minutos ya consumidas.
 
 ## Registro del quinto incremento
 
@@ -65,7 +65,7 @@ En jornadas de revisión, añadir las puntuaciones por criterio, quién las emit
 
 ## Próxima acción y decisiones pendientes
 
-Próxima acción: revisar una partida completa, puntuar arte, movimiento y sonido por separado y corregir el defecto perceptivo dominante. La preparación y salida y las mediciones instrumentadas están documentadas en la web 0.6.0. Se dispone de vídeo del recorrido y una muestra PCM del audio. Continúan pendientes la escucha valorada por el autor, el teléfono físico de referencia y la escucha comparada de Grand Prix.
+Próxima acción: valorar el recorrido completo y la comparación visual de 0.7.0, con puntuaciones separadas de composición, materiales, identidad, continuidad del movimiento, control y justicia percibida. Hay vídeo de una carrera completa con error y recuperación y comparación de Grand Prix, Sendero 0.6.0 y 0.7.0. La revisión sonora queda reservada para otro turno por indicación expresa del autor. Continúan pendientes el teléfono físico de referencia y la observación de usuarios destinatarios.
 
 Dirección artística resuelta: desarrollar este bosque ilustrado. Permanecen pendientes las puntuaciones perceptivas por criterio, la revisión de cada hito y la disponibilidad de una persona no familiarizada para observar el uso.
 
