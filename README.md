@@ -1,4 +1,4 @@
-# Sendero Matemático · Web 0.7.0
+# Sendero Matemático · Web 0.8.0
 
 [Jugar](https://krakaur.github.io/sendero-matematico/) · [Actualizar conservando datos](https://krakaur.github.io/sendero-matematico/actualizar.html) · [Android 14–16](https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-Nativo-0.4.0.apk) · [Windows x64](https://github.com/Krakaur/sendero-matematico/releases/download/v0.4.0/Sendero-0.4.0-Windows-x64.exe) · [Para docentes](https://krakaur.github.io/sendero-matematico/docentes.html)
 
@@ -8,7 +8,7 @@ Juego gratuito en español para practicar matemáticas con conectividad intermit
 
 La regata web transcurre en un bosque ilustrado con personajes, remos, estelas y ambiente sonoro originales. Nube destaca en la salida, Rayo alterna impulsos y Chispa acelera hacia el final. Sus tiempos y ritmos varían entre carreras y se fijan al comenzar; no reaccionan al desempeño posterior del jugador. Los adelantamientos tienen una señal visual y sonora. El silencio, los volúmenes y la reducción de movimiento se conservan por perfil.
 
-La web 0.7.0 incorpora paisaje y personajes con textura y volumen, una cámara que acompaña a Luma y movimiento continuo por impulsos. Antes de salir se puede elegir Paseo, Carrera o Desafío sin cambiar el nivel matemático. La calibración usa el tiempo necesario para resolver correctamente, incluidas las correcciones; una respuesta errónea rápida no acelera a los rivales. Las nuevas ilustraciones se descargan una vez y se conservan para jugar sin conexión.
+La web 0.8.0 añade tres circuitos con curvas, incluida una vuelta completa, y [juego entre personas](https://krakaur.github.io/sendero-matematico/juntos.html): dos en la misma pantalla o de dos a cuatro por invitación privada. Permite carrera amistosa o meta cooperativa, con los mismos ocho retos, pausa conjunta y revisión matemática final. El modo local funciona sin conexión tras preparar la web; las salas por enlace necesitan internet y algunas redes pueden impedir su conexión directa. Se conserva el bosque ilustrado, el movimiento por impulsos y la elección de intensidad de los rivales individuales.
 
 La copa del río comienza en un muelle ilustrado: presenta a Luma, los rivales y las reglas antes de una cuenta de tres pulsos con sonido opcional. La espera no consume tiempo de respuesta. La salida se puede cancelar; con movimiento reducido es directa. Las carreras ya empezadas se reanudan sin repetir la preparación.
 
@@ -16,7 +16,7 @@ La carrera tiene posición, tiempo y puntos; su referencia de ritmo se calibra c
 
 Al terminar los ocho retos, la canoa alcanza la meta y aparece un cierre ilustrado con posición, puntos y tiempo. Se puede volver al río o elegir otro camino sin recorrer un informe largo. El detalle de la carrera y los resultados educativos se despliega por separado; los rivales que aún no llegaron se muestran como «En el río».
 
-Esta entrega corresponde a la **web 0.7.0**. Las descargas Android y Windows permanecen en **0.4.0**. [Cambios, pruebas y límites de la web](docs/EVALUACION-WEB-0.7.0.md) · [Comparación de arte y jugabilidad](docs/ANALISIS-ARCADEMICS-WEB-0.7.0.md).
+Esta entrega corresponde a la **web 0.8.0**. Las descargas Android y Windows permanecen en **0.4.0**. [Cambios, pruebas y límites](docs/EVALUACION-WEB-0.8.0.md) · [Análisis global comparativo](docs/ANALISIS-GLOBAL-WEB-0.8.0.md) · [Salas y circuitos](docs/MULTIJUGADOR-Y-CIRCUITOS.md). Atractivo, preferencia y audio quedan pendientes de evaluación.
 
 Los puntos son recompensas de juego. El informe educativo distingue precisión inicial, resolución sin ayuda, pistas, correcciones y ritmo de respuesta. La web separa evolución por modalidad, contenido y nivel. Una posición, porcentaje o color no acredita aprendizaje ni equivale a calificación escolar.
 

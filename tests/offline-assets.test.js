@@ -9,7 +9,7 @@ test('The offline indicator checks the worker cache and the complete local modul
   assert(app.includes('caches.open(`'+cache+'`)'),'Indicator refers to a different cache');
   const files=new Set([...worker.match(/const FILES = \[([\s\S]*?)\];/)[1].matchAll(/"\.\/([^"]*)"/g)].map(m=>m[1]));
   for(const file of files) if(file) assert(existsSync(new URL('../web/'+file,import.meta.url)),file+' missing');
-  const pending=['app.js'];
+  const pending=['app.js','together.js'];
   const visited=new Set();
   while(pending.length){
     const file=pending.pop();if(visited.has(file))continue;visited.add(file);

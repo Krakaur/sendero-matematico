@@ -1,3 +1,17 @@
+# Continuidad web 0.8.0 · paquetes 0.4.0
+
+Sexto incremento: análisis global, juego entre personas y circuitos con curvas. Leer primero `ANALISIS-GLOBAL-WEB-0.8.0.md`, `EVALUACION-WEB-0.8.0.md` y `MULTIJUGADOR-Y-CIRCUITOS.md`. La publicación efectiva se registra en `qa-web-0.8.0/publication.json`; antes de ese registro, la versión es candidata comprobada localmente.
+
+La nueva entrada `juntos.html` admite dos personas en un dispositivo, o dos a cuatro por enlace privado con PeerJS/WebRTC. Incluye cooperación, pausa común, mismos retos, validación de respuestas y separación del expediente individual. La señalización usa PeerServer Cloud y STUN externos; no hay TURN propio, migración de anfitrión ni prueba entre redes físicas diferentes. Las desconexiones detienen la carrera sin premiarlas; una sala ya terminada conserva resultados al cerrar. No confundir estas salas con un servidor docente desplegado.
+
+`circuit.js` interpola cuatro carriles por longitud de arco en tres trazados, incluido un circuito cerrado de 360°. Mantiene trabajo matemático equivalente, no distancia física idéntica. La cámara y el minimapa siguen la geometría. Los NPC preservan sus protocolos y tiempos históricos. `learning-review.js` incorpora representaciones, revisión posterior y explicación; `core.js` y `practice.js` generan distractores más relacionados con la operación. No interpretar estas funciones como eficacia educativa validada.
+
+61 pruebas Node aprobadas. Carreras individuales y compartidas verificadas en Chromium y Firefox, cinco viewports, funcionamiento local offline, cuatro conexiones reales en contextos aislados de un solo equipo, pausa, corrección, revancha y cierre. Registros, rendimiento y límites en `qa-web-0.8.0/`. Respaldo de la pública 0.7.0: `qa-private/public-web-backup-20261014-cycle6/`, 36 archivos HTTP coincidentes con `1a1246e3431640a6612018271178230fc463f92b`, ZIP y restauración.
+
+Atractivo, preferencia y audio se reservaron expresamente para otro turno. No repetir como pendientes el juego humano y las curvas ya implementados; sí distinguir la validación entre redes y con estudiantes. No afirmar superioridad global sobre Arcademics. Mantener fuera de Git el PDF PISA y `BASE-CURRICULAR-NEM-PISA.md`. La autorización para publicar tras respaldo permanece vigente.
+
+## Historial de 0.7.0
+
 # Continuidad web 0.7.0 · paquetes 0.4.0
 
 Quinto incremento, 13 de octubre de 2026: renovación de arte, movimiento y competencia. Leer `ANALISIS-ARCADEMICS-WEB-0.7.0.md`, `EVALUACION-WEB-0.7.0.md` y `qa-web-0.7.0/`. Publicación verificada: fuente `0bbd14f1057031336813729295e763425885e170`, despliegue `1a1246e3431640a6612018271178230fc463f92b`, Pages `38494559976` satisfactorio y 36 archivos públicos coincidentes. La actualización conservó historial y carrera de protocolo 2; se completó y se abrió otra de protocolo 3 con respuesta e ilustraciones offline. Registro definitivo: `qa-web-0.7.0/publication.json`. Hay respaldo íntegro de 0.6.0 en `qa-private/public-web-backup-20261014-0015/`.

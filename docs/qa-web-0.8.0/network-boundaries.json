@@ -1,0 +1,7 @@
+{
+  "wrongKeyRejected": true,
+  "fifthParticipantRejected": true,
+  "hostRosterUnaffected": true,
+  "wrongKeyMessage": "No se pudo entrar. Comprueba la invitación; la sala puede estar completa, iniciada o cerrada.",
+  "fullRoomMessage": "No se pudo entrar. Comprueba la invitación; la sala puede estar completa, iniciada o cerrada."
+}

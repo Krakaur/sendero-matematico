@@ -1,0 +1,310 @@
+{
+  "baselineCommit": "0bbd14f1057031336813729295e763425885e170",
+  "version": "0.8.0",
+  "scope": "Instrumented structural and deterministic analysis; not learner outcomes or aesthetic ratings",
+  "bank": {
+    "items": 6630,
+    "uniquePrompts": 6630,
+    "families": {
+      "agrupar": 480,
+      "area": 320,
+      "comparacion": 80,
+      "comparar": 448,
+      "completar": 448,
+      "dato_faltante": 280,
+      "datos": 640,
+      "decimal": 80,
+      "dos_pasos": 320,
+      "equivalencia": 40,
+      "fraccion": 320,
+      "grupos": 480,
+      "patron": 312,
+      "perimetro": 320,
+      "posicion": 80,
+      "quitar": 288,
+      "repartir": 480,
+      "representar": 558,
+      "reunir": 288,
+      "tiempo": 288,
+      "unidades": 80
+    },
+    "levels": {
+      "1": 782,
+      "2": 1776,
+      "3": 2216,
+      "4": 1856
+    },
+    "pools": {
+      "practice": 4966,
+      "transfer": 1664
+    },
+    "dimensions": {
+      "Cantidades decimales": 80,
+      "Comparar": 448,
+      "Comparar números": 80,
+      "Dato desconocido": 928,
+      "Elegir representación": 558,
+      "Fracciones equivalentes": 40,
+      "Grupos y reparto": 960,
+      "Información suficiente": 280,
+      "Interpretar datos": 640,
+      "Medir y representar": 928,
+      "Partes iguales": 320,
+      "Planificar": 320,
+      "Reconocer relaciones": 312,
+      "Relacionar cantidades": 576,
+      "Relaciones entre unidades": 80,
+      "Valor posicional": 80
+    },
+    "templates": 148
+  },
+  "content": [
+    "suma",
+    "resta",
+    "multi",
+    "tablas20",
+    "razonar"
+  ],
+  "circuits": {
+    "bosque": {
+      "samplesPerLane": 641,
+      "laneLengths": [
+        2917.371,
+        2881.936,
+        2893.748,
+        2905.56
+      ],
+      "minHeadingDegrees": -20.68141827374372,
+      "maxHeadingDegrees": 15.212763052947022,
+      "minY": 314.0629156906763,
+      "maxY": 554.4936779469772,
+      "distanceParameter": "Each lane independently parameterized by arc length; progress fraction is equal educational work, not a shared speed in meters."
+    },
+    "islas": {
+      "samplesPerLane": 641,
+      "laneLengths": [
+        2918.944,
+        2931.533,
+        2927.337,
+        2923.14
+      ],
+      "minHeadingDegrees": -20.324001274484313,
+      "maxHeadingDegrees": 25.50662424791697,
+      "minY": 337.6426172216158,
+      "maxY": 556.4289793755792,
+      "distanceParameter": "Each lane independently parameterized by arc length; progress fraction is equal educational work, not a shared speed in meters."
+    },
+    "cascada": {
+      "samplesPerLane": 641,
+      "laneLengths": [
+        4986.263,
+        6639.828,
+        6088.64,
+        5537.451
+      ],
+      "minHeadingDegrees": -89.51680564039339,
+      "maxHeadingDegrees": 269.51680564039344,
+      "minY": 300,
+      "maxY": 1500,
+      "distanceParameter": "Each lane independently parameterized by arc length; progress fraction is equal educational work, not a shared speed in meters."
+    }
+  },
+  "sharedDecks": {
+    "configurations": 1600,
+    "items": 12800,
+    "exactDuplicates": 0,
+    "invalidChoices": 0
+  },
+  "baselineRandomDecks": {
+    "configurations": 1600,
+    "exactDuplicates": 907,
+    "note": "Random generator alone, without spaced-practice memory. Do not identify this simulation with observed individual-session repetition."
+  },
+  "distribution": [
+    {
+      "file": "web/actualizar.html",
+      "bytes": 1084
+    },
+    {
+      "file": "web/app.js",
+      "bytes": 76159
+    },
+    {
+      "file": "web/assets/forest-river-v1.png",
+      "bytes": 2771940
+    },
+    {
+      "file": "web/assets/river-racers-v1.png",
+      "bytes": 1414213
+    },
+    {
+      "file": "web/backup.js",
+      "bytes": 4950
+    },
+    {
+      "file": "web/bank-data.js",
+      "bytes": 2956849
+    },
+    {
+      "file": "web/bank-extra.js",
+      "bytes": 197809
+    },
+    {
+      "file": "web/bank.js",
+      "bytes": 2799
+    },
+    {
+      "file": "web/circuit.css",
+      "bytes": 3601
+    },
+    {
+      "file": "web/circuit.js",
+      "bytes": 11273
+    },
+    {
+      "file": "web/classroom.js",
+      "bytes": 3267
+    },
+    {
+      "file": "web/core.js",
+      "bytes": 8202
+    },
+    {
+      "file": "web/docentes.html",
+      "bytes": 3556
+    },
+    {
+      "file": "web/fluency.js",
+      "bytes": 873
+    },
+    {
+      "file": "web/icon-192.png",
+      "bytes": 5526
+    },
+    {
+      "file": "web/icon-512.png",
+      "bytes": 20357
+    },
+    {
+      "file": "web/icon.svg",
+      "bytes": 351
+    },
+    {
+      "file": "web/index.html",
+      "bytes": 4446
+    },
+    {
+      "file": "web/juntos.html",
+      "bytes": 1514
+    },
+    {
+      "file": "web/landscape.svg",
+      "bytes": 2749
+    },
+    {
+      "file": "web/learning-review.js",
+      "bytes": 3785
+    },
+    {
+      "file": "web/manifest.webmanifest",
+      "bytes": 368
+    },
+    {
+      "file": "web/narration.js",
+      "bytes": 524
+    },
+    {
+      "file": "web/practice.js",
+      "bytes": 1011
+    },
+    {
+      "file": "web/profiles.js",
+      "bytes": 3685
+    },
+    {
+      "file": "web/race-art.js",
+      "bytes": 1341
+    },
+    {
+      "file": "web/race-audio.js",
+      "bytes": 3754
+    },
+    {
+      "file": "web/race-finish.js",
+      "bytes": 4271
+    },
+    {
+      "file": "web/race-motion.js",
+      "bytes": 4649
+    },
+    {
+      "file": "web/race-start.css",
+      "bytes": 13142
+    },
+    {
+      "file": "web/race-start.js",
+      "bytes": 5428
+    },
+    {
+      "file": "web/race-world.css",
+      "bytes": 14003
+    },
+    {
+      "file": "web/race.js",
+      "bytes": 6858
+    },
+    {
+      "file": "web/regatta.css",
+      "bytes": 25077
+    },
+    {
+      "file": "web/results.js",
+      "bytes": 3606
+    },
+    {
+      "file": "web/room-link.js",
+      "bytes": 7593
+    },
+    {
+      "file": "web/room.js",
+      "bytes": 8692
+    },
+    {
+      "file": "web/sitemap.xml",
+      "bytes": 256
+    },
+    {
+      "file": "web/social.png",
+      "bytes": 70180
+    },
+    {
+      "file": "web/style.css",
+      "bytes": 35777
+    },
+    {
+      "file": "web/sw.js",
+      "bytes": 2349
+    },
+    {
+      "file": "web/together.css",
+      "bytes": 10551
+    },
+    {
+      "file": "web/together.js",
+      "bytes": 27026
+    },
+    {
+      "file": "web/update.js",
+      "bytes": 1823
+    },
+    {
+      "file": "web/vendor/peerjs-1.5.5.min.js",
+      "bytes": 86948
+    },
+    {
+      "file": "web/vendor/peerjs-LICENSE.txt",
+      "bytes": 1108
+    }
+  ],
+  "distributionBytes": 7835323
+}

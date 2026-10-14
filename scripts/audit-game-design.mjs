@@ -1,0 +1,17 @@
+import {execFileSync} from 'node:child_process';
+const baselineCommit='0bbd14f1057031336813729295e763425885e170';
+const baselineSource=execFileSync('git',['show',baselineCommit+':web/core.js'],{encoding:'utf8'}).replace('"./bank.js"',JSON.stringify(new URL('../web/bank.js',import.meta.url).href));
+const {makeQuestion:baselineQuestion}=await import('data:text/javascript;base64,'+Buffer.from(baselineSource).toString('base64'));
+import {writeFileSync,statSync,readdirSync} from 'node:fs';
+import {BANK_ITEMS} from '../web/bank.js';import {TRAILS,makeQuestion} from '../web/core.js';
+import {courseGeometry,coursePoint,CIRCUITS} from '../web/circuit.js';import {sharedDeck,seededRandom} from '../web/room.js';
+const group=key=>Object.fromEntries([...new Set(BANK_ITEMS.map(q=>q[key]))].sort().map(v=>[v,BANK_ITEMS.filter(q=>q[key]===v).length]));
+const result={baselineCommit,version:'0.8.0',scope:'Instrumented structural and deterministic analysis; not learner outcomes or aesthetic ratings',bank:{items:BANK_ITEMS.length,uniquePrompts:new Set(BANK_ITEMS.map(q=>q.prompt)).size,families:group('family'),levels:group('level'),pools:group('pool'),dimensions:group('dimension'),templates:new Set(BANK_ITEMS.map(q=>q.template)).size},content:Object.keys(TRAILS),circuits:{},sharedDecks:{configurations:0,items:0,exactDuplicates:0,invalidChoices:0},baselineRandomDecks:{configurations:0,exactDuplicates:0}};
+for(const id of Object.keys(CIRCUITS)){const g=courseGeometry(id),angles=g.lanes.flat().map(p=>p.angle*180/Math.PI);result.circuits[id]={samplesPerLane:641,laneLengths:g.lanes.map(l=>Number(l.at(-1).distance.toFixed(3))),minHeadingDegrees:Math.min(...angles),maxHeadingDegrees:Math.max(...angles),minY:Math.min(...g.points.map(p=>p.y)),maxY:Math.max(...g.points.map(p=>p.y)),distanceParameter:'Each lane independently parameterized by arc length; progress fraction is equal educational work, not a shared speed in meters.'};}
+for(const trail of ['suma','resta','multi','tablas20'])for(let level=1;level<=4;level++)for(let seed=0;seed<100;seed++){
+ const d=sharedDeck({trail,level,seed,mode:'race',circuit:'bosque'});result.sharedDecks.configurations++;result.sharedDecks.items+=d.length;result.sharedDecks.exactDuplicates+=8-new Set(d.map(q=>`${q.a}:${q.b}`)).size;result.sharedDecks.invalidChoices+=d.filter(q=>q.options.length!==4||new Set(q.options).size!==4||!q.options.includes(q.answer)).length;
+ const rng=seededRandom(seed),baseline=Array.from({length:8},()=>baselineQuestion(trail,level,rng));result.baselineRandomDecks.configurations++;result.baselineRandomDecks.exactDuplicates+=8-new Set(baseline.map(q=>`${q.a}:${q.b}`)).size;
+}
+result.baselineRandomDecks.note='Random generator alone, without spaced-practice memory. Do not identify this simulation with observed individual-session repetition.';
+const walk=dir=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(dir+'/'+e.name):[{file:dir+'/'+e.name,bytes:statSync(dir+'/'+e.name).size}]);result.distribution=walk('web');result.distributionBytes=result.distribution.reduce((s,f)=>s+f.bytes,0);
+writeFileSync('docs/qa-web-0.8.0/structural-audit.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({items:result.bank.items,unique:result.bank.uniquePrompts,templates:result.bank.templates,sharedDecks:result.sharedDecks,baselineRandomDecks:result.baselineRandomDecks,bytes:result.distributionBytes}));

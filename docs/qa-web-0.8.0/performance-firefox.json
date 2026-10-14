@@ -1,0 +1,35 @@
+{
+  "browser": "headless Firefox",
+  "viewport": [
+    1280,
+    800
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "durationMs": 64676,
+      "samples": 3722,
+      "medianFrameMs": 16.660000000003492,
+      "p95FrameMs": 16.68000000000029,
+      "over50ms": 8,
+      "visibility": "visible",
+      "latencies": [
+        27,
+        32,
+        21,
+        25,
+        28,
+        24,
+        17,
+        15
+      ]
+    }
+  ],
+  "latency": {
+    "n": 8,
+    "medianMs": 25,
+    "p95Ms": 32,
+    "maxMs": 32
+  },
+  "measure": "Capture-phase answer click to next animation frame with updated earned-distance feedback; rendering proxy, not photodiode latency"
+}

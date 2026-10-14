@@ -1,4 +1,4 @@
-import { makeQuestion } from './core.js';
+import { makeQuestion, arithmeticOptions } from './core.js';
 export function rememberPractice(profile,trail,q){
   if(trail==='razonar')return;
   const memory=profile.practiceMemory??={}, track=memory[trail]??={step:0,facts:{}};
@@ -13,7 +13,6 @@ export function practiceQuestion(profile,trail,level,rng=Math.random){
   const due=Object.values(track.facts).filter(f=>f.level===level&&f.due<=track.step).sort((a,b)=>a.due-b.due)[0];
   if(!due)return q;
   q.a=due.a;q.b=due.b;q.answer=trail==='suma'?q.a+q.b:trail==='resta'?q.a-q.b:q.a*q.b;
-  const options=new Set([q.answer]);while(options.size<4)options.add(Math.max(0,q.answer-5)+Math.floor(rng()*11));q.options=[...options];
-  for(let i=3;i>0;i--){const j=Math.floor(rng()*(i+1));[q.options[i],q.options[j]]=[q.options[j],q.options[i]];}
+  q.options=arithmeticOptions(trail,q.a,q.b,q.answer,rng);
   q.review=true;return q;
 }

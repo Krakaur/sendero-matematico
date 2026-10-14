@@ -1,6 +1,14 @@
 # Privacidad de Sendero
 
-Versión del aviso: 15 de septiembre de 2026. Desarrollo: Dirk Hans Krakaur Floranes. Contacto público sobre el software: [repositorio de Sendero](https://github.com/Krakaur/sendero-matematico/issues). No publiques nombres, expedientes ni informes de menores en ese canal.
+Versión del aviso: 13 de octubre de 2026. Desarrollo: Dirk Hans Krakaur Floranes. Contacto público sobre el software: [repositorio de Sendero](https://github.com/Krakaur/sendero-matematico/issues). No publiques nombres, expedientes ni informes de menores en ese canal.
+
+## Partidas compartidas de la web 0.8.0
+
+«Dos en esta pantalla» conserva el recorrido en el almacenamiento de la pestaña para poder recuperarlo tras una recarga. «Elegir otra experiencia» o terminar el recorrido desde la pausa elimina esa copia; cerrar la pestaña normalmente termina su almacenamiento de sesión, aunque algunos navegadores restauran sesiones. La copia no se incorpora al expediente individual.
+
+Al elegir crear o entrar en una sala por enlace se utiliza PeerServer Cloud, en `0.peerjs.com`, para conectar navegadores, y servidores STUN de Google para descubrir rutas de conexión. Estos servicios reciben metadatos técnicos, incluida información de red. Las partidas viajan por canales WebRTC cifrados entre participantes; se comparten ejercicios, respuestas, ayudas, tiempos y nombres predefinidos de personajes. No se envían alias, contraseñas, historial ni expediente individual. Las aplicaciones de los participantes reciben el estado compartido y podrían conservarlo fuera del control de Sendero.
+
+La invitación incluye una llave aleatoria: quien la recibe puede intentar entrar mientras haya plazas y la sala no haya empezado. No acredita identidad. No existen buscador público de salas, chat, cámara o micrófono. La señalización externa se activa solo al elegir el juego en línea. No se contrató alojamiento ni se desplegó un servidor de partidas o TURN propio. Algunas redes impiden la conexión. Cerrar la sala finaliza sus conexiones; no borra copias que otra persona pudiera haber hecho.
 
 ## Datos dentro del dispositivo
 
