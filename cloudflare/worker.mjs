@@ -1,5 +1,5 @@
 import { validateReport, SCHEMA } from "../web/core.js";
-import { validateTasks } from "../web/classroom.js";
+import { isAssignedTask, validateTasks, mergeTaskHistory, visibleTasks, validateAssignedSession } from "../web/assignments.js";
 import { validWorkshop } from "../web/workshop.js";
 import { validEnrollment, normalizeEnrollment } from "../web/enrollment.js";
 import {
@@ -229,26 +229,42 @@ export default {
             "chunked-vault",
             "enrollment",
             "multiplayer",
+            "assignments-v2",
           ],
           pageSize: PAGE,
           chunkSize: CHUNK,
           maxCopyBytes: MAX_COPY,
         });
-      if (is("/tasks"))
+      if (is("/tasks")) {
+        require(["teacher", "student"].includes(who.role), 403, "role");
+        const row = await first("SELECT tasks FROM rooms WHERE id=?", who.room);
+        require(row, 404, "classroom");
+        const tasks = validateTasks(JSON.parse(row.tasks));
         return respond({
-          tasks: JSON.parse(
-            (await first("SELECT tasks FROM rooms WHERE id=?", who.room)).tasks,
-          ),
+          tasks: who.role === "teacher" ? tasks : visibleTasks(tasks, who.profile),
+          revision: await digest(row.tasks),
         });
+      }
       if (is("/tasks", "POST")) {
         require(who.role === "teacher", 403, "role");
-        const tasks = validateTasks(data.tasks);
-        await run(
-          "UPDATE rooms SET tasks=? WHERE id=?",
-          JSON.stringify(tasks),
-          who.room,
+        const incoming = validateTasks(data.tasks);
+        const row = await first("SELECT tasks FROM rooms WHERE id=?", who.room);
+        require(row, 404, "classroom");
+        const existing = validateTasks(JSON.parse(row.tasks));
+        const currentRevision = await digest(row.tasks);
+        if (incoming.some(isAssignedTask) || existing.some(isAssignedTask))
+          require(data.expectedRevision === currentRevision, 409, "task_history_changed");
+        else if (data.expectedRevision != null)
+          require(data.expectedRevision === currentRevision, 409, "task_history_changed");
+        const tasks = mergeTaskHistory(existing, incoming, who.room);
+        const serialized = JSON.stringify(canonical(tasks));
+        require(new TextEncoder().encode(serialized).length <= 192 * 1024, 413, "task_history_limit");
+        const result = await run(
+          "UPDATE rooms SET tasks=? WHERE id=? AND tasks=? AND EXISTS(SELECT 1 FROM access WHERE hash=? AND room=? AND role='teacher')",
+          serialized, who.room, row.tasks, hash, who.room,
         );
-        return respond({ tasks });
+        require(result.meta.changes === 1, 409, "task_history_changed");
+        return respond({ tasks, revision: await digest(serialized) });
       }
       if (is("/students")) {
         require(who.role === "teacher", 403, "role");
@@ -349,6 +365,8 @@ export default {
             reports: [...groups.values()],
             cursor: rows.at(-1)?.seq || after,
             more: rows.length === PAGE,
+            confirmedAt: new Date().toISOString(),
+            confirmationSource: "server-read",
           });
         }
         require(who.role === "student", 403, "role");
@@ -359,7 +377,14 @@ export default {
             data[key].length <= PAGE,
         );
         require(!who.profile || who.profile === data.profile, 403, "profile");
-        if (key === "sessions") validateReport(data);
+        if (key === "sessions") {
+          validateReport(data);
+          const catalog = data.sessions.some((session) => session.assignment)
+            ? validateTasks(JSON.parse((await first("SELECT tasks FROM rooms WHERE id=?", who.room)).tasks))
+            : null;
+          for (const session of data.sessions)
+            validateAssignedSession(session, catalog, who.room);
+        }
         else if (key === "multiplayer") validateMultiplayerReport(data);
         else
           require(
@@ -375,7 +400,7 @@ export default {
           stmt("UPDATE access SET profile=? WHERE hash=?", data.profile, hash),
           ...records.map((r) =>
             stmt(
-              `INSERT INTO ${table}(room,profile,id,body) SELECT ?,?,?,? WHERE EXISTS(SELECT 1 FROM access WHERE hash=? AND profile=?) ON CONFLICT(room,profile,id) DO UPDATE SET body=excluded.body`,
+              `INSERT INTO ${table}(room,profile,id,body) SELECT ?,?,?,? WHERE EXISTS(SELECT 1 FROM access WHERE hash=? AND profile=?) ON CONFLICT(room,profile,id) DO UPDATE SET body=excluded.body${key === "sessions" ? " WHERE sessions.body <> excluded.body" : ""}`,
               who.room,
               data.profile,
               r.id,
@@ -385,12 +410,14 @@ export default {
             ),
           ),
         ]);
-        require(results.every((r) => r.meta.changes === 1), 401, "revoked");
+        require(results[0].meta.changes === 1 && results.slice(1).every((r) =>
+          r.meta.changes === 1 || (key === "sessions" && r.meta.changes === 0)), 401, "revoked");
         return respond({
           classId: who.room,
           profile: data.profile,
           accepted: records.map((r) => r.id),
           receivedAt: new Date().toISOString(),
+          receiptSource: "server-acknowledgement",
         });
       }
       if (is("/vault/start", "POST")) {

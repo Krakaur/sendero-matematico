@@ -3,9 +3,15 @@ import { DatabaseSync } from "node:sqlite";
 import { createHash, randomUUID, randomBytes } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { validateReport, SCHEMA } from "../web/core.js";
-import { validateTasks } from "../web/classroom.js";
+import { isAssignedTask, validateTasks, mergeTaskHistory, visibleTasks, validateAssignedSession } from "../web/assignments.js";
 import { validWorkshop } from "../web/workshop.js";
+import { validEnrollment, normalizeEnrollment } from "../web/enrollment.js";
 const digest = (s) => createHash("sha256").update(s).digest("hex");
+const canonical = (x) => Array.isArray(x) ? x.map(canonical)
+  : x && typeof x === "object" ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canonical(x[k])])) : x;
+class HttpError extends Error {
+  constructor(status, message) { super(message); this.status = status; }
+}
 export function openDatabase(path) {
   const db = new DatabaseSync(path);
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
@@ -13,6 +19,7 @@ export function openDatabase(path) {
  CREATE TABLE IF NOT EXISTS access(hash TEXT PRIMARY KEY,room TEXT NOT NULL REFERENCES rooms(id),role TEXT NOT NULL,profile TEXT);
  CREATE TABLE IF NOT EXISTS sessions(room TEXT,profile TEXT,id TEXT,body TEXT NOT NULL,PRIMARY KEY(room,profile,id));
  CREATE TABLE IF NOT EXISTS projects(room TEXT,profile TEXT,id TEXT,body TEXT NOT NULL,PRIMARY KEY(room,profile,id));
+ CREATE TABLE IF NOT EXISTS enrollments(room TEXT NOT NULL REFERENCES rooms(id),profile TEXT NOT NULL,body TEXT NOT NULL,updated_at TEXT NOT NULL,PRIMARY KEY(room,profile));
  CREATE TABLE IF NOT EXISTS vaults(access_hash TEXT PRIMARY KEY REFERENCES access(hash) ON DELETE CASCADE,profile TEXT NOT NULL,revision INTEGER NOT NULL,envelope TEXT NOT NULL,updated_at TEXT NOT NULL);`);
   if (
     !db
@@ -85,7 +92,7 @@ export function receiver(db, { origins = [] } = {}) {
       if (req.url === "/capabilities" && req.method === "GET")
         return json(200, {
           version: 2,
-          features: ["projects", "vault", "students"],
+          features: ["projects", "vault", "students", "enrollment", "assignments-v2"],
         });
       if (req.url === "/vault" && req.method === "GET") {
         const v = db
@@ -154,6 +161,28 @@ export function receiver(db, { origins = [] } = {}) {
         }
         return json(200, { revision, updatedAt: at });
       }
+      if (req.url === "/enrollment" && req.method === "POST") {
+        if (who.role !== "student") return json(403, { error: "role" });
+        const data = await body();
+        if (typeof data.profile !== "string" || !/^[a-zA-Z0-9-]{1,60}$/.test(data.profile) || !validEnrollment(data.enrollment))
+          return json(400, { error: "invalid_enrollment" });
+        const enrollment = normalizeEnrollment(data.enrollment);
+        db.exec("BEGIN IMMEDIATE");
+        try {
+          const account = db.prepare("SELECT profile FROM access WHERE hash=? AND room=? AND role='student'").get(who.hash, who.room);
+          if (!account) throw new HttpError(401, "revoked");
+          if (account.profile && account.profile !== data.profile)
+            throw new HttpError(403, "profile");
+          db.prepare("UPDATE access SET profile=? WHERE hash=?").run(data.profile, who.hash);
+          db.prepare("INSERT INTO enrollments(room,profile,body,updated_at) VALUES(?,?,?,?) ON CONFLICT(room,profile) DO UPDATE SET body=excluded.body,updated_at=excluded.updated_at")
+            .run(who.room, data.profile, JSON.stringify(enrollment), new Date().toISOString());
+          db.exec("COMMIT");
+        } catch (error) {
+          db.exec("ROLLBACK");
+          throw error;
+        }
+        return json(200, { classId:who.room, profile:data.profile, enrollment });
+      }
       if (
         req.url === "/students" &&
         req.method === "GET" &&
@@ -162,9 +191,9 @@ export function receiver(db, { origins = [] } = {}) {
         return json(200, {
           students: db
             .prepare(
-              "SELECT id,profile FROM access WHERE room=? AND role='student'",
+              "SELECT a.id,a.profile,e.body FROM access a LEFT JOIN enrollments e ON a.room=e.room AND a.profile=e.profile WHERE a.room=? AND a.role='student'",
             )
-            .all(who.room),
+            .all(who.room).map(({id,profile,body}) => ({id,profile,enrollment:body ? JSON.parse(body) : null})),
         });
       if (
         req.url === "/students" &&
@@ -273,24 +302,41 @@ export function receiver(db, { origins = [] } = {}) {
           })),
         });
       }
-      if (req.url === "/tasks" && req.method === "GET")
+      if (req.url === "/tasks" && req.method === "GET") {
+        if (!["teacher", "student"].includes(who.role))
+          return json(403, { error: "role" });
+        const row = db.prepare("SELECT tasks FROM rooms WHERE id=?").get(who.room);
+        const tasks = validateTasks(JSON.parse(row.tasks));
         return json(200, {
-          tasks: JSON.parse(
-            db.prepare("SELECT tasks FROM rooms WHERE id=?").get(who.room)
-              .tasks,
-          ),
+          tasks: who.role === "teacher" ? tasks : visibleTasks(tasks, who.profile),
+          revision: digest(row.tasks),
         });
-      if (
-        req.url === "/tasks" &&
-        req.method === "POST" &&
-        who.role === "teacher"
-      ) {
-        const tasks = validateTasks((await body()).tasks);
-        db.prepare("UPDATE rooms SET tasks=? WHERE id=?").run(
-          JSON.stringify(tasks),
-          who.room,
-        );
-        return json(200, { tasks });
+      }
+      if (req.url === "/tasks" && req.method === "POST" && who.role === "teacher") {
+        const data = await body();
+        const incoming = validateTasks(data.tasks);
+        db.exec("BEGIN IMMEDIATE");
+        let tasks, serialized;
+        try {
+          const row = db.prepare("SELECT tasks FROM rooms WHERE id=?").get(who.room);
+          const existing = validateTasks(JSON.parse(row.tasks));
+          const currentRevision = digest(row.tasks);
+          if ((incoming.some(isAssignedTask) || existing.some(isAssignedTask) || data.expectedRevision != null)
+              && data.expectedRevision !== currentRevision)
+            throw new HttpError(409, "task_history_changed");
+          tasks = mergeTaskHistory(existing, incoming, who.room);
+          serialized = JSON.stringify(canonical(tasks));
+          if (Buffer.byteLength(serialized) > 192 * 1024)
+            throw new HttpError(413, "task_history_limit");
+          const result = db.prepare("UPDATE rooms SET tasks=? WHERE id=? AND tasks=? AND EXISTS(SELECT 1 FROM access WHERE hash=? AND room=? AND role='teacher')")
+            .run(serialized, who.room, row.tasks, who.hash, who.room);
+          if (result.changes !== 1) throw new HttpError(409, "task_history_changed");
+          db.exec("COMMIT");
+        } catch (error) {
+          db.exec("ROLLBACK");
+          throw error;
+        }
+        return json(200, { tasks, revision: digest(serialized) });
       }
       if (
         req.url === "/reports" &&
@@ -305,15 +351,19 @@ export function receiver(db, { origins = [] } = {}) {
           const bound = db
             .prepare("SELECT profile FROM access WHERE hash=?")
             .get(who.hash).profile;
-          if (bound && bound !== report.profile) throw Error("profile");
+          if (bound && bound !== report.profile) throw new HttpError(403, "profile");
+          const catalog = report.sessions.some((session) => session.assignment)
+            ? validateTasks(JSON.parse(db.prepare("SELECT tasks FROM rooms WHERE id=?").get(who.room).tasks))
+            : null;
           for (const s of report.sessions) {
+            validateAssignedSession(s, catalog, who.room);
             const old = db
               .prepare(
                 "SELECT body FROM sessions WHERE room=? AND profile=? AND id=?",
               )
               .get(who.room, report.profile, s.id);
             if (old && !isDeepStrictEqual(JSON.parse(old.body), s))
-              throw Error("conflict");
+              throw new HttpError(409, "conflicting_record");
             if (!old)
               db.prepare("INSERT INTO sessions VALUES(?,?,?,?)").run(
                 who.room,
@@ -336,6 +386,7 @@ export function receiver(db, { origins = [] } = {}) {
           profile: report.profile,
           accepted: report.sessions.map((s) => s.id),
           receivedAt: new Date().toISOString(),
+          receiptSource: "server-acknowledgement",
         });
       }
       if (
@@ -351,6 +402,8 @@ export function receiver(db, { origins = [] } = {}) {
           grouped.get(row.profile).push(JSON.parse(row.body));
         }
         return json(200, {
+          confirmedAt: new Date().toISOString(),
+          confirmationSource: "server-read",
           reports: [...grouped].map(([profile, sessions]) => ({
             schema: SCHEMA,
             profile,
@@ -359,8 +412,8 @@ export function receiver(db, { origins = [] } = {}) {
         });
       }
       return json(403, { error: "permission" });
-    } catch {
-      return json(400, { error: "invalid_or_conflicting_data" });
+    } catch (error) {
+      return json(error instanceof HttpError ? error.status : 400, { error: error instanceof HttpError ? error.message : "invalid_or_conflicting_data" });
     }
   });
 }

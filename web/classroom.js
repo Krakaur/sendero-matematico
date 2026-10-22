@@ -1,3 +1,5 @@
+import {validateTasks,sessionKey} from './assignments.js';
+export {validateTasks} from './assignments.js';
 import { validWorkshop, mergeWorkshopReports } from "./workshop.js";
 import { SCHEMA, TRAILS, validateReport, mergeSessions } from "./core.js";
 import { normalizeEnrollment, validEnrollment } from "./enrollment.js";
@@ -6,6 +8,57 @@ import {
   validateMultiplayerReport,
   mergeMultiplayer,
 } from "./multiplayer-records.js";
+export const DELIVERY_ATTEMPT_SCHEMA = "sendero.delivery-attempt.v1";
+const deliveryTime = (value) => typeof value === "string" && /(?:Z|[+-]\d\d:\d\d)$/.test(value) && Number.isFinite(Date.parse(value));
+function confirmationFor(state, session, entries=state.classroom?.confirmations) {
+  const confirmation=entries?.[sessionKey(session)];
+  return confirmation && confirmation.classId===state.classroom?.classId
+    && confirmation.profile===state.profile && session.profile===state.profile
+    && (!session.assignment || session.assignment.classId===confirmation.classId)
+    && confirmation.source==="server-acknowledgement" && deliveryTime(confirmation.receivedAt)
+    ? confirmation : null;
+}
+function checkedDeliveryAttempt(state, event) {
+  if (event?.schema!==DELIVERY_ATTEMPT_SCHEMA || event.classId!==state.classroom?.classId
+      || event.profile!==state.profile || typeof event.attemptId!=="string" || !/^[a-zA-Z0-9-]{1,80}$/.test(event.attemptId)
+      || !deliveryTime(event.startedAt) || !Array.isArray(event.sessionKeys) || !Array.isArray(event.sessionIds)
+      || !event.sessionKeys.length || event.sessionKeys.length>5000 || event.sessionKeys.length!==event.sessionIds.length
+      || new Set(event.sessionKeys).size!==event.sessionKeys.length || new Set(event.sessionIds).size!==event.sessionIds.length)
+    throw Error("El intento de entrega no corresponde al perfil o al aula.");
+  const sessions=new Map(state.sessions.map((session)=>[sessionKey(session),session]));
+  for (let index=0; index<event.sessionKeys.length; index++) {
+    const session=sessions.get(event.sessionKeys[index]);
+    if (!session || session.id!==event.sessionIds[index] || session.profile!==state.profile
+        || !deliveryTime(session.completedAt) || (session.assignment && session.assignment.classId!==event.classId))
+      throw Error("El intento de entrega contiene una sesión ajena o sin cierre local.");
+  }
+  return event;
+}
+// This is an intention persisted before POST, never proof of transmission or reception.
+export function applyDeliveryAttempt(state, event) {
+  checkedDeliveryAttempt(state,event);
+  const attempts={...(state.classroom.deliveryAttempts||{})};
+  for (const key of event.sessionKeys) {
+    const old=attempts[key];
+    if (old?.lastAttemptId===event.attemptId) continue;
+    const same=old?.classId===event.classId && old?.profile===event.profile;
+    attempts[key]={classId:event.classId,profile:event.profile,
+      firstAttemptAt:same?old.firstAttemptAt:event.startedAt,
+      lastAttemptAt:event.startedAt,lastAttemptId:event.attemptId,
+      attemptCount:(same && Number.isSafeInteger(old.attemptCount) && old.attemptCount>0?old.attemptCount:0)+1};
+  }
+  state.classroom.deliveryAttempts=attempts;
+}
+export function deliveryStatus(state, session) {
+  const confirmation=confirmationFor(state,session);
+  const candidate=state.classroom?.deliveryAttempts?.[sessionKey(session)];
+  const attempt=candidate?.classId===state.classroom?.classId && candidate?.profile===session.profile
+    && deliveryTime(candidate.lastAttemptAt) ? candidate : null;
+  return {stage:confirmation?"acknowledged":!session.completedAt?"in_progress":attempt?"send_attempted":"closed_local",
+    closedAt:session.completedAt||null,attempt,confirmation,
+    // Preserve legacy skip markers without upgrading them into verifiable acknowledgements.
+    legacyReceivedFlag:!session.assignment && Boolean(state.classroom?.received?.includes(session.id))};
+}
 export function readInvitation(data, role) {
   if (
     data?.schema !== "sendero.invitation.v1" ||
@@ -39,22 +92,6 @@ export function readInvitation(data, role) {
     received: [],
     tasks: [],
   };
-}
-export function validateTasks(tasks) {
-  if (!Array.isArray(tasks) || tasks.length > 100)
-    throw Error("Lista de tareas no válida.");
-  return tasks.map((t) => {
-    if (
-      typeof t.id !== "string" ||
-      t.id.length > 80 ||
-      typeof t.title !== "string" ||
-      t.title.length < 1 ||
-      t.title.length > 100 ||
-      !Object.hasOwn(TRAILS, t.trail)
-    )
-      throw Error("Tarea no válida.");
-    return { id: t.id, title: t.title, trail: t.trail };
-  });
 }
 export async function classroomRequest(link, path, body, fetcher = fetch) {
   const r = await fetcher(link.endpoint + path, {
@@ -92,12 +129,10 @@ export async function classroomRequest(link, path, body, fetcher = fetch) {
     throw Error("Respuesta demasiado grande.");
   return JSON.parse(text);
 }
-export async function exchangeClassroom(state, fetcher = fetch) {
+export async function exchangeClassroom(state, fetcher = fetch, {onAttempt} = {}) {
+  if (onAttempt!==undefined && typeof onAttempt!=="function") throw Error("onAttempt debe ser una función de persistencia.");
   const link = state.classroom;
   if (!link?.enabled) return null;
-  const tasks = validateTasks(
-    (await classroomRequest(link, "/tasks", null, fetcher)).tasks,
-  );
   let capabilities = link.capabilities || [];
   let capabilitiesAt = link.capabilitiesAt || 0;
   if (!link.capabilitiesAt || Date.now() - link.capabilitiesAt > 3600000)
@@ -115,12 +150,36 @@ export async function exchangeClassroom(state, fetcher = fetch) {
             "chunked-vault",
             "enrollment",
             "multiplayer",
+            "assignments-v2",
           ].includes(f),
         );
       capabilitiesAt = Date.now();
     } catch (error) {
       if (error.retryAfter > 60) throw error;
     }
+  const extra = {};
+  if (link.role === "student" && capabilities.includes("enrollment")) {
+    const enrollment = normalizeEnrollment(state.enrollment),
+      stamp = JSON.stringify(enrollment);
+    if (link.enrollmentSent !== stamp) {
+      const receipt = await classroomRequest(
+        link,
+        "/enrollment",
+        { profile: state.profile, enrollment },
+        fetcher,
+      );
+      if (
+        receipt.profile !== state.profile ||
+        receipt.classId !== link.classId ||
+        JSON.stringify(receipt.enrollment) !== stamp
+      )
+        throw Error("La confirmación de datos escolares no coincide.");
+      extra.enrollmentSent = stamp;
+    }
+  }
+  const taskData=await classroomRequest(link,"/tasks",null,fetcher);
+  const tasks=validateTasks(taskData.tasks);
+  const taskRevision=typeof taskData.revision==='string'?taskData.revision:null;
   const paged = capabilities.includes("paged-reports");
   if (link.role === "teacher") {
     const data = await classroomRequest(
@@ -137,6 +196,8 @@ export async function exchangeClassroom(state, fetcher = fetch) {
     )
       throw Error("Cursor de informes no válido.");
     const sessions = data.reports.flatMap((r) => validateReport(r).sessions);
+    const confirmedAt=typeof data.confirmedAt==='string'&&Number.isFinite(Date.parse(data.confirmedAt))?data.confirmedAt:new Date().toISOString();
+    const teacherConfirmations=Object.fromEntries(sessions.map(s=>[sessionKey(s),{classId:link.classId,profile:s.profile,confirmedAt,source:data.confirmationSource==='server-read'?'server-read':'client-observed-server-read'}]));
     let projects = [],
       multiplayer = [],
       multiplayerCursor = link.multiplayerCursor || 0,
@@ -204,6 +265,8 @@ export async function exchangeClassroom(state, fetcher = fetch) {
     }
     return {
       tasks,
+      taskRevision,
+      teacherConfirmations,
       sessions,
       projects,
       students,
@@ -216,26 +279,6 @@ export async function exchangeClassroom(state, fetcher = fetch) {
         : {}),
       at: new Date().toISOString(),
     };
-  }
-  const extra = {};
-  if (capabilities.includes("enrollment")) {
-    const enrollment = normalizeEnrollment(state.enrollment),
-      stamp = JSON.stringify(enrollment);
-    if (link.enrollmentSent !== stamp) {
-      const receipt = await classroomRequest(
-        link,
-        "/enrollment",
-        { profile: state.profile, enrollment },
-        fetcher,
-      );
-      if (
-        receipt.profile !== state.profile ||
-        receipt.classId !== link.classId ||
-        JSON.stringify(receipt.enrollment) !== stamp
-      )
-        throw Error("La confirmación de datos escolares no coincide.");
-      extra.enrollmentSent = stamp;
-    }
   }
   if (link.includeMultiplayer && capabilities.includes("multiplayer")) {
     const pending = (state.multiplayerHistory || [])
@@ -287,12 +330,14 @@ export async function exchangeClassroom(state, fetcher = fetch) {
     }
   }
   const pending = state.sessions
-    .filter((s) => !link.received?.includes(s.id))
+    .filter((s) => (!s.assignment ? !link.received?.includes(s.id) : !confirmationFor(state,s))
+      && (!s.assignment || s.assignment.classId === link.classId))
     .slice(0, paged ? 4 : 5000);
   if (!pending.length)
     return {
       ...extra,
       tasks,
+      taskRevision,
       received: [],
       projectReceived,
       capabilities,
@@ -301,17 +346,28 @@ export async function exchangeClassroom(state, fetcher = fetch) {
     };
   const report = { schema: SCHEMA, profile: state.profile, sessions: pending };
   validateReport(report);
+  const deliveryAttempt={schema:DELIVERY_ATTEMPT_SCHEMA,classId:link.classId,profile:state.profile,
+    attemptId:crypto.randomUUID(),startedAt:new Date().toISOString(),
+    sessionKeys:pending.map(sessionKey),sessionIds:pending.map((session)=>session.id)};
+  checkedDeliveryAttempt(state,deliveryAttempt);
+  // The host application must save this callback before it resolves. Failure prevents POST.
+  if (onAttempt) await onAttempt(structuredClone(deliveryAttempt));
   const receipt = await classroomRequest(link, "/reports", report, fetcher);
   if (
     receipt.classId !== link.classId ||
     receipt.profile !== state.profile ||
     !Array.isArray(receipt.accepted) ||
-    pending.some((s) => !receipt.accepted.includes(s.id))
+    pending.some((s) => !receipt.accepted.includes(s.id)) ||
+    receipt.accepted.length!==pending.length || new Set(receipt.accepted).size!==pending.length ||
+    !deliveryTime(receipt.receivedAt)
   )
     throw Error("La confirmación no coincide con los informes enviados.");
   return {
     ...extra,
     tasks,
+    taskRevision,
+    deliveryAttempt,
+    confirmations:Object.fromEntries(pending.map(s=>[sessionKey(s),{classId:link.classId,profile:s.profile,receivedAt:receipt.receivedAt,source:'server-acknowledgement'}])),
     received: receipt.accepted,
     projectReceived,
     capabilities,
@@ -321,6 +377,23 @@ export async function exchangeClassroom(state, fetcher = fetch) {
 }
 export function applyExchange(state, result) {
   if (!result) return;
+  // Reject incomplete student acknowledgements before changing any state or cursor.
+  if (state.classroom.role==="student") {
+    const accepted=result.received||[], confirmations=result.confirmations||{};
+    if (!Array.isArray(accepted) || new Set(accepted).size!==accepted.length
+        || Object.keys(confirmations).length!==accepted.length)
+      throw Error("El intercambio no contiene un acuse íntegro.");
+    for (const id of accepted) {
+      const session=state.sessions.find((entry)=>entry.id===id && entry.profile===state.profile
+        && confirmationFor(state,entry,confirmations));
+      const confirmation=session && confirmationFor(state,session,confirmations);
+      if (!confirmation || confirmation.receivedAt!==result.at)
+        throw Error("No se puede marcar recibido un informe sin acuse válido.");
+    }
+    if (result.deliveryAttempt) checkedDeliveryAttempt(state,result.deliveryAttempt);
+  }
+  // Validate conflicts before changing cursors or other state.
+  const mergedTeacher=result.sessions?mergeSessions(state.teacher,result.sessions).sessions:null;
   if (result.multiplayer)
     state.teacherMultiplayer = mergeMultiplayer(
       state.teacherMultiplayer || [],
@@ -362,9 +435,25 @@ export function applyExchange(state, result) {
       ]),
     ];
   state.classroom.tasks = result.tasks;
-  state.classroom.lastReceipt = result.at;
+  if(result.taskRevision)state.classroom.taskRevision=result.taskRevision;
+  // onAttempt owns attempt persistence; an out-of-order response must not count it again.
+  if(result.confirmations){
+    const confirmations={...(state.classroom.confirmations||{})};
+    for(const [key,incoming] of Object.entries(result.confirmations)){
+      const old=confirmations[key];
+      if(!old || old.classId!==incoming.classId || old.profile!==incoming.profile
+          || old.source!=="server-acknowledgement"
+          || !deliveryTime(old.receivedAt) || Date.parse(old.receivedAt)<=Date.parse(incoming.receivedAt))
+        confirmations[key]=incoming;
+    }
+    state.classroom.confirmations=confirmations;
+  }
+  if(result.teacherConfirmations)state.teacherConfirmations={...(state.teacherConfirmations||{}),...result.teacherConfirmations};
+  state.classroom.lastSyncAt = result.at;
+  if (result.received?.length && (!deliveryTime(state.classroom.lastReceipt)
+      || Date.parse(state.classroom.lastReceipt)<=Date.parse(result.at))) state.classroom.lastReceipt = result.at;
   if (result.sessions)
-    state.teacher = mergeSessions(state.teacher, result.sessions).sessions;
+    state.teacher = mergedTeacher;
   if (result.received)
     state.classroom.received = [
       ...new Set([...(state.classroom.received || []), ...result.received]),

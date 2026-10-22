@@ -1,7 +1,8 @@
+import {assignmentSnapshot,validateAssignedSession,equivalent,sessionKey} from './assignments.js';
 import {validEnrollment} from './enrollment.js';
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.12.0";
-export const SCHEMA = "sendero.report.v2";
+export const VERSION = "0.13.0";
+export const SCHEMA = "sendero.report.v3";
 export const TRAILS = {
   suma: {
     name: "El bosque de las sumas",
@@ -46,9 +47,36 @@ export function recordAttempt(question, value) {
     return false;
   if (!question.attempts.length && question.timingProtocol === 1) question.firstResponseMs = question.activeMs;
   question.attempts.push(value);
+  if(Array.isArray(question.events)) {
+    question.events.push({type:value===question.answer?'correct':'wrong',value});
+    if(value!==question.answer&&!question.solutionShown)question.events.push({type:'solution'});
+  }
   if (value !== question.answer) question.solutionShown = true;
   else question.done = true;
   return true;
+}
+export function recordSupport(question) {
+  if(question.done||question.hint)return false;
+  question.hint=true;
+  if(Array.isArray(question.events))question.events.push({type:'hint'});
+  return true;
+}
+export function newAssignedSession(task,profile) {
+  const assignment=assignmentSnapshot(task);
+  if(!task.recipientProfileIds.includes(profile))throw Error('Esta tarea no está asignada a este perfil.');
+  const level=task.parameters.table<=3?1:task.parameters.table<=5?2:task.parameters.table<=8?3:4;
+  const s=newSession('multi',level,profile);
+  Object.assign(s,{assignment,assignmentId:task.id,assignmentVersion:task.version,taskProtocol:1,responseMode:'choice'});
+  s.questions=Array.from({length:8},(_,i)=>{
+    const q=makeQuestion('multi',level),a=task.parameters.table,b=i+1;
+    return {...q,a,b,answer:a*b,options:arithmeticOptions('multi',a,b,a*b),itemId:`item-${i+1}`,events:[]};
+  });
+  return s;
+}
+export function advanceAssignedSession(s,at=new Date().toISOString()) {
+  if(!s.assignment||s.completedAt||!s.questions[s.index]?.attempts.length)throw Error('Responde el reto antes de continuar.');
+  if(s.index===7){validateAssignedSession({...s,completedAt:at});s.completedAt=at;return true;}
+  s.index++;return false;
 }
 export function adapt(state, question) {
   const next = {
@@ -166,7 +194,7 @@ export function dimensions(sessions) {
 export function validateReport(data) {
   if (
     !data ||
-    ![SCHEMA,"sendero.report.v1"].includes(data.schema) ||
+    ![SCHEMA,"sendero.report.v2","sendero.report.v1"].includes(data.schema) ||
     typeof data.profile !== "string" ||
     !/^[a-zA-Z0-9-]{1,60}$/.test(data.profile) ||
     !Array.isArray(data.sessions) ||
@@ -190,6 +218,7 @@ export function validateReport(data) {
       s.questions.length !== 8
     )
       throw new Error("El informe contiene una sesión no válida.");
+    validateAssignedSession(s);
     for (const q of s.questions) {
       if (
         !q ||
@@ -210,7 +239,7 @@ export function validateReport(data) {
         q.attempts.length < 1 ||
         q.attempts.length > 20 ||
         !q.attempts.every((n) => Number.isInteger(n) && n >= 0 && n <= 2500) ||
-        q.attempts.at(-1) !== q.answer
+        (!s.assignment && q.attempts.at(-1) !== q.answer)
       )
         throw new Error("El informe contiene respuestas no válidas.");
       if (q.timingProtocol !== undefined && (q.timingProtocol !== 1 || typeof q.timingInterrupted !== "boolean" || !Number.isFinite(q.firstResponseMs) || q.firstResponseMs < 0 || q.firstResponseMs > q.activeMs)) throw new Error("Registro temporal no válido.");
@@ -227,11 +256,12 @@ export function validateReport(data) {
   return data;
 }
 export function mergeSessions(existing, incoming) {
-  const ids = new Map(existing.map((s) => [s.id, s]));
+  const ids = new Map(existing.map((s) => [sessionKey(s), s]));
   let added = 0;
   for (const s of incoming) {
-    if (!ids.has(s.id)) {
-      ids.set(s.id, s);
+    if(ids.has(sessionKey(s))&&!equivalent(ids.get(sessionKey(s)),s))throw Error('Conflicto: un identificador de partida contiene datos diferentes. Se conserva el informe anterior.');
+    if (!ids.has(sessionKey(s))) {
+      ids.set(sessionKey(s), s);
       added++;
     }
   }

@@ -1,9 +1,9 @@
-const VERSION = "0.12.0";
-const CACHE = `sendero-${VERSION}-four-local-v1`;
+const VERSION = "0.13.0";
+const CACHE = `sendero-${VERSION}-delivery-notice-c3-v2`;
 const FILES = [
   "./",
   "./index.html", "./docentes.html",
-  "./style.css",
+  "./style.css", "./research-notice.js", "./research-notice.css", "./terminos.html",
   "./regatta.css", "./race-art.js", "./race-audio.js",
   "./race-finish.js",
   "./race-start.js", "./race-start.css",
@@ -14,7 +14,7 @@ const FILES = [
   "./profiles.js", "./enrollment.js", "./cohorts.js", "./multiplayer-records.js", "./together-profiles.js", "./together-local.js",
   "./backup.js", "./race.js",
   "./classroom.js", "./cloud.js", "./cloud-view.js",
-  "./core.js",
+  "./core.js", "./assignments.js", "./assignment-view.js",
   "./fluency.js",
   "./results.js",
   "./bank.js",
