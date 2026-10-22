@@ -31,7 +31,7 @@ function matrix(){
   for(const s of sessions){if(s.profile!==profiles[2])state.teacherConfirmations[sessionKey(s)]={classId,profile:s.profile,source:s.profile===profiles[1]?'manual-file':'server-read',confirmedAt:'2026-10-22T00:00:00Z'};}
   return {state,sessions,reasoning,workshop};
 }
-function attemptHTML(html,id){const own=html.split('<details class="insights-attempt">').slice(1).find(part=>part.includes(`Registro ${esc(id)} ·`));assert(own,`Attempt ${id} must be reachable from its profile`);return own;}
+function attemptHTML(html,id){const own=html.split(/<details class="insights-attempt"[^>]*>/).slice(1).find(part=>part.includes(`Registro ${esc(id)} ·`));assert(own,`Attempt ${id} must be reachable from its profile`);return own;}
 
 test('C12 teacher: four profiles can reach all eight real protocol-6/protocol-5 trajectories',()=>{
   const {state,sessions}=matrix(),before=JSON.stringify(state),summary=teachingInsights(state),html=teachingInsightsHTML(summary);

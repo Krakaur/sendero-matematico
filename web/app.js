@@ -1,3 +1,4 @@
+import {refreshTeacherReading} from './teacher-reading-state.js';
 import {bindBufferedReflection} from './buffered-reflection.js';
 import {teachingInsights,teachingInsightsHTML,teachingEvidenceCSV} from './teaching-insights.js';
 import {reasoningSupportEvent,reasoningScaffoldHTML,reasoningFeedbackHTML} from './reasoning-support.js';
@@ -285,7 +286,10 @@ async function syncClassroom() {
       state.classroom.error=e.message;state.classroom.retryAt=Date.now()+(e.retryAfter||60)*1000;save();
     }
   }
-  finally {syncBusy=false;if(activeProfile?.id===id&&['#docentes','#progreso'].includes(location.hash)){if(main.querySelector('#class-task[data-task-dirty="true"]')){const notice=main.querySelector('#task-preview-status');if(notice)notice.textContent='Consulta del aula terminada. Tu borrador se conserva; al publicar se comprobará la versión actual del aula. '+(state.classroom?.error||'');}else render(false);}if(syncQueued){syncQueued=false;queueMicrotask(syncClassroom);}}
+  finally {syncBusy=false;if(activeProfile?.id===id&&['#docentes','#progreso'].includes(location.hash)){if(main.querySelector('#class-task[data-task-dirty="true"]')){const notice=main.querySelector('#task-preview-status');if(notice)notice.textContent='Consulta del aula terminada. Tu borrador se conserva; al publicar se comprobará la versión actual del aula. '+(state.classroom?.error||'');}else if(location.hash==='#docentes' && activeProfile?.role==='teacher') {
+      const getContext=()=>JSON.stringify([activeProfile?.id,state.classroom?.classId,state.classroom?.endpoint,state.classroom?.role,location.hash]);
+      refreshTeacherReading(main,{getContext,render:()=>render(false)});
+    }else render(false);}if(syncQueued){syncQueued=false;queueMicrotask(syncClassroom);}}
 }
 function bindClassroom() {
   const taskPreview = bindTaskFields(main,{link:state.classroom,uid});
