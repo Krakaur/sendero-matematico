@@ -66,16 +66,21 @@ export function newAssignedSession(task,profile) {
   if(!task.recipientProfileIds.includes(profile))throw Error('Esta tarea no está asignada a este perfil.');
   const level=task.parameters.table<=3?1:task.parameters.table<=5?2:task.parameters.table<=8?3:4;
   const s=newSession('multi',level,profile);
-  Object.assign(s,{assignment,assignmentId:task.id,assignmentVersion:task.version,taskProtocol:1,responseMode:'choice'});
+  Object.assign(s,{assignment,assignmentId:task.id,assignmentVersion:task.version,taskProtocol:2,responseMode:'choice'});
   s.questions=Array.from({length:8},(_,i)=>{
     const q=makeQuestion('multi',level),a=task.parameters.table,b=i+1;
     return {...q,a,b,answer:a*b,options:arithmeticOptions('multi',a,b,a*b),itemId:`item-${i+1}`,events:[]};
   });
   return s;
 }
+// Protocol2 waits for an explicit finish action, including after a correct last answer.
+export const requiresAssignedFinish=s=>!!s?.assignment&&s.taskProtocol===2&&s.index===7&&!s.completedAt;
 export function advanceAssignedSession(s,at=new Date().toISOString()) {
   if(!s.assignment||s.completedAt||!s.questions[s.index]?.attempts.length)throw Error('Responde el reto antes de continuar.');
-  if(s.index===7){validateAssignedSession({...s,completedAt:at});s.completedAt=at;return true;}
+  if(s.index===7){
+    const closure={...s,completedAt:at,...(s.taskProtocol===2?{completionAction:{kind:'finish-task',at}}:{})};
+    validateAssignedSession(closure);Object.assign(s,closure);return true;
+  }
   s.index++;return false;
 }
 export function adapt(state, question) {

@@ -197,3 +197,279 @@
 .curved-regatta .course-map:after {
   display: none;
 }
+/* C5 presentation candidate: protect the answer area before decorative height.
+   Small/mobile viewports may scroll; never shrink or clip mathematical content. */
+.arcade.regatta-game .race-stage {
+  height: clamp(160px, calc(100vh - 420px), 330px);
+  height: clamp(160px, calc(100svh - 420px), 330px);
+}
+.arcade.regatta-game .race-banner {
+  min-height: 38px;
+  padding: 5px 14px;
+}
+.arcade.regatta-game .competition-score {
+  padding: 5px 12px;
+}
+.arcade.regatta-game .course-map {
+  height: 24px;
+}
+.arcade.regatta-game .virtual-note {
+  font-size: 0.75rem !important;
+  padding-bottom: 5px !important;
+}
+.arcade.regatta-game .question-card {
+  grid-template-rows: 18px minmax(70px, auto) minmax(40px, auto) auto;
+  padding: 10px 18px;
+}
+.arcade.regatta-game .answer {
+  min-width: 48px;
+  min-height: 64px;
+}
+.arcade.regatta-game .feedback {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  min-height: 2.8em;
+  margin: 2px 0 0;
+}
+.arcade.regatta-game .solution-callout p {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+.arcade.regatta-game .game-controls {
+  flex-wrap: wrap;
+}
+.arcade.regatta-game .game-controls .soft-button {
+  min-height: 48px;
+  font-size: 0.8rem;
+}
+.arcade.regatta-game .race-settings {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+@media (min-width: 651px) {
+  .arcade-playing:has(.regatta-game) .topbar {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .arcade.regatta-game {
+    gap: 8px;
+  }
+  .arcade.regatta-game .game-top {
+    min-height: 42px;
+  }
+}
+@media (min-width: 651px) and (max-height: 600px) {
+  .arcade.regatta-game .regatta-kicker {
+    display: none;
+  }
+  .arcade.regatta-game .race-banner {
+    min-height: 32px;
+  }
+  .arcade.regatta-game .question-card {
+    padding-block: 7px;
+  }
+  .arcade.regatta-game .answer {
+    min-height: 54px;
+    font-size: 1.65rem;
+  }
+}
+@media (max-width: 650px) {
+  .arcade-playing:has(.regatta-game) #main {
+    margin-inline: auto;
+    padding-inline: 12px;
+  }
+  .arcade.regatta-game .race-stage {
+    height: clamp(160px, calc(100vh - 490px), 230px);
+    height: clamp(160px, calc(100svh - 490px), 230px);
+  }
+  .arcade.regatta-game .question-card {
+    grid-template-rows: auto minmax(76px, auto) minmax(52px, auto) minmax(40px, auto) auto;
+    padding: 9px 10px;
+  }
+  .arcade.regatta-game .answers {
+    grid-template-columns: repeat(4, minmax(48px, 1fr));
+  }
+  .arcade.regatta-game .answer {
+    min-height: 52px;
+    font-size: 1.5rem;
+  }
+  .arcade.regatta-game .equation {
+    font-size: 2.2rem;
+    margin: 0;
+  }
+  .arcade.regatta-game .solution-callout {
+    padding: 4px;
+  }
+}
+/* C5 visual revision: fixed identity keys remain readable when boats overlap.
+   The legend overlays the scene and does not change the validated answer layout. */
+.circuit-has-legend .circuit-legend {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  width: min(390px, calc(100% - 16px));
+  padding: 4px;
+  border: 1px solid #b5c3a2;
+  border-radius: 10px;
+  background: #fff9e9ed;
+  box-shadow: 0 2px 5px #123b3326;
+  pointer-events: none;
+}
+.circuit-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #173e35;
+  white-space: nowrap;
+}
+.circuit-key,
+.circuit-has-legend .competitor::after {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  border: 1px solid #244a3f;
+  border-radius: 50%;
+  background: var(--racer-accent, #fff1be);
+  color: #17352e;
+  font: 800 12px/1 system-ui, sans-serif;
+}
+.circuit-has-legend .competitor::after {
+  content: attr(data-circuit-key);
+  position: absolute;
+  left: calc(50% - 9px);
+  top: 66px;
+  z-index: 5;
+  box-shadow: 0 0 0 2px #fff9e9;
+}
+.circuit-has-legend .lane-name {
+  display: none;
+}
+.circuit-has-legend .lane-label {
+  top: 66px;
+  left: calc(50% + 12px);
+  right: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.875rem;
+}
+.reduced-motion .circuit-has-legend .competitor .canoe-art {
+  scale: 0.72;
+}
+@media (prefers-reduced-motion: reduce) {
+  .circuit-has-legend .competitor .canoe-art {
+    scale: 0.72;
+  }
+}
+@media (max-height: 600px) {
+  .reduced-motion .circuit-has-legend .competitor .canoe-art {
+    scale: 0.55;
+  }
+}
+@media (max-height: 600px) and (prefers-reduced-motion: reduce) {
+  .circuit-has-legend .competitor .canoe-art {
+    scale: 0.55;
+  }
+}
+@media (max-width: 650px) {
+  .circuit-has-legend .race-message {
+    top: auto;
+    bottom: 5px;
+    max-width: calc(100% - 16px);
+  }
+  .circuit-has-legend .competitor::after,
+  .circuit-has-legend .lane-label {
+    top: 48px;
+  }
+}
+/* Four callouts are created once; only changed transforms/paths update per frame. */
+.circuit-callouts {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6;
+  pointer-events: none;
+}
+.circuit-callouts .callout-outline {
+  fill: none;
+  stroke: #fff8e9;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.circuit-callouts .callout-line {
+  fill: none;
+  stroke: #244a3f;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.circuit-callouts circle {
+  stroke: #fff8e9;
+  stroke-width: 2;
+}
+.circuit-callouts text {
+  fill: #17352e;
+  font: 800 12px system-ui, sans-serif;
+}
+.circuit-has-callouts .competitor::after {
+  display: none;
+}
+/* Offscreen projections are indicators, never boats apparently sailing on land.
+   The 64x18 badge fits the >=20.66px edge rows of the 160px minimum stage. */
+.circuit-has-callouts .race-lane:has(.competitor:is([data-edge="ahead"], [data-edge="behind"])) {
+  z-index: 7;
+}
+.circuit-has-callouts .competitor:is([data-edge="ahead"], [data-edge="behind"])
+  :is(.canoe-art, .boat-wake, .water-splash, .race-spark) {
+  visibility: hidden;
+}
+.circuit-has-callouts .competitor:is([data-edge="ahead"], [data-edge="behind"]) .lane-label {
+  top: 62px;
+  left: 50%;
+  right: auto;
+  width: 64px;
+  height: 18px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  border: 1px dashed #244a3f;
+  border-radius: 11px;
+  background: #fff9e9;
+  color: #17352e;
+  box-shadow: 0 1px 3px #123b3340;
+  font: 700 11px/1 system-ui, sans-serif;
+}
+.circuit-has-callouts .competitor:is([data-edge="ahead"], [data-edge="behind"]) .edge-arrow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.circuit-has-callouts .competitor[data-edge="ahead"] .edge-arrow::before {
+  content: "Fuera";
+}
+.circuit-has-callouts .competitor[data-edge="ahead"] .edge-arrow::after {
+  content: "→";
+}
+.circuit-has-callouts .competitor[data-edge="behind"] .edge-arrow::before {
+  content: "←";
+}
+.circuit-has-callouts .competitor[data-edge="behind"] .edge-arrow::after {
+  content: "Fuera";
+}
+@media (max-width: 600px) {
+  .circuit-has-callouts .competitor:is([data-edge="ahead"], [data-edge="behind"]) .lane-label {
+    top: 48px;
+  }
+}

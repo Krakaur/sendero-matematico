@@ -1,5 +1,5 @@
 const VERSION = "0.13.0";
-const CACHE = `sendero-${VERSION}-delivery-notice-c3-v2`;
+const CACHE = `sendero-${VERSION}-interaction-c5-v8`;
 const FILES = [
   "./",
   "./index.html", "./docentes.html",
@@ -11,7 +11,7 @@ const FILES = [
       "./juntos.html", "./together.css", "./together.js", "./room.js", "./room-link.js", "./vendor/peerjs-1.5.5.min.js",
   "./assets/forest-river-v1.png", "./assets/river-racers-v1.png",
   "./app.js", "./workshop.js", "./practice-view.js", "./workshop-view.js", "./workshop.css",
-  "./profiles.js", "./enrollment.js", "./cohorts.js", "./multiplayer-records.js", "./together-profiles.js", "./together-local.js",
+  "./profiles.js", "./enrollment.js", "./cohorts.js", "./reconciliation.js", "./reconciliation-view.js", "./multiplayer-records.js", "./together-profiles.js", "./together-local.js",
   "./backup.js", "./race.js",
   "./classroom.js", "./cloud.js", "./cloud-view.js",
   "./core.js", "./assignments.js", "./assignment-view.js",

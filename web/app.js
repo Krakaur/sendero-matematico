@@ -1,7 +1,8 @@
 import {sessionKey,isAssignedTask,assignmentKey,assignmentMatches} from './assignments.js';
 import {taskListHTML,taskFormHTML,taskFromForm,legacyTaskFromForm,assignmentReportHTML} from './assignment-view.js';
 import {normalizeEnrollment,enrollmentFields,enrollmentFromForm,csvCell} from './enrollment.js';
-import {cohortPanel,bindCohorts} from './cohorts.js';
+import {reconciliationPanel,bindReconciliation} from './reconciliation-view.js';
+import {summarizeReconciliation} from './reconciliation.js';
 import {MULTIPLAYER_SCHEMA,validateMultiplayerReport,mergeMultiplayer} from './multiplayer-records.js';
 import {cloudProfileHTML,classroomRosterHTML,bindCloud} from './cloud-view.js';
 import {calmSceneHTML,writtenAnswerHTML,workbenchHTML} from './practice-view.js';
@@ -28,6 +29,7 @@ import {
   recordSupport,
   newAssignedSession,
   advanceAssignedSession,
+  requiresAssignedFinish,
   SCHEMA,
   TRAILS,
   uid,
@@ -235,7 +237,7 @@ let syncBusy = false, syncQueued = false;
 function classroomHTML() {
   const link=state.classroom,teacherRole=activeProfile?.role==='teacher';
   const pending=state.sessions.filter(s=>(s.assignment?deliveryStatus(state,s).stage!=='acknowledged':!link?.received?.includes(s.id))&&(!s.assignment||s.assignment.classId===link?.classId)).length;
-  return `<section class="panel"><h2>${teacherRole?'Mi aula y las tareas':'Compartir con mi docente'}</h2>${link?`<p>Aula vinculada: ${esc(new URL(link.endpoint).host)}. ${teacherRole?'Recepción de informes habilitada.':`${pending} aventuras pendientes de confirmar.`}</p><p>${teacherRole?(link.lastSyncAt?'Última consulta del aula: '+esc(new Date(link.lastSyncAt).toLocaleString('es')):'Todavía sin consulta confirmada del aula.'):(link.lastReceipt?'Último acuse de entrega: '+esc(new Date(link.lastReceipt).toLocaleString('es')):'Todavía sin acuse de entrega guardado.')}</p><p role="status">${esc(link.error||'')}</p><div class="button-row"><button id="sync-now" class="primary">Conectar ahora</button><button id="unlink-class" class="secondary">Desvincular</button></div>`:'<p>Importa una invitación entregada por la persona responsable del aula. Sin invitación, puedes seguir compartiendo los informes mediante archivos.</p>'}
+  return `<section class="panel"><h2>${teacherRole?'Mi aula y las tareas':'Compartir con mi docente'}</h2>${link?`<p>Aula vinculada: ${esc(new URL(link.endpoint).host)}. ${teacherRole?(link.enabled?'Consulta automática de informes habilitada.':'Conexión pausada; no se consultan informes automáticamente.'):`${pending} aventuras pendientes de confirmar.`}</p><p>${teacherRole?(link.lastSyncAt?'Última consulta del aula: '+esc(new Date(link.lastSyncAt).toLocaleString('es')):'Todavía sin consulta confirmada del aula.'):(link.lastReceipt?'Último acuse de entrega: '+esc(new Date(link.lastReceipt).toLocaleString('es')):'Todavía sin acuse de entrega guardado.')}</p><p role="status">${esc(link.error||'')}</p><div class="button-row"><button id="sync-now" class="primary" ${link.enabled?'':'disabled'}>${link.enabled?'Conectar ahora':'Conexión pausada'}</button>${!link.enabled?'<p>Para reanudar, vuelve a vincular la invitación del aula. Los informes conservados siguen disponibles.</p>':''}<button id="unlink-class" class="secondary">Desvincular</button></div>`:'<p>Importa una invitación entregada por la persona responsable del aula. Sin invitación, puedes seguir compartiendo los informes mediante archivos.</p>'}
   <details><summary>${link?'Cambiar invitación':'Vincular con un aula'}</summary><p>La invitación contiene una clave privada y el servidor de destino. Al confirmar, se enviarán automáticamente las aventuras completas de este perfil cuando el juego esté abierto y haya conexión. No se enviarán contraseñas ni alias. Si registras escuela, grado, grupo y número de lista, se compartirán privadamente con tu docente.</p><label>Archivo de invitación<input id="class-invite" type="file" accept=".json,application/json"></label><p id="class-status" role="status"></p></details>
   ${taskListHTML(state,teacherRole)}
   ${teacherRole&&link?taskFormHTML(state):''}<p class="micro">La confirmación registra recepción técnica, no que el docente haya leído el informe. Las tareas versionadas mantienen sus condiciones de práctica; estos registros no son exámenes.</p></section>`;
@@ -497,29 +499,27 @@ function levelTable(sessions) {
     : "<p>Aún no hay aventuras completas. El informe aparecerá después de la primera.</p>";
 }
 function teacher() {
-  return `<header class="page-head fade-in"><span class="eyebrow">Observar para acompañar</span><h1>Una mirada<br>a cada paso.</h1><p>Informes locales para orientar la práctica. Perfiles locales e informes por estudiante. La entrega automática requiere una invitación a un aula configurada; la investigación permanece desactivada.</p></header><section class="panel"><h3>Este dispositivo · ${profileCode()}</h3><p>Perfil activo: ${esc(activeProfile?.name || "")}. Cada estudiante tiene su propio acceso local. El código del informe no verifica la identidad ni crea una cuenta en línea.</p>${statsHTML(summarize(state.sessions))}${levelTable(state.sessions)}<div class="button-row"><button id="export-report" class="primary" ${state.sessions.length ? "" : "disabled"}>Exportar informe JSON ↓</button><button id="export-csv" class="secondary" ${state.sessions.length ? "" : "disabled"}>Detalle CSV ↓</button></div><p class="micro">${state.exportedAt ? `Última exportación: ${fmtDate(state.exportedAt)}. Exportar no confirma recepción por el docente.` : "Sin exportaciones registradas."} Solo se exportan aventuras completas.</p></section>${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}<section class="panel"><h3>Intercambiar evidencias de proyectos</h3><p>Estos archivos contienen construcciones, revisiones y notas opcionales, sin cifrado. Compártelos solo con la persona autorizada. No necesitas un servidor para entregarlos.</p><button id="export-projects" class="secondary" ${state.workshopHistory?.length?'':'disabled'}>Descargar mis proyectos</button><label for="import-projects">Recibir proyectos de estudiantes</label><input id="import-projects" type="file" accept=".json,application/json" multiple><p id="project-import-status" role="status"></p></section><section class="panel"><h3>Recibir informes de estudiantes</h3><p>El estudiante lleva su archivo JSON al centro educativo. Puedes abrir varios informes aquí; las sesiones repetidas se cuentan una sola vez.</p><div class="button-row"><label for="import-file" class="sr-only">Seleccionar informes JSON de Sendero</label><input id="import-file" type="file" accept=".json,application/json" multiple></div><p id="import-status" role="status" class="micro"></p>${state.teacher.length ? `<div class="table-wrap"><table><caption class="sr-only">Informes recibidos en este dispositivo</caption><thead><tr><th>Perfil</th><th>Contenido</th><th>Aventuras</th><th>Ejercicios</th><th>Última práctica</th></tr></thead><tbody>${teacherRows()}</tbody></table></div>${importedProfiles()}` : '<p class="micro">No hay informes recibidos. Se guardarán solamente en este dispositivo.</p>'}</section><section class="panel"><h3>Cómo interpretar los resultados</h3><details open><summary>Condiciones de práctica, no diagnóstico</summary><p>Las tareas versionadas de multiplicación mantienen la tabla y el nivel fijos durante ocho respuestas. No aplican adaptación. En la práctica libre hay cuatro niveles de cantidades. Tres respuestas consecutivas correctas al primer intento y sin ayuda suben un nivel; dos ejercicios consecutivos con error o ayuda lo reducen. En carrera se conserva el nivel durante ocho retos: siete u ocho aciertos iniciales sin ayuda suben un nivel para la siguiente; cuatro o menos lo reducen. Los rivales ajustan su ritmo a tiempos previos del mismo contenido y nivel. El tiempo no decide el nivel matemático. Son reglas iniciales transparentes, todavía sin validación educativa.</p></details><details><summary>Qué significan los indicadores</summary><p>Primer intento: la primera respuesta coincide con el resultado, haya o no ayuda. Sin ayuda: acierto al primer intento sin abrir la pista. Los errores anteriores a la corrección se conservan. El tiempo es una estimación de interacción: se pausa al salir, ocultar la app o tras 60 segundos sin interacción. No equivale a atención ni asistencia escolar.</p></details><details><summary>Comparaciones y evaluación formal</summary><p>Compara por contenido y dificultad; un porcentaje global puede cambiar porque cambiaron los ejercicios. Estas actividades domiciliarias no verifican identidad, supervisión ni ayuda externa. Complementan el criterio docente; no acreditan por sí solas aprendizaje, autoría o una calificación.</p></details><details><summary>Privacidad y conservación</summary><p>Puedes usar un alias; no necesitas nombre completo ni correo. Escuela, grado, grupo y número de lista son opcionales y se reservan para tus informes privados. Los códigos persistentes y las fechas pueden permitir vincular registros: estos informes no deben considerarse anónimos. Entrégalos solo al adulto autorizado. Solo se transmiten al servidor docente si se vincula expresamente una invitación. La investigación requerirá un procedimiento separado.</p></details></section>`;
+  return `<header class="page-head fade-in"><span class="eyebrow">Observar para acompañar</span><h1>Una mirada<br>a cada paso.</h1><p>Informes locales para orientar la práctica. Perfiles locales e informes por estudiante. La entrega automática requiere una invitación a un aula configurada; la investigación permanece desactivada.</p></header><section class="panel"><h3>Práctica del perfil activo · ${profileCode()}</h3><p>Perfil activo: ${esc(activeProfile?.name || "")}. Cada estudiante tiene su propio acceso local. El código del informe no verifica la identidad ni crea una cuenta en línea.</p>${statsHTML(summarize(state.sessions))}${levelTable(state.sessions)}<div class="button-row"><button id="export-report" class="primary" ${state.sessions.length ? "" : "disabled"}>Exportar informe JSON ↓</button><button id="export-csv" class="secondary" ${state.sessions.length ? "" : "disabled"}>Detalle CSV ↓</button></div><p class="micro">${state.exportedAt ? `Última exportación: ${fmtDate(state.exportedAt)}. Exportar no confirma recepción por el docente.` : "Sin exportaciones registradas."} Solo se exportan aventuras completas.</p></section>${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}<section class="panel"><h3>Intercambiar evidencias de proyectos</h3><p>Estos archivos contienen construcciones, revisiones y notas opcionales, sin cifrado. Compártelos solo con la persona autorizada. No necesitas un servidor para entregarlos.</p><button id="export-projects" class="secondary" ${state.workshopHistory?.length?'':'disabled'}>Descargar mis proyectos</button><label for="import-projects">Recibir proyectos de estudiantes</label><input id="import-projects" type="file" accept=".json,application/json" multiple><p id="project-import-status" role="status"></p></section><section class="panel"><h3>Recibir informes de estudiantes</h3><p>El estudiante lleva su archivo JSON al centro educativo. Puedes abrir varios informes aquí; las sesiones repetidas se cuentan una sola vez.</p><div class="button-row"><label for="import-file" class="sr-only">Seleccionar informes JSON de Sendero</label><input id="import-file" type="file" accept=".json,application/json" multiple></div><p id="import-status" role="status" class="micro"></p>${state.teacher.length ? `<div class="table-wrap"><table><caption class="sr-only">Partidas individuales válidas y únicas recibidas en este dispositivo; no incluye construcciones ni participaciones</caption><thead><tr><th>Perfil</th><th>Contenido</th><th>Aventuras</th><th>Ejercicios</th><th>Última práctica</th></tr></thead><tbody>${teacherRows()}</tbody></table></div>${importedProfiles()}` : '<p class="micro">No hay informes recibidos. Se guardarán solamente en este dispositivo.</p>'}</section><section class="panel"><h3>Cómo interpretar los resultados</h3><details open><summary>Condiciones de práctica, no diagnóstico</summary><p>Las tareas versionadas de multiplicación mantienen la tabla y el nivel fijos durante ocho respuestas. No aplican adaptación. En la práctica libre hay cuatro niveles de cantidades. Tres respuestas consecutivas correctas al primer intento y sin ayuda suben un nivel; dos ejercicios consecutivos con error o ayuda lo reducen. En carrera se conserva el nivel durante ocho retos: siete u ocho aciertos iniciales sin ayuda suben un nivel para la siguiente; cuatro o menos lo reducen. Los rivales ajustan su ritmo a tiempos previos del mismo contenido y nivel. El tiempo no decide el nivel matemático. Son reglas iniciales transparentes, todavía sin validación educativa.</p></details><details><summary>Qué significan los indicadores</summary><p>Primer intento: la primera respuesta coincide con el resultado, haya o no ayuda. Sin ayuda: acierto al primer intento sin abrir la pista. Los errores anteriores a la corrección se conservan. El tiempo es una estimación de interacción: se pausa al salir, ocultar la app o tras 60 segundos sin interacción. No equivale a atención ni asistencia escolar.</p></details><details><summary>Comparaciones y evaluación formal</summary><p>Compara por contenido y dificultad; un porcentaje global puede cambiar porque cambiaron los ejercicios. Estas actividades domiciliarias no verifican identidad, supervisión ni ayuda externa. Complementan el criterio docente; no acreditan por sí solas aprendizaje, autoría o una calificación.</p></details><details><summary>Privacidad y conservación</summary><p>Puedes usar un alias; no necesitas nombre completo ni correo. Escuela, grado, grupo y número de lista son opcionales y se reservan para tus informes privados. Los códigos persistentes y las fechas pueden permitir vincular registros: estos informes no deben considerarse anónimos. Entrégalos solo al adulto autorizado. Solo se transmiten al servidor docente si se vincula expresamente una invitación. La investigación requerirá un procedimiento separado.</p></details></section>`;
+}
+let reportReconciliationCache=new Map();
+function reconciliationFor(teacher) {
+  if(!reportReconciliationCache.has(teacher))reportReconciliationCache.set(teacher,summarizeReconciliation(state,teacher));
+  return reportReconciliationCache.get(teacher);
+}
+function canonicalTeacherGroups() {
+  const groups=new Map();
+  for(const r of reconciliationFor(true).allRecords.filter(r=>r.kind==='session')) {
+    const key=r.dimensions.student;
+    if(!groups.has(key))groups.set(key,{label:r.labels.student,sessions:[]});
+    groups.get(key).sessions.push(r.sourceRecord);
+  }
+  return [...groups.values()];
 }
 function teacherRows() {
-  const profiles = [...new Set(state.teacher.map((s) => s.profile))];
-  return profiles
-    .map((p) => {
-      const ss = state.teacher.filter((s) => s.profile === p);
-      return `<tr><td>${esc(p.slice(0, 8).toUpperCase())}</td><td>${[...new Set(ss.map((s) => TRAILS[s.trail].short))].join(", ")}</td><td>${ss.length}</td><td>${ss.length * 8}</td><td>${fmtDate(
-        ss
-          .map((s) => s.completedAt)
-          .sort()
-          .at(-1),
-      )}</td></tr>`;
-    })
-    .join("");
+  return canonicalTeacherGroups().map(({label,sessions:ss})=>`<tr><td>${esc(label)}</td><td>${[...new Set(ss.map(s=>TRAILS[s.trail]?.short||'Sin clasificar'))].map(esc).join(', ')}</td><td>${ss.length}</td><td>${ss.reduce((n,s)=>n+s.questions.length,0)}</td><td>${fmtDate(ss.map(s=>s.completedAt).sort().at(-1))}</td></tr>`).join('');
 }
 function importedProfiles() {
-  return [...new Set(state.teacher.map((s) => s.profile))]
-    .map((profile) => {
-      const sessions = state.teacher.filter((s) => s.profile === profile);
-      return `<details><summary>Perfil ${esc(profile.slice(0, 8).toUpperCase())} · ${sessions.length} aventuras</summary>${dimensionsHTML(sessions)}${fluencyHTML(sessions)}${reasoningHTML(sessions)}${levelTable(sessions)}</details>`;
-    })
-    .join("");
+  return canonicalTeacherGroups().map(({label,sessions})=>`<details><summary>Perfil ${esc(label)} · ${sessions.length} partidas individuales válidas y únicas</summary><p>Detalle sólo de estas partidas; no incorpora construcciones ni participaciones multijugador. Cada indicador declara su propia unidad.</p>${dimensionsHTML(sessions)}${fluencyHTML(sessions)}${reasoningHTML(sessions)}${levelTable(sessions)}</details>`).join('');
 }
 function about() {
   return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. Cada aventura contiene ocho ejercicios y se puede pausar. Las pistas forman parte del aprendizaje. Cada reto completado da puntos; el acierto inicial sin ayuda añade una bonificación.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. La entrega al docente solo se activa al vincular una invitación. No tiene publicidad ni activa la participación en investigación. <a href="./terminos.html">Consulta las condiciones, el tratamiento de datos y la investigación prevista</a>.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p><a href="./docentes.html" target="_blank" rel="noopener">Guía breve para familias y docentes</a></p><p>Responsable: Dr. Hans Krakaur Floranes. Proyecto aún sin adscripción institucional. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales y circuito con curvas. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas de la aventura individual permanecen en este dispositivo salvo exportación manual o vinculación explícita con un servidor docente. Si eliges una sala por enlace, los retos, respuestas y tiempos de esa partida se comparten con sus participantes. La conexión utiliza PeerJS y servidores STUN; no se comparte tu perfil ni historial. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
@@ -575,15 +575,16 @@ function game() {
     <div class="race-hud"><div><span>Recorrido</span><strong>${s.index}<small> / 8</small></strong></div><div><span>Acierto inicial</span><strong>${answered.length ? Math.round(100 * initial / answered.length) + '<small>%</small>' : '—'}</strong></div><div title="Aciertos iniciales por minuto de respuesta del nivel actual; sin pistas ni interrupciones"><span>Aciertos/min · N${q.level}</span><strong>${f.n ? f.rate.toFixed(1) : '—'}</strong></div></div>
     ${s.race?competitionHTML(s,esc,activeProfile.name):calmSceneHTML(s.trail,s.index)}
     <div class="question-card"><div class="question-meta"><span>RETO ${s.index + 1} / 8</span><span>${levelName(q.level)}</span></div><h1 class="equation ${q.solutionShown ? 'sr-only' : ''}" tabindex="-1" aria-label="${q.a} ${s.trail === 'suma' ? 'más' : s.trail === 'resta' ? 'menos' : 'por'} ${q.b}, ¿cuánto es?">${q.a} ${t.symbol} ${q.b} <span class="unknown">= ?</span></h1>${q.solutionShown ? solutionHTML(s, q) : ''}
-    ${q.responseMode==='write'?writtenAnswerHTML(q):`<div class="answers">${q.options.map(n => `<button class="answer ${q.solutionShown && n === q.answer ? 'correct' : ''} ${q.attempts.includes(n) ? 'wrong' : ''}" data-answer="${n}" ${q.attempts.includes(n) ? 'disabled' : ''} aria-label="Respuesta ${n}">${n}</button>`).join('')}</div>`}
-    <div class="feedback ${q.solutionShown ? 'error' : ''}" role="status" id="feedback">${q.solutionShown ? (q.responseMode==='write'?'Revisa la solución y escribe el resultado.':'Mira la solución y toca la respuesta destacada.') : moved ? '¡Bien! Tu siguiente reto ya está aquí.' : q.responseMode==='write'?'Escribe el resultado. Puedes usar el modelo si necesitas ayuda.':'Toca una respuesta para avanzar.'}</div>${q.hint ? (q.responseMode==='write'?workbenchHTML(s.trail,q):hintHTML(s,q)) : ''}<div class="game-controls"><span>${s.race?`${raceStats(s).points} puntos · ${raceStats(s).streak} aciertos seguidos`:"Sin límite de tiempo"}</span><button id="hint" class="soft-button" ${q.hint ? 'disabled' : ''}>${q.hint ? 'Pista abierta' : '✧ Una pista'}</button></div></div>
-    ${s.assignment&&q.attempts.length&&!q.done?'<button id="assigned-next" class="primary">Continuar con el siguiente reto →</button>':''}
+    ${q.responseMode==='write'?writtenAnswerHTML(q):`<div class="answers">${q.options.map(n => `<button class="answer ${(q.solutionShown||q.done) && n === q.answer ? 'correct' : ''} ${q.attempts.includes(n)&&n!==q.answer ? 'wrong' : ''}" data-answer="${n}" ${q.done||q.attempts.includes(n) ? 'disabled' : ''} aria-label="Respuesta ${n}">${n}</button>`).join('')}</div>`}
+    <div class="feedback ${q.solutionShown ? 'error' : ''}" role="status" id="feedback">${q.solutionShown ? (q.responseMode==='write'?'Revisa la solución y escribe el resultado.':'Mira la solución y toca la respuesta destacada.') : moved ? '¡Bien! Tu siguiente reto ya está aquí.' : q.responseMode==='write'?'Escribe el resultado. Puedes usar el modelo si necesitas ayuda.':'Toca una respuesta para avanzar.'}</div>${q.hint ? (q.responseMode==='write'?workbenchHTML(s.trail,q):hintHTML(s,q)) : ''}<div class="game-controls"><span>${s.race?`${raceStats(s).points} puntos · ${raceStats(s).streak} aciertos seguidos`:"Sin límite de tiempo"}</span><button id="hint" class="soft-button" ${q.hint||q.done ? 'disabled' : ''}>${q.hint ? 'Pista abierta' : '✧ Una pista'}</button></div></div>
+    ${s.assignment&&q.attempts.length&&(!q.done||requiresAssignedFinish(s))?`<button id="assigned-next" class="primary">${requiresAssignedFinish(s)?'Terminar tarea':'Continuar con el siguiente reto →'}</button>`:''}
     <p class="game-note">Rapidez del nivel actual: ${f.n} ${f.n === 1 ? 'ejercicio' : 'ejercicios'} medidos. Tu precisión y tus tiempos se guardan por separado.</p></section>`;
   if(s.assignment){
     markup=markup.replace('<strong>Exploración del río</strong>',`<strong>${esc(s.assignment.title)} · versión ${s.assignmentVersion}</strong>`);
     markup=markup.replace(/<div title="Aciertos iniciales[\s\S]*?<\/div>/,'');
     markup=markup.replace(/<p class="game-note">[\s\S]*?<\/p>/,'<p class="game-note">Tarea asignada: ocho respuestas, sin límite de tiempo ni adaptación. Los errores y los apoyos quedan registrados. Puedes corregir o continuar.</p>');
-    markup=markup.replace('Mira la solución y toca la respuesta destacada.','Puedes corregir con la respuesta destacada o continuar; el error inicial se conserva.');
+    markup=markup.replace('Mira la solución y toca la respuesta destacada.',requiresAssignedFinish(s)?'Puedes corregir o terminar la tarea; el error inicial se conserva.':'Puedes corregir con la respuesta destacada o continuar; el error inicial se conserva.');
+    if(requiresAssignedFinish(s)&&q.done)markup=markup.replace(/<div class="feedback[^"]*" role="status" id="feedback">[\s\S]*?<\/div>/,`<div class="feedback" role="status" id="feedback">${q.solutionShown?'Respuesta corregida; el error inicial se conserva.':'Respuesta registrada.'} Cuando estés listo, pulsa Terminar tarea.</div>`);
   }
   return markup;
 }
@@ -606,7 +607,7 @@ function solutionHTML(s, q) {
       : s.trail === "resta"
         ? `Si a ${q.a} le quitas ${q.b}, quedan ${q.answer}.`
         : `${q.a} grupos de ${q.b} contienen ${q.answer} en total.`;
-  return `<section class="solution-callout" tabindex="-1" aria-label="Solución del ejercicio"><span>¡Descubramos la respuesta!</span><strong>¡${q.a} ${TRAILS[s.trail].symbol} ${q.b} = ${q.answer}!</strong><p>${explanation}</p><p class="solution-action">${s.completedAt ? "Este reto ya quedó registrado. Revisa la solución." : q.done ? "Ya puedes continuar." : `Ahora ${q.responseMode==='write'?'escribe':'toca'} el ${q.answer} para comprobarlo.`}</p></section>`;
+  return `<section class="solution-callout" tabindex="-1" aria-label="Solución del ejercicio"><span>¡Descubramos la respuesta!</span><strong>¡${q.a} ${TRAILS[s.trail].symbol} ${q.b} = ${q.answer}!</strong><p>${explanation}</p><p class="solution-action">${s.completedAt ? "Este reto ya quedó registrado. Revisa la solución." : requiresAssignedFinish(s) ? (q.done ? "Cuando quieras, pulsa Terminar tarea." : "Puedes corregir o terminar la tarea sin corregir.") : q.done ? "Ya puedes continuar." : `Ahora ${q.responseMode==='write'?'escribe':'toca'} el ${q.answer} para comprobarlo.`}</p></section>`;
 }
 function finished() {
   const s = state.sessions.at(-1);
@@ -616,6 +617,7 @@ function finished() {
   return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ocho ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${s.assignment?`<section class="panel"><h2>${esc(s.assignment.title)} · versión ${s.assignmentVersion}</h2><p>Ocho respuestas registradas; completar no exige acertarlas todas. ${storageOK && KEY && activeProfile?'El cierre está guardado en este dispositivo.':'No se confirmó el guardado del cierre. Exporta una copia de tus resultados antes de salir.'} La recepción se consulta por separado en tu informe.</p>${s.questions.at(-1).attempts.at(-1)!==s.questions.at(-1).answer?solutionHTML(s,s.questions.at(-1)):''}<a href="#progreso" class="secondary">Revisar la tarea y su recepción</a></section>`:''}${learningReviewHTML(s)}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">${s.assignment?'Práctica libre ↗':'Otra aventura ↗'}</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
 }
 function render(persistState = true) {
+  reportReconciliationCache.clear();
   cancelLaunch();
   clearTimeout(arrivalTimer);
   globalThis.speechSynthesis?.cancel();
@@ -624,7 +626,7 @@ function render(persistState = true) {
   // Adaptation already happened at answer time; only advance, exactly once.
   if (location.hash === '#jugar' && state.current) {
     const pending = state.current.questions[state.current.index];
-    if (pending.done && !pending.bankId) { next(); return; }
+    if (pending.done && !pending.bankId && !requiresAssignedFinish(state.current)) { next(); return; }
   }
   if (persistState) save();
   const requestedRoute = location.hash.slice(1) || "explorar";
@@ -749,10 +751,12 @@ function render(persistState = true) {
   $('#sound').setAttribute('aria-pressed',String(state.sound));
   $('#sound').setAttribute('aria-label',state.sound?'Desactivar sonidos':'Activar sonidos');
   if(['docentes','progreso'].includes(route)&&activeProfile){
-    main.insertAdjacentHTML('beforeend',assignmentReportHTML(state,route==='docentes'&&activeProfile.role==='teacher'));
+    main.insertAdjacentHTML('beforeend','<p class="micro">Seguimiento de tareas: historial completo por tarea, versión y destinatario. No hereda el filtro de periodo de Progreso. Su cobertura de destinatarios es distinta del recuento de cierres del tablero.</p>'+assignmentReportHTML(state,route==='docentes'&&activeProfile.role==='teacher'));
     const teacher=route==='docentes'&&activeProfile.role==='teacher';
-    main.insertAdjacentHTML('beforeend',cohortPanel(state,teacher)+`<section class="panel"><h2>Informe de participaciones multijugador</h2><p>Se conservan separadas de la práctica individual. No verifican quién respondió ni excluyen ayuda de compañeros.</p><button id="export-multiplayer" class="secondary" ${(state.multiplayerHistory||[]).length?'':'disabled'}>Descargar mis participaciones JSON</button>${teacher?'<label>Recibir participaciones de estudiantes<input id="import-multiplayer" type="file" accept=".json,application/json" multiple></label>':''}<p id="multiplayer-import-status" role="status"></p></section>`);
-    bindCohorts(main,state,teacher,download);
+    if(teacher)main.querySelector('.page-head').insertAdjacentHTML('afterend',reconciliationPanel(state,true,reconciliationFor(true)));
+    else main.insertAdjacentHTML('beforeend',reconciliationPanel(state,false,reconciliationFor(false)));
+    main.insertAdjacentHTML('beforeend',`<section class="panel"><h2>Informe de participaciones multijugador</h2><p>Se conservan separadas de la práctica individual. No verifican quién respondió ni excluyen ayuda de compañeros.</p><button id="export-multiplayer" class="secondary" ${(state.multiplayerHistory||[]).length?'':'disabled'}>Descargar mis participaciones JSON</button>${teacher?'<label>Recibir participaciones de estudiantes<input id="import-multiplayer" type="file" accept=".json,application/json" multiple></label>':''}<p id="multiplayer-import-status" role="status"></p></section>`);
+    bindReconciliation(main,state,teacher,download,reconciliationFor(teacher));
     $('#export-multiplayer').addEventListener('click',()=>download('sendero-multijugador.json',JSON.stringify({schema:MULTIPLAYER_SCHEMA,profile:state.profile,multiplayer:state.multiplayerHistory||[]},null,2),'application/json'));
     $('#import-multiplayer')?.addEventListener('change',async e=>{const id=state.profile;try{const incoming=[];for(const file of e.target.files){if(file.size>10*1024*1024)throw Error('El informe supera 10 MB.');incoming.push(...validateMultiplayerReport(JSON.parse(await file.text())).multiplayer);}if(state.profile!==id)return;state.teacherMultiplayer=mergeMultiplayer(state.teacherMultiplayer||[],incoming);save();render(false);$('#multiplayer-import-status').textContent='Participaciones recibidas, sin duplicados.';}catch(error){if(state.profile===id)$('#multiplayer-import-status').textContent=error.message;}});
   }
@@ -808,8 +812,8 @@ function answer(n) {
     if (s.index !== 7 || q.bankId) tone(q.attempts.length > 1 ? 'recover' : 'correct');
   } else tone(false);
   if (s.race) raceReact(n === q.answer ? q.attempts.length > 1 ? 'recover' : 'correct' : 'error');
-  if(s.assignment&&s.index===7&&!q.done){next();return;}
-  if (q.done && !q.bankId) {
+  if(s.assignment&&s.taskProtocol===1&&s.index===7&&!q.done){next();return;}
+  if (q.done && !q.bankId && !requiresAssignedFinish(s)) {
     announce(`¡Correcto! ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}.`);
     next();
     return;
@@ -817,14 +821,14 @@ function answer(n) {
   save();
   render();
   if (q.done) {
-    $("#next")?.focus();
+    $("#assigned-next,#next")?.focus({preventScroll:true});
     announce(
       q.bankId ? `Correcto. ${q.solution}. ${q.explanation}` : `Correcto. ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}.`,
     );
   } else {
-    $(".solution-callout")?.focus();
+    $(".solution-callout")?.focus({preventScroll:true});
     announce(
-      q.bankId ? (q.solutionShown?`Mira la solución: ${q.solution}. ${q.explanation}`:`Revisa qué pide la situación. Puedes pedir una pista o abrir la solución explicada.`) : `Mira la solución: ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}. Ahora toca ${q.answer}.`,
+      q.bankId ? (q.solutionShown?`Mira la solución: ${q.solution}. ${q.explanation}`:`Revisa qué pide la situación. Puedes pedir una pista o abrir la solución explicada.`) : `Mira la solución: ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}. ${requiresAssignedFinish(s)?'Puedes corregir o pulsar Terminar tarea sin corregir.':`Ahora toca ${q.answer}.`}`,
     );
   }
 }
@@ -1096,7 +1100,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-delivery-notice-c3-v2`);
+    const cache = await caches.open(`sendero-${VERSION}-interaction-c5-v8`);
     const files = [
       "./index.html",
       "./app.js",

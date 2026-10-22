@@ -56,9 +56,11 @@ export function latestTasks(tasks) {
 export function validateAssignedSession(s,tasks=null,classId=null) {
   if(s.assignment===undefined){require(s.assignmentId===undefined&&s.assignmentVersion===undefined&&s.taskProtocol===undefined,'Referencia de tarea incompleta.');return true;}
   const a=validateTask(s.assignment,false);
-  require(s.assignmentId===a.id&&typeof s.assignmentId==='string'&&int(s.assignmentVersion,1,100000)&&s.assignmentVersion===a.version&&s.taskProtocol===1,'Referencia de tarea no coincide.');
+  require(s.assignmentId===a.id&&typeof s.assignmentId==='string'&&int(s.assignmentVersion,1,100000)&&s.assignmentVersion===a.version&&[1,2].includes(s.taskProtocol),'Referencia de tarea no coincide.');
   require(id(s.profile)&&s.trail===a.trail&&!s.race&&s.responseMode==='choice','Condiciones de práctica asignada incompatibles.');
   require(Array.isArray(s.questions)&&s.questions.length===8&&iso(s.startedAt)&&iso(s.completedAt)&&Date.parse(s.completedAt)>=Date.parse(s.startedAt),'Cierre de tarea no válido.');
+  if(s.taskProtocol===2){keys(s.completionAction,'kind at');require(s.completionAction.kind==='finish-task'&&s.completionAction.at===s.completedAt,'Falta la decisión explícita de terminar la tarea.');}
+  else require(s.completionAction===undefined,'El protocolo histórico no registra decisión de cierre.');
   if(classId!==null)require(a.classId===classId,'Asignación de otra aula.');
   if(tasks!==null){
     const master=validateTasks(tasks).find(t=>isAssignedTask(t)&&assignmentKey(t)===assignmentKey(a));
@@ -82,7 +84,7 @@ export function validateAssignedSession(s,tasks=null,classId=null) {
       else throw Error('Evento desconocido.');
     }
     require(equivalent(answers,q.attempts)&&hint===q.hint&&solution===!!q.solutionShown,'Evidencia y resumen del ítem difieren.');
-    require(!answers.some(n=>n!==q.answer)||solution,'Falta la solución automática del protocolo 1.');
+    require(!answers.some(n=>n!==q.answer)||solution,'Falta la solución automática del protocolo declarado.');
   });return true;
 }
 export function assignedEvidence(s) {
