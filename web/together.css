@@ -680,3 +680,36 @@
 @media(min-width:1150px){
   .room-many-local:not(.room-reasoning) .room-scene.circuit-has-callouts .competitor:is([data-edge="ahead"],[data-edge="behind"]) .lane-label{top:36px}
 }
+
+/* C12: cloud interaction states and readable evidence at narrow widths. */
+.cloud-room,.cloud-teacher-report{min-width:0;overflow-wrap:anywhere}
+.cloud-room #cloud-create-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;align-items:end}
+.cloud-room #cloud-create-form label{display:grid;gap:6px;min-width:0}
+.cloud-room #cloud-create-form select{font:inherit;color:inherit;width:100%;min-width:0;max-width:100%;min-height:48px}
+.cloud-room button{max-width:100%;min-height:48px;white-space:normal}
+.cloud-room .console-answers button{display:flex;align-items:center;justify-content:center;gap:10px;min-width:0;min-height:48px}
+.cloud-room .cloud-answer-key{font:700 .75rem/1 system-ui;border:1px solid currentColor;border-radius:5px;min-width:1.4em;padding:3px;opacity:.9}
+.cloud-room .cloud-key-hint{font-size:.85rem;margin:8px 0}
+.cloud-room .cloud-pending{background:#fff2c7;border:1px solid #b29244;border-radius:10px;padding:10px;color:#4c3d17}
+.cloud-room .cloud-pending[hidden]{display:none}
+.cloud-room .console-feedback{font-size:.9rem;line-height:1.45}
+.cloud-room button:disabled{cursor:default;background:#e4e9e1;color:#4b584d;border-color:#a9b5a6;opacity:1;box-shadow:none}
+.cloud-teacher-report .player-console{min-width:0}
+.cloud-teacher-report details,.cloud-teacher-report details section{min-width:0;max-width:100%}
+.cloud-teacher-report summary{min-height:48px;box-sizing:border-box;padding-block:12px;cursor:pointer}
+.cloud-teacher-report p,.cloud-teacher-report li,.cloud-teacher-report h3,.cloud-teacher-report h4{overflow-wrap:anywhere}
+.cloud-teacher-report ol,.cloud-teacher-report ul{padding-inline-start:1.35em}
+.cloud-teacher-report details section{border-block-start:1px solid #c7d6bd;padding-block:8px}
+.cloud-teacher-report details h4{line-height:1.4}
+@media(max-width:600px){
+  .cloud-room .player-console{padding:12px 8px}
+  .cloud-room .player-console h2{font-size:1.25rem;line-height:1.35}
+  .cloud-teacher-report .player-console{padding:12px 8px}
+  .cloud-teacher-report details{margin-inline:0;padding-inline:0}
+  .cloud-teacher-report details section{padding-inline:0}
+}
+.cloud-teacher-report .cloud-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.cloud-teacher-report .cloud-metrics>div{min-width:0;border:1px solid #c7d6bd;background:#f1f6ed;border-radius:10px;padding:10px}
+.cloud-teacher-report .cloud-metrics dt{font-size:.9rem;line-height:1.4}
+.cloud-teacher-report .cloud-metrics dd{font-size:1.25rem;font-weight:750;margin:5px 0 0}
+.cloud-teacher-report .cloud-record-status{line-height:1.5}

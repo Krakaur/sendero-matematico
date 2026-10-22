@@ -1,0 +1,19 @@
+# C9–C12: razonamiento, evidencias y aula compartida
+
+El objetivo es una herramienta matemática gratuita, útil en contextos con recursos limitados. La velocidad de respuesta, el número de imágenes y el volumen de ejercicios no constituyen por sí solos calidad pedagógica.
+
+C9 conserva los contratos anteriores y añade 48 problemas en seis familias, con dos variantes y formas estructurales distintas. La vista previa es obligatoria antes de publicar una tarea; cambiar el borrador invalida la revisión previa. El diseño docente se comprueba a 320, 360 y 390 píxeles. Las bandas de requisitos no son una dificultad empíricamente calibrada.
+
+C10 añade apoyos visuales y orientación específica solicitados por el estudiante para esos 48 problemas. Registra ayuda, error, revisión y solución por separado. Los informes distinguen ítems, construcciones, elecciones de explicación y cierres; no suman esas unidades como un índice de dominio. La exportación conserva modelos y eventos de los ocho talleres asignables. No se escribe en disco por cada tecla de una nota.
+
+C11 incorpora una sala de cuatro plazas cuya autoridad está en un Durable Object SQLite de Cloudflare. El cierre de la pestaña docente no convierte a otro alumno en anfitrión. Cooperación es el modo predeterminado; la carrera opcional conserva la condición de interrupción y anula el podio al reanudar una pausa. La cámara sigue la plaza correspondiente. Las participaciones de sala se mantienen separadas de los informes de tareas individuales y de las copias importadas. La primera publicación C11 provisiona la estructura con LIVE_ROOMS_ENABLED=false; su activación posterior exige una revisión de infraestructura separada.
+
+C12 mejora la conservación del foco ante latidos de conexión, el teclado 1–4, las acciones pendientes de confirmación y la lectura móvil. Añade exportación específica de participaciones cloud y navegación docente por perfil e intento. El archivo completo sólo se afirma cuando los recibos coinciden con la sala, plazas, configuración, tiempo, cierre y progreso observables. La procedencia del CSV no es una firma criptográfica.
+
+La cohorte sintética pública C12 contiene cuatro perfiles 00094x, dos tareas y ocho registros consultados en el servidor, sin duplicados. Se verificaron un cierre local sin transporte, un acuse deliberadamente retenido y su recuperación por reenvío con igualdad canónica. La tanda utilizó 26 solicitudes, con 234 lecturas y 128 escrituras de filas D1 declaradas en las respuestas. No son ocho partidas de navegador ni observaciones de niños; sus tiempos de generación no son tiempos cognitivos.
+
+La navegación docente conserva los intentos y sus condiciones. Presenta hasta ocho cierres recientes por perfil, con el límite explícito y todos los cierres admisibles en la exportación. No elige el mejor intento como representativo. Solicitar una ayuda no demuestra déficit; corregir una respuesta no demuestra aprendizaje por sí solo. Las notas no reciben calificación automática.
+
+Cada publicación requiere respaldo diferencial local, comparación de SHA, revisión docente y crítica, prueba secuencial y cuotas antes/después. Workers permanece en Free. Los indicadores del proveedor pueden retrasarse; ausencia o estabilidad aparente no equivale a consumo cero. Los registros de activación, pruebas públicas y despliegue son independientes del cierre local del harness.
+
+La auditoría histórica conserva 97 compromisos, sus grados de cumplimiento y desacuerdos. El propósito de igualar o superar a Arcademics orienta el trabajo; esta campaña no demuestra superioridad global, preferencia infantil, eficacia ni reducción de una brecha educativa. Audio, APK y experimentación con participantes quedan fuera de este cierre por instrucciones del usuario. Las referencias verificables de publicación están en los manifiestos privados publish-c9, publish-c10, publish-c11 y publish-c12; este documento no sustituye esa comprobación.

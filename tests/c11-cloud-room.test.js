@@ -72,7 +72,7 @@ test('C11: proyección de compañeros no filtra identidad ni respuestas; informe
   assert(!text.includes(principals[0].profile));assert(!text.includes(principals[1].hash));assert(!Object.hasOwn(s,'seed'));assert(!Object.hasOwn(s.question,'answer'));assert(!Object.hasOwn(s.players[1],'questions'));assert(!Object.hasOwn(s,'classroom'));
   answer(r,0,false);expireLiveRoom(r,'teacher_closed',r.clock+1);
   const record=liveParticipation(r,r.members[0]);assert.equal(record.status,'partial');assert.equal(record.metrics.responded,1);assert.equal(record.metrics.correctFinal,0);
-  const html=cloudTeacherReportHTML([{record,delivery:'pending'}],{source:'server-read'});assert.match(html,/Pendiente de acuse D1/);assert.match(html,/1\/8 respondidos/);assert.match(html,/incorrecta/);assert.match(html,/Solución docente/);
+  const html=cloudTeacherReportHTML([{record,delivery:'pending'}],{source:'server-read'});assert.match(html,/Pendiente de acuse D1/);assert.match(html,/<dt>Retos con respuesta<\/dt>\s*<dd>1\/8<\/dd>/);assert.match(html,/incorrecta/);assert.match(html,/Solución docente/);
   const imported=cloudTeacherReportHTML([{record,delivery:'received'}]);assert.match(imported,/Importado, sin acuse verificado/);
   const learner=cloudRoomHTML(liveSnapshot(r,principals[0]));assert(!learner.includes('Solución docente'));
   const race=finish(setup('race')),studentRanking=liveSnapshot(race,principals[0]).ranking;

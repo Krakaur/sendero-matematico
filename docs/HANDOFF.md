@@ -1,3 +1,13 @@
+# Continuidad C12: interfaz fiable y evidencia pública
+
+Candidata 0.17.0, caché `contracts-c12-v1`. Leer `CICLOS-C9-C12.md`. La mejora de foco, teclado, exportación cloud y trayectorias por perfil conserva contratos y datos previos. El harness local y las comprobaciones públicas tienen evidencias separadas. La activación de salas es un cambio de infraestructura independiente; su estado publicado sólo se acredita en el manifiesto `qa-private/publish-c12-20261022/release.json`.
+
+C9 y C10 están publicados. C11 está publicado como 0.16.0, commit `51b47fe16c5bcaa869008f8cb49bdcb6ea4b7aae`, CI 271 aprobadas, ninguna fallida y una omitida; la primera publicación mantiene las salas deshabilitadas. C12 verificó ocho informes de tareas en D1 con cuatro perfiles sintéticos, dos contratos y cero duplicados. La prueba de dos salas públicas debe conservar sus propios registros y no confundirse con esos informes.
+
+Auditoría de los 97 compromisos y contraste de expertos: `qa-private/campana-c9-c12-20261021/`. Revisiones C12, métricas, respaldo y cierre: `qa-private/ciclo-c12-20261022/`. Cualquier estado posterior requiere consultar el manifiesto correspondiente; no inferir despliegue ni eficacia de este texto. Mantener Free, un proceso local de pruebas, presupuesto acotado y respaldos diferenciales. No publicar credenciales ni bases de alumnos en Pages.
+
+---
+
 # Continuidad C10: apoyos solicitados y evidencia docente
 
 Aplicación 0.15.0, caché `contracts-c10-v3`; nuevo contrato `reasoning-supported-pack@1`, protocolo 6, capability `assignments-reasoning-supported-v1`. Los 48 apoyos derivan del banco C9 inmutable; no son 48 conceptos nuevos. Leer `C10-APOYOS-E-INFORMES.md`. No hay migración de D1 en C10.

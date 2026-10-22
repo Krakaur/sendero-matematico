@@ -1,4 +1,4 @@
-// Infrastructure candidate, NOT the applied wrangler.jsonc. Capacity stays off until acceptance.
+// Free-only classroom service. Disable LIVE_ROOMS_ENABLED to block new room entry; preserve SQLite namespace and D1 receipts.
 {
   "$schema":"../node_modules/wrangler/config-schema.json",
   "name":"sendero-aula",
@@ -6,7 +6,7 @@
   "compatibility_date":"2026-10-14",
   "workers_dev":true,
   "assets":{"directory":"./admin","binding":"ASSETS","run_worker_first":["/admin-api/*"]},
-  "vars":{"ALLOWED_ORIGINS":"https://krakaur.github.io","SERVICE_ENABLED":"true","MAX_DAILY_REQUESTS":"10000","MAX_DAILY_PER_ACCESS":"1000","LIVE_ROOMS_ENABLED":"false"},
+  "vars":{"ALLOWED_ORIGINS":"https://krakaur.github.io","SERVICE_ENABLED":"true","MAX_DAILY_REQUESTS":"10000","MAX_DAILY_PER_ACCESS":"1000","LIVE_ROOMS_ENABLED":"true"},
   "d1_databases":[{"binding":"DB","database_name":"sendero-aula-db","database_id":"02157c38-df21-4402-aef6-78d784f15aa3","migrations_dir":"migrations"}],
   "durable_objects":{"bindings":[{"name":"CLASSROOM_RACE","class_name":"ClassroomRace"}]},
   "exports":{"ClassroomRace":{"type":"durable-object","storage":"sqlite"}},

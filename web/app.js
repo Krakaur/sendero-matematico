@@ -1206,9 +1206,9 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-contracts-c11-v2`);
+    const cache = await caches.open(`sendero-${VERSION}-contracts-c12-v1`);
     const files = [
-      "./cloud-room-contract.js", "./cloud-room-link.js", "./cloud-room-view.js",
+      "./cloud-room-ui.js", "./cloud-room-contract.js", "./cloud-room-link.js", "./cloud-room-view.js",
       "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js", "./reasoning-c9.js","./reasoning-support.js","./buffered-reflection.js","./teaching-insights.js","./teaching-insights.css", "./task-preview.js", "./teacher-c9.css",
       "./index.html",
       "./app.js",

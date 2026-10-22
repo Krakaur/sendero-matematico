@@ -39,7 +39,7 @@ test('C11 integración: cuatro copias cloud se conservan y no alteran denominado
   for(const rows of Object.values(summary.partitions)){assert.equal(rows.reduce((n,row)=>n+row.count,0),1);assert(rows.every(row=>row.denominator===1));}
   const csv=reconciliationCSV(summary);assert(csv.includes(legacy.id));assert(cloud.every(record=>!csv.includes(record.id)));
   assert.match(reconciliationSummaryHTML(summary),/Diferencia de conservación: 0/);
-  const html=cloudTeacherReportHTML(cloud.map(record=>({record,delivery:'received'})));assert.match(html,/Importado, sin acuse verificado/);assert(!html.includes('Lectura autenticada'));assert(!html.includes('Acuse D1 confirmado'));assert.match(html,/0\/8 respondidos/);
+  const html=cloudTeacherReportHTML(cloud.map(record=>({record,delivery:'received'})));assert.match(html,/Importado, sin acuse verificado/);assert(!html.includes('Lectura autenticada'));assert(!html.includes('Acuse D1 confirmado'));assert.equal([...html.matchAll(/<dt>Retos con respuesta<\/dt>\s*<dd>0\/8<\/dd>/g)].length,4);
   const filtered=summarizeReconciliation(teacher,true,{student:'absent'});assert.equal(filtered.totals.visibleEntries,0);assert.equal(filtered.outsideLegacy.count,4,'La frontera no desaparece al filtrar otro universo.');
 });
 

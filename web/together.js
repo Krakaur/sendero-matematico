@@ -30,7 +30,9 @@ import { RoomLink, readRoomInvitation } from "./room-link.js";
 import {profileKey} from './profiles.js';
 import {CloudRoomLink,cloudAccessFromState} from './cloud-room-link.js';
 import {cloudEntryHTML,cloudSetupHTML,cloudRoomHTML,mountCloudScene} from './cloud-room-view.js';
+import {cloudViewKey,captureCloudUI,restoreCloudUI,cloudFocusIdentity,restoreCloudFocus,patchCloudUI,cloudKeyChoice,cloudRecordsCSV} from './cloud-room-ui.js';
 let cloudLink=null,cloudSnapshot=null,cloudRecords=[],cloudCurrent=null,cloudMessage='',cloudAccess=null,cloudDispose=null;
+let cloudRenderKey='',cloudBusy=false,cloudPendingFocus=null;
 const cloudPositions=new Map();
 const main = document.querySelector("#main"),
   esc = (s) =>
@@ -95,7 +97,7 @@ function stopView() {
   consoleKeys.clear();
 }
 function reset(keepRecovery=false) {
-  cloudLink?.close();cloudLink=null;cloudDispose?.();cloudDispose=null;cloudSnapshot=null;cloudRecords=[];cloudPositions.clear();
+  cloudLink?.close();cloudLink=null;cloudDispose?.();cloudDispose=null;cloudSnapshot=null;cloudRecords=[];cloudPositions.clear();cloudRenderKey='';cloudBusy=false;cloudPendingFocus=null;
   stopView();
   document.body.classList.remove("room-many-local", "room-reasoning");
   link?.close();
@@ -143,42 +145,105 @@ function setup() {
   main.insertAdjacentHTML('beforeend',cloudEntryHTML());
 }
 function renderCloud(){
-  cloudDispose?.();cloudDispose=null;
-  const focus=document.activeElement,focusId=focus?.id,focusChoice=focus?.dataset?.cloudChoice;
-  main.innerHTML=cloudSnapshot?cloudRoomHTML(cloudSnapshot,{message:cloudMessage,pending:!!cloudLink?.pending,records:cloudRecords,connected:cloudLink?.connected===true}):cloudSetupHTML(cloudAccess,cloudCurrent,cloudMessage);
-  if(cloudSnapshot)cloudDispose=mountCloudScene(main,cloudSnapshot,{reduced:getReduced(),previous:cloudPositions});
-  const replacement=focusId?document.getElementById(focusId):focusChoice!==undefined?main.querySelector(`[data-cloud-choice="${focusChoice}"]`):null;
-  if(replacement&&!replacement.disabled)replacement.focus({preventScroll:true});
+  const pending=cloudLink?.pending,connected=cloudLink?.connected===true;
+  const key=cloudViewKey(cloudSnapshot,{records:cloudRecords,current:cloudCurrent,role:cloudAccess?.role,reduced:getReduced(),connected});
+  const active=cloudFocusIdentity(main),saved=captureCloudUI(main);
+  // Keep a pending answer's focus only while the user has not chosen another control.
+  if(cloudPendingFocus&&active&&JSON.stringify(active)!==JSON.stringify(cloudPendingFocus))cloudPendingFocus=null;
+  const rebuilt=key!==cloudRenderKey;
+  if(rebuilt){
+    cloudDispose?.();cloudDispose=null;
+    main.innerHTML=cloudSnapshot?cloudRoomHTML(cloudSnapshot,{message:cloudMessage,pending:!!pending,records:cloudRecords,connected}):cloudSetupHTML(cloudAccess,cloudCurrent,cloudMessage);
+    cloudRenderKey=key;
+    if(cloudSnapshot)cloudDispose=mountCloudScene(main,cloudSnapshot,{reduced:getReduced(),previous:cloudPositions});
+    restoreCloudUI(main,saved,{focus:false});
+  }
+  patchCloudUI(main,{snapshot:cloudSnapshot,message:cloudMessage,pending,connected,busy:cloudBusy});
+  if(rebuilt&&saved.focus&&!pending)restoreCloudFocus(main,saved.focus);
+  const noOtherFocus=!document.activeElement||document.activeElement===document.body||document.activeElement===main;
+  if(!pending&&cloudPendingFocus){
+    if(noOtherFocus||(active&&JSON.stringify(active)===JSON.stringify(cloudPendingFocus)))restoreCloudFocus(main,cloudPendingFocus);
+    cloudPendingFocus=null;
+  }
+}
+async function cloudWork(message,work,success=''){
+  const channel=cloudLink;cloudBusy=true;cloudMessage=message;renderCloud();
+  try{
+    const result=await work(channel);
+    if(kind==='cloud'&&cloudLink===channel){cloudBusy=false;if(cloudMessage===message)cloudMessage=success;renderCloud();}
+    return result;
+  }catch(e){
+    if(kind==='cloud'&&cloudLink===channel){cloudBusy=false;cloudMessage=e.message;renderCloud();}
+    if(kind==='cloud'&&cloudLink===channel)throw e;
+    return undefined;
+  }
 }
 async function openCloud(){
   reset();
   try{
     const id=sessionStorage.getItem('sendero.active'),state=id&&JSON.parse(localStorage.getItem(profileKey(id)));
-    cloudAccess=cloudAccessFromState(state);kind='cloud';cloudMessage='Consultando disponibilidad del aula…';cloudCurrent=null;renderCloud();
-    cloudLink=new CloudRoomLink(cloudAccess,{accessCurrent:access=>{try{const state=JSON.parse(localStorage.getItem(profileKey(access.profile))),current=cloudAccessFromState(state);return ['endpoint','token','classroom','role','profile'].every(k=>current[k]===access[k]);}catch{return false;}},snapshot:(snapshot,records=[])=>{if(kind!=='cloud')return;cloudSnapshot=snapshot;cloudRecords=records;renderCloud();},status:message=>{if(kind!=='cloud')return;cloudMessage=message;renderCloud();},receipt:receipt=>{if(kind!=='cloud')return;cloudMessage=receipt.committed?'Acción aceptada por el servidor.':`La acción anterior no cambió el juego (${receipt.code}). Revisa el estado y vuelve a intentarlo si corresponde.`;renderCloud();}});
-    cloudCurrent=await cloudLink.current();if(kind==='cloud')renderCloud();
-  }catch(e){error=e.message;kind=null;setup();}
+    cloudAccess=cloudAccessFromState(state);kind='cloud';cloudCurrent=null;
+    let channel;
+    const currentChannel=()=>kind==='cloud'&&cloudLink===channel;
+    channel=new CloudRoomLink(cloudAccess,{
+      accessCurrent:access=>{try{const state=JSON.parse(localStorage.getItem(profileKey(access.profile))),current=cloudAccessFromState(state);return ['endpoint','token','classroom','role','profile'].every(k=>current[k]===access[k]);}catch{return false;}},
+      snapshot:(snapshot,records=[])=>{if(!currentChannel())return;cloudSnapshot=snapshot;cloudRecords=records;renderCloud();},
+      status:message=>{if(!currentChannel())return;cloudMessage=message;renderCloud();},
+      receipt:receipt=>{if(!currentChannel())return;cloudMessage=receipt.committed?'Acción aceptada por el servidor.':`La acción anterior no cambió el juego (${receipt.code}). Revisa el estado y vuelve a intentarlo si corresponde.`;renderCloud();}
+    });
+    cloudLink=channel;
+    const current=await cloudWork('Consultando disponibilidad del aula…',link=>link.current(),'Disponibilidad del aula actualizada.');
+    if(currentChannel()){cloudCurrent=current;renderCloud();}
+  }catch(e){if(kind===null||kind==='cloud'){reset();error=e.message;setup();}}
 }
 async function cloudClick(button){
   try{
     if(button.id==='cloud-exit'){reset();setup();return;}
-    if(button.id==='cloud-discover'){cloudCurrent=await cloudLink.current();cloudSnapshot=null;renderCloud();return;}
-    if(button.id==='cloud-enter'){cloudLink.roomId=cloudCurrent.id;if(cloudAccess.role==='teacher'||cloudCurrent.terminal)await cloudLink.refreshTeacher();else await cloudLink.connect(cloudCurrent.id);return;}
-    if(button.id==='cloud-teacher-refresh'){await cloudLink.refreshTeacher();return;}
-    if(button.id==='cloud-close-room'){await cloudLink.request(`/live/rooms/${cloudSnapshot.id}/close`,{actionId:crypto.randomUUID(),expectedVersion:cloudSnapshot.version});await cloudLink.refreshTeacher();return;}
-    if(button.id==='cloud-archive'){await cloudLink.request(`/live/rooms/${cloudSnapshot.id}/archive`,{});await cloudLink.refreshTeacher();return;}
-    if(button.id==='cloud-reconnect'||button.id==='cloud-transfer'){await cloudLink.connect(cloudSnapshot?.id||cloudCurrent.id,{transfer:button.id==='cloud-transfer'});return;}
-    const s=cloudSnapshot;if(!s?.self)return;
-    if(button.id==='cloud-ready')cloudLink.action({type:'ready',value:!s.players.find(p=>p.seat===s.self.seat)?.ready});
-    if(button.id==='cloud-pause')cloudLink.action({type:'pause',reason:'requested'});
-    if(button.id==='cloud-hint')cloudLink.action({type:'hint',questionId:s.question.id,questionIndex:s.question.index});
-    if(button.dataset.cloudChoice!==undefined)cloudLink.action({type:'answer',questionId:s.question.id,questionIndex:s.question.index,choiceIndex:Number(button.dataset.cloudChoice)});
-  }catch(e){cloudMessage=e.message;renderCloud();}
+    if(cloudBusy)return;
+    const channel=cloudLink;
+    if(button.id==='cloud-discover'){
+      const current=await cloudWork('Consultando disponibilidad del aula…',link=>link.current(),'Disponibilidad del aula actualizada.');
+      if(kind==='cloud'&&cloudLink===channel){cloudCurrent=current;cloudSnapshot=null;cloudRecords=[];renderCloud();}return;
+    }
+    if(button.id==='cloud-enter'){
+      channel.roomId=cloudCurrent.id;
+      await cloudWork('Abriendo la sala…',link=>cloudAccess.role==='teacher'||cloudCurrent.terminal?link.refreshTeacher():link.connect(cloudCurrent.id));return;
+    }
+    if(button.id==='cloud-teacher-refresh'){await cloudWork('Actualizando estado e informe…',link=>link.refreshTeacher(),'Estado e informe actualizados.');return;}
+    if(button.id==='cloud-close-room'){
+      const id=cloudSnapshot.id,version=cloudSnapshot.version;
+      await cloudWork('Cerrando la sala y conservando resultados…',async link=>{await link.request(`/live/rooms/${id}/close`,{actionId:crypto.randomUUID(),expectedVersion:version});return link.refreshTeacher();},'Estado de cierre actualizado.');return;
+    }
+    if(button.id==='cloud-archive'){
+      const id=cloudSnapshot.id;
+      await cloudWork('Consultando el archivo pendiente…',async link=>{await link.request(`/live/rooms/${id}/archive`,{});return link.refreshTeacher();},'Estado del archivo actualizado; revisa los acuses de cada participación.');return;
+    }
+    if(button.id==='cloud-csv'){
+      const csv=cloudRecordsCSV(cloudRecords,{source:'server-read',roomId:cloudSnapshot.id,serviceOrigin:cloudAccess.endpoint});
+      const url=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
+      a.href=url;a.download='sendero-aula-'+cloudSnapshot.id.replace(/[^A-Za-z0-9_-]/g,'_')+'.csv';a.hidden=true;document.body.append(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+      cloudMessage='Se solicitó la descarga del CSV de esta partida. Conserva los perfiles como texto al abrirlo en una hoja de cálculo.';renderCloud();return;
+    }
+    if(button.id==='cloud-reconnect'||button.id==='cloud-transfer'){
+      const id=cloudSnapshot?.id||cloudCurrent.id,transfer=button.id==='cloud-transfer';
+      await cloudWork('Preparando la conexión…',link=>link.connect(id,{transfer}));return;
+    }
+    const snapshot=cloudSnapshot;if(!snapshot?.self)return;
+    let action=null;
+    if(button.id==='cloud-ready')action={type:'ready',value:!snapshot.players.find(p=>p.seat===snapshot.self.seat)?.ready};
+    if(button.id==='cloud-pause')action={type:'pause',reason:'requested'};
+    if(button.id==='cloud-hint')action={type:'hint',questionId:snapshot.question.id,questionIndex:snapshot.question.index};
+    if(button.dataset.cloudChoice!==undefined)action={type:'answer',questionId:snapshot.question.id,questionIndex:snapshot.question.index,choiceIndex:Number(button.dataset.cloudChoice)};
+    if(action){cloudPendingFocus=cloudFocusIdentity(main);channel.action(action);}
+  }catch(e){if(kind==='cloud'){cloudMessage=e.message;renderCloud();}}
 }
 main.addEventListener('submit',async event=>{
-  if(event.target.id!=='cloud-create-form')return;event.preventDefault();const values=new FormData(event.target);event.target.querySelector('button').disabled=true;
-  try{await cloudLink.create({trail:values.get('trail'),level:Number(values.get('level')),mode:values.get('mode'),circuit:values.get('circuit')});}
-  catch(e){cloudMessage=e.message;renderCloud();}
+  if(event.target.id!=='cloud-create-form')return;
+  event.preventDefault();if(cloudBusy)return;
+  const values=new FormData(event.target);
+  try{await cloudWork('Creando el recorrido del aula…',link=>link.create({trail:values.get('trail'),level:Number(values.get('level')),mode:values.get('mode'),circuit:values.get('circuit')}),'Recorrido creado. Pueden entrar cuatro estudiantes.');}
+  catch{/* cloudWork already displays the error only in its originating view. */}
 });
 function roster() {
   return `<div class="room-roster">${match.players.map((p) => `<article class="room-person" data-ready="${p.ready}">${canoeSVG(p.seat)}<strong>${p.name}${p.id === localId && !local() ? " · Tú" : ""}</strong><small>${!p.connected ? "Sin conexión" : p.ready ? "Preparado para salir" : "Preparando el recorrido"}</small>${!p.connected&&authority()&&match.status==='lobby'?`<button class="soft-button" data-remove-waiting="${esc(p.id)}">Liberar esta plaza</button>`:""}${local() || p.id === localId ? `<button class="${p.ready ? "secondary" : "primary"}" data-ready="${esc(p.id)}" ${!p.connected ? "disabled" : ""}>${p.ready ? "Todavía no" : `Estoy listo · ${p.name}`}</button>` : ""}</article>`).join("")}</div>`;
@@ -634,6 +699,13 @@ main.addEventListener("click", async (e) => {
   }
 });
 document.addEventListener("keydown", (e) => {
+  if(kind==='cloud'){
+    const choice=cloudKeyChoice(e);
+    if(choice===null||cloudBusy||!cloudLink?.connected||cloudLink.pending||cloudSnapshot?.status!=='running')return;
+    const button=main.querySelector(`[data-cloud-choice="${choice}"]`);
+    if(!button||button.disabled)return;
+    e.preventDefault();button.focus({preventScroll:true});button.click();return;
+  }
   if (
     e.repeat ||
     e.ctrlKey ||

@@ -4,7 +4,7 @@ import {assignedItems} from './task-content.js';
 import {assignmentSnapshot,validateAssignedSession,equivalent,sessionKey} from './assignments.js';
 import {validEnrollment} from './enrollment.js';
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.16.0";
+export const VERSION = "0.17.0";
 export const SCHEMA = "sendero.report.v3";
 export const TRAILS = {
   suma: {

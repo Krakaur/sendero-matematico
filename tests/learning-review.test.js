@@ -64,7 +64,7 @@ test("Post-game review includes corrected and helped items without turning them 
       questions: [q, { a: 1, b: 3, answer: 3, attempts: [3], hint: true }],
     },
     html = learningReviewHTML(s);
-  assert(html.includes("2 retos necesitaron"));
+  assert(html.includes("2 retos registraron ayuda o un intento incorrecto"));
   assert(html.includes("corregido"));
   assert(html.includes("con ayuda"));
   assert(html.includes("resolución independiente"));
