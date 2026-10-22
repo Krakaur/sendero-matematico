@@ -1,5 +1,5 @@
 const VERSION = "0.13.0";
-const CACHE = `sendero-${VERSION}-reasoning-c6-v5`;
+const CACHE = `sendero-${VERSION}-routes-c7-v4`;
 const FILES = [
   "./",
   "./index.html", "./docentes.html",

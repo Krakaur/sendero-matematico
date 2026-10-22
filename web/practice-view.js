@@ -1,5 +1,5 @@
 const safe = (n) => (Number.isInteger(n) && n >= 0 && n <= 50 ? n : 0);
-export function calmSceneHTML(trail, index) {
+export function calmSceneHTML(trail, index, count=8) {
   const names = {
       suma: [
         "El sendero de las semillas",
@@ -23,7 +23,7 @@ export function calmSceneHTML(trail, index) {
       ],
     },
     [title, text, icon] = names[trail];
-  return `<section class="calm-scene" aria-label="${title}: ${index} de ocho retos completados"><div><span class="eyebrow">A MI RITMO</span><h2>${title}</h2><p>${text}</p></div><div class="calm-garden" aria-hidden="true">${Array.from({ length: 8 }, (_, i) => `<span class="${i < index ? "grown" : ""}">${i < index ? icon : "·"}</span>`).join("")}</div></section>`;
+  return `<section class="calm-scene" aria-label="${title}: ${index} de ${count} retos completados"><div><span class="eyebrow">A MI RITMO</span><h2>${title}</h2><p>${text}</p></div><div class="calm-garden" aria-hidden="true">${Array.from({ length: count }, (_, i) => `<span class="${i < index ? "grown" : ""}">${i < index ? icon : "·"}</span>`).join("")}</div></section>`;
 }
 export function writtenAnswerHTML(q) {
   return `<form id="written-answer" class="written-answer"><label for="written-result">Construye tu respuesta</label><div><input id="written-result" name="result" type="number" inputmode="numeric" min="0" max="2500" step="1" required autocomplete="off" placeholder="Resultado" aria-describedby="feedback"><button class="primary">Comprobar</button></div></form>`;

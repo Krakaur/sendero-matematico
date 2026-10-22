@@ -72,10 +72,10 @@ export function newAssignedSession(task,profile) {
   const assignment=assignmentSnapshot(task);
   if(!task.recipientProfileIds.includes(profile))throw Error('Esta tarea no está asignada a este perfil.');
   const pack=assignedItems(task);
-  const level=pack?task.parameters.level:task.parameters.table<=3?1:task.parameters.table<=5?2:task.parameters.table<=8?3:4;
+  const level=pack?pack[0].level:task.parameters.table<=3?1:task.parameters.table<=5?2:task.parameters.table<=8?3:4;
   const s=newSession(task.trail,level,profile);
-  Object.assign(s,{assignment,assignmentId:task.id,assignmentVersion:task.version,taskProtocol:pack?3:2,responseMode:'choice'});
-  if(pack){s.questions=pack.map(q=>({...q,attempts:[],events:[],hint:false,solutionShown:false,solutionRequested:false,done:false,activeMs:0,supportProtocol:3,reflection:''}));return s;}
+  Object.assign(s,{assignment,assignmentId:task.id,assignmentVersion:task.version,taskProtocol:pack?(task.contentId==='arithmetic-fixed-pack'?4:3):2,responseMode:'choice'});
+  if(pack){s.questions=pack.map(q=>({...q,attempts:[],events:[],hint:false,solutionShown:false,solutionRequested:false,done:false,activeMs:0,supportProtocol:s.taskProtocol,...(s.taskProtocol===3?{reflection:''}:{timingProtocol:1,firstResponseMs:0,timingInterrupted:false})}));return s;}
   s.questions=Array.from({length:8},(_,i)=>{
     const q=makeQuestion('multi',level),a=task.parameters.table,b=i+1;
     return {...q,a,b,answer:a*b,options:arithmeticOptions('multi',a,b,a*b),itemId:`item-${i+1}`,events:[]};

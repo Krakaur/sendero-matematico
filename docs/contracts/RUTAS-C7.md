@@ -1,0 +1,13 @@
+# C7: tareas aritméticas y evidencia de los talleres
+
+`arithmetic-fixed-pack@1` amplía las tareas individuales a suma y resta, con cuatro niveles y ocho pares de operandos fijos por nivel, y a tablas del 1 al 20. Cada tarea declara 4, 6 u 8 ítems. Los paquetes de menor longitud son prefijos del de ocho: repetirlos no constituye una medición con ítems independientes. Las tablas usan factores del 1 al número de ítems, no cubren una matriz completa de 20 × 20. Los niveles son bandas de contenido, no una escala psicométrica calibrada.
+
+La publicación de una tarea conserva contenido, destinatarios, longitud y versión. El protocolo de interacción 4 mantiene la solución automática tras un error y exige decidir el cierre del último ítem. Se informa por separado primer intento, acierto sin apoyo registrado y acierto final. No es equivalente al protocolo 3 de representación, que requiere solicitar la solución; tampoco se reinterpreta el historial de los protocolos 1 y 2.
+
+Se conserva una vía asignable para cada una de las cinco rutas actuales: multiplicación clásica, representación de situaciones, sumas, restas y tablas ampliadas. Esto no significa cobertura completa del currículo, de las 21 familias del banco de razonamiento ni de los ocho talleres manipulativos. Estos últimos todavía no tienen un contrato de tarea versionado.
+
+El informe de talleres reconstruye los modelos de cada comprobación en sus ocho familias, distingue la fase original y la comprobación posterior con otros datos, muestra las explicaciones seleccionadas y la nota propia opcional, y declara los datos ausentes. Elegir una explicación no acredita su producción autónoma. La comprobación posterior, aun correcta, no demuestra transferencia independiente ni retención. Se muestran las seis sesiones más recientes y se anuncia ese límite.
+
+La fracción se representa como una unidad completa, con columnas compatibles con 2, 4, 6 u 8 partes; una marca y el estado accesible complementan el color. Los controles mantienen su identidad y foco al seleccionar. El formulario docente oculta y deshabilita los campos que no corresponden al contenido elegido.
+
+La aceptación exige comprobar 84 combinaciones aritméticas, doce entregas HTTP locales (tres rutas × cuatro perfiles sintéticos) y sus doce reenvíos sin duplicados, sesiones con cierre explícito y estímulos inmutables, los ocho modelos de taller, tres recorridos aritméticos por UI y cuatro controles de taller por teclado. El profesor debe interpretar un informe integrado sin confundir resolución, apoyo, explicación seleccionada y transferencia. Estas métricas son funcionales y de revisión experta; no miden aprendizaje ni preferencia infantil.

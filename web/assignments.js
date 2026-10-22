@@ -17,7 +17,7 @@ function validateTask(t,recipients=true) {
   keys(t,'schema classId id version title trail contentId contentVersion parameters completionRule assignedAt'+(recipients?' recipientProfileIds':''));
   require(isAssignedTask(t)&&id(t.classId)&&id(t.id)&&int(t.version,1,100000));
   require(typeof t.title==='string'&&t.title.trim().length>0&&t.title.length<=100);
-  if(t.contentId==='represent-fixed-pack'){require(validContentTask(t),'Paquete de razonamiento no compatible.');}
+  if(['represent-fixed-pack','arithmetic-fixed-pack'].includes(t.contentId)){require(validContentTask(t),'Paquete de contenido no compatible.');}
   else {require(t.trail==='multi'&&t.contentId==='multiply-fixed-table'&&t.contentVersion===1,'Paquete de contenido no compatible. Actualiza Sendero para abrir contenidos nuevos.');
   keys(t.parameters,'table');require(int(t.parameters.table,1,12));
   keys(t.completionRule,'kind count');require(t.completionRule.kind==='answered_items'&&t.completionRule.count===8);}
@@ -61,9 +61,9 @@ export function validateAssignedSession(s,tasks=null,classId=null,pending=false)
   if(s.assignment===undefined){require(s.assignmentId===undefined&&s.assignmentVersion===undefined&&s.taskProtocol===undefined,'Referencia de tarea incompleta.');return true;}
   const a=validateTask(s.assignment,false);
   require(id(s.id)&&typeof s.version==='string'&&s.version.length<=20,'Identidad de sesión no válida.');
-  if(s.taskProtocol===3)require(new TextEncoder().encode(JSON.stringify(s)).length<=32768,'El registro supera el límite de entrega de 32 KiB.');
+  if(s.taskProtocol>=3)require(new TextEncoder().encode(JSON.stringify(s)).length<=32768,'El registro supera el límite de entrega de 32 KiB.');
   if(pending)require(int(s.index,0,a.completionRule.count-1)&&s.completedAt===null&&s.completionAction===undefined,'Avance pendiente incompatible con la tarea.');
-  require(s.assignmentId===a.id&&typeof s.assignmentId==='string'&&int(s.assignmentVersion,1,100000)&&s.assignmentVersion===a.version&&(a.contentId==='represent-fixed-pack'?s.taskProtocol===3:[1,2].includes(s.taskProtocol)),'Referencia de tarea no coincide.');
+  require(s.assignmentId===a.id&&typeof s.assignmentId==='string'&&int(s.assignmentVersion,1,100000)&&s.assignmentVersion===a.version&&(a.contentId==='represent-fixed-pack'?s.taskProtocol===3:a.contentId==='arithmetic-fixed-pack'?s.taskProtocol===4:[1,2].includes(s.taskProtocol)),'Referencia de tarea no coincide.');
   require(id(s.profile)&&s.trail===a.trail&&!s.race&&s.responseMode==='choice','Condiciones de práctica asignada incompatibles.');
   require(Array.isArray(s.questions)&&s.questions.length===a.completionRule.count&&iso(s.startedAt)&&(pending||iso(s.completedAt)&&Date.parse(s.completedAt)>=Date.parse(s.startedAt)),'Cierre de tarea no válido.');
   if(pending){}
@@ -75,12 +75,13 @@ export function validateAssignedSession(s,tasks=null,classId=null,pending=false)
     require(master&&master.recipientProfileIds.includes(s.profile)&&equivalent(assignmentSnapshot(master),a),'La sesión no corresponde al catálogo o destinatario asignado.');
   }
   const pack=assignedItems(a);
-  const level=pack?a.parameters.level:a.parameters.table<=3?1:a.parameters.table<=5?2:a.parameters.table<=8?3:4;
+  const level=pack?pack[0].level:a.parameters.table<=3?1:a.parameters.table<=5?2:a.parameters.table<=8?3:4;
   require(s.level===level,'Nivel diferente de las condiciones asignadas.');
   s.questions.forEach((q,i)=>{
-    require(q&&Number.isFinite(q.activeMs)&&q.activeMs>=0&&q.activeMs<=86400000&&typeof q.hint==='boolean'&&(typeof q.solutionShown==='boolean'||s.taskProtocol!==3&&q.solutionShown===undefined),'Estado de ítem no transportable.');
-    if(q.timingProtocol!==undefined)require(q.timingProtocol===1&&typeof q.timingInterrupted==='boolean'&&Number.isFinite(q.firstResponseMs)&&q.firstResponseMs>=0&&q.firstResponseMs<=q.activeMs,'Tiempo de respuesta no válido.');
+    require(q&&Number.isFinite(q.activeMs)&&q.activeMs>=0&&q.activeMs<=86400000&&typeof q.hint==='boolean'&&(typeof q.solutionShown==='boolean'||s.taskProtocol<3&&q.solutionShown===undefined),'Estado de ítem no transportable.');
+    if(q.timingProtocol!==undefined)require(q.timingProtocol===1&&typeof q.timingInterrupted==='boolean'&&((pending&&q.attempts?.length===0&&q.firstResponseMs===undefined)||(Number.isFinite(q.firstResponseMs)&&q.firstResponseMs>=0&&q.firstResponseMs<=q.activeMs)),'Tiempo de respuesta no válido.');
     require(pack?validAssignedItem(q,pack[i]):q.itemId===`item-${i+1}`&&q.a===a.parameters.table&&q.b===i+1&&q.answer===q.a*q.b,'Estímulo diferente del contenido asignado.');
+    if(s.taskProtocol===4){const fields=[...Object.keys(pack[i]),'attempts','events','hint','solutionShown','solutionRequested','done','activeMs','supportProtocol','responseMode','timingProtocol','timingInterrupted','firstResponseMs'];require(Object.keys(q).every(k=>fields.includes(k))&&q.solutionRequested===false,'Campos ajenos al paquete aritmético.');}
     require(q.reflection===undefined||(s.taskProtocol===3&&typeof q.reflection==='string'&&q.reflection.length<=600&&new TextEncoder().encode(JSON.stringify(q.reflection)).length<=2402),'Explicación propia no válida.');
     require(Array.isArray(q.attempts),'Faltan respuestas.');
     require(q.level===level&&[undefined,'choice'].includes(q.responseMode)&&Array.isArray(q.options)&&q.options.length===4&&new Set(q.options).size===4&&q.options.every(n=>int(n,0,2500))&&q.options.includes(q.answer)&&q.attempts.every(n=>q.options.includes(n)),'Opciones incompatibles con la tarea.');
@@ -96,10 +97,12 @@ export function validateAssignedSession(s,tasks=null,classId=null,pending=false)
       else if(ev?.type==='solution'){keys(ev,'type');require(!solution&&answers.length>0&&answers.at(-1)!==q.answer,'Solución automática sin error previo.');solution=true;}
       else throw Error('Evento desconocido.');
     }
+    if(s.taskProtocol>=3)require(q.supportProtocol===s.taskProtocol&&q.done===correct,'Estado de interacción distinto del protocolo.');
     require(equivalent(answers,q.attempts)&&hint===q.hint&&solution===!!q.solutionShown,'Evidencia y resumen del ítem difieren.');
     if(s.taskProtocol!==3)require(!answers.some(n=>n!==q.answer)||solution,'Falta la solución automática del protocolo declarado.');
     else {require(q.supportProtocol===3&&typeof q.solutionRequested==='boolean'&&q.solutionRequested===solution&&q.done===correct,'La solución solicitada o el estado de respuesta no coincide con su exposición.');
-    if(pending&&i>s.index)require(q.events.length===0&&!q.hint&&!q.solutionShown&&!q.reflection,'Evidencia en un reto que aún no se ha abierto.');}
+    }
+    if(pending&&i>s.index)require(q.events.length===0&&!q.hint&&!q.solutionShown&&!q.reflection,'Evidencia en un reto que aún no se ha abierto.');
   });return true;
 }
 export function assignedEvidence(s) {

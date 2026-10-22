@@ -1,3 +1,4 @@
+import {taskDescription} from './assignments.js';
 import {TRAILS} from './core.js';
 export const resultCondition=s=>s.assignment?JSON.stringify([s.assignment.classId,s.assignment.id,s.assignment.version,s.assignment.contentId,s.assignment.contentVersion,s.assignment.parameters,s.taskProtocol??1]):'free';import {fluency} from './fluency.js';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -11,7 +12,7 @@ export function resultGroups(sessions) {
    if(!questions.length)continue;
    const first=questions.filter(q=>q.attempts[0]===q.answer).length;
    const task=ss[0]?.assignment;
-   const conditionLabel=task?`Tarea ${task.title||task.id} · versión ${task.version} · tabla ${task.parameters?.table??'sin registrar'} · interacción ${ss[0].taskProtocol??1}`:'Práctica libre';
+   const conditionLabel=task?`Tarea ${task.title||task.id} · versión ${task.version} · ${taskDescription(task)} · interacción ${ss[0].taskProtocol??1}`:'Práctica libre';
    rows.push({condition,conditionLabel,trail,title:t.short+' · '+(mode==='race'?'Carrera':mode==='written'?'Respuesta escrita':'Práctica con opciones'),mode,level,total:questions.length,first,errors:questions.length-first,percent:Math.round(100*first/questions.length),fluency:fluency(questions),recent:ss.map(s=>({at:s.completedAt,...fluency(s.questions.filter(q=>q.level===level))})).filter(f=>f.n).slice(-6)});
   }
  }
