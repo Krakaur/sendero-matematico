@@ -1,3 +1,4 @@
+import {assignedItems} from './task-content.js';
 import {assignmentSnapshot,validateAssignedSession,equivalent,sessionKey} from './assignments.js';
 import {validEnrollment} from './enrollment.js';
 import { validBankQuestion } from "./bank.js";
@@ -49,9 +50,9 @@ export function recordAttempt(question, value) {
   question.attempts.push(value);
   if(Array.isArray(question.events)) {
     question.events.push({type:value===question.answer?'correct':'wrong',value});
-    if(value!==question.answer&&!question.solutionShown)question.events.push({type:'solution'});
+    if(question.supportProtocol!==3&&value!==question.answer&&!question.solutionShown)question.events.push({type:'solution'});
   }
-  if (value !== question.answer) question.solutionShown = true;
+  if (value !== question.answer) {if(question.supportProtocol!==3)question.solutionShown = true;}
   else question.done = true;
   return true;
 }
@@ -61,12 +62,20 @@ export function recordSupport(question) {
   if(Array.isArray(question.events))question.events.push({type:'hint'});
   return true;
 }
+export function recordSolution(question) {
+  if(question.done||question.solutionShown||!question.attempts.length)return false;
+  question.solutionShown=true;question.solutionRequested=true;
+  if(Array.isArray(question.events))question.events.push({type:'solution'});
+  return true;
+}
 export function newAssignedSession(task,profile) {
   const assignment=assignmentSnapshot(task);
   if(!task.recipientProfileIds.includes(profile))throw Error('Esta tarea no está asignada a este perfil.');
-  const level=task.parameters.table<=3?1:task.parameters.table<=5?2:task.parameters.table<=8?3:4;
-  const s=newSession('multi',level,profile);
-  Object.assign(s,{assignment,assignmentId:task.id,assignmentVersion:task.version,taskProtocol:2,responseMode:'choice'});
+  const pack=assignedItems(task);
+  const level=pack?task.parameters.level:task.parameters.table<=3?1:task.parameters.table<=5?2:task.parameters.table<=8?3:4;
+  const s=newSession(task.trail,level,profile);
+  Object.assign(s,{assignment,assignmentId:task.id,assignmentVersion:task.version,taskProtocol:pack?3:2,responseMode:'choice'});
+  if(pack){s.questions=pack.map(q=>({...q,attempts:[],events:[],hint:false,solutionShown:false,solutionRequested:false,done:false,activeMs:0,supportProtocol:3,reflection:''}));return s;}
   s.questions=Array.from({length:8},(_,i)=>{
     const q=makeQuestion('multi',level),a=task.parameters.table,b=i+1;
     return {...q,a,b,answer:a*b,options:arithmeticOptions('multi',a,b,a*b),itemId:`item-${i+1}`,events:[]};
@@ -74,11 +83,11 @@ export function newAssignedSession(task,profile) {
   return s;
 }
 // Protocol2 waits for an explicit finish action, including after a correct last answer.
-export const requiresAssignedFinish=s=>!!s?.assignment&&s.taskProtocol===2&&s.index===7&&!s.completedAt;
+export const requiresAssignedFinish=s=>!!s?.assignment&&s.taskProtocol>=2&&s.index===s.questions.length-1&&!s.completedAt;
 export function advanceAssignedSession(s,at=new Date().toISOString()) {
   if(!s.assignment||s.completedAt||!s.questions[s.index]?.attempts.length)throw Error('Responde el reto antes de continuar.');
-  if(s.index===7){
-    const closure={...s,completedAt:at,...(s.taskProtocol===2?{completionAction:{kind:'finish-task',at}}:{})};
+  if(s.index===s.questions.length-1){
+    const closure={...s,completedAt:at,...(s.taskProtocol>=2?{completionAction:{kind:'finish-task',at}}:{})};
     validateAssignedSession(closure);Object.assign(s,closure);return true;
   }
   s.index++;return false;
@@ -220,7 +229,7 @@ export function validateReport(data) {
       !Number.isFinite(Date.parse(s.startedAt)) ||
       !Number.isFinite(Date.parse(s.completedAt)) ||
       !Array.isArray(s.questions) ||
-      s.questions.length !== 8
+      s.questions.length !== (s.assignment?.completionRule?.count??8)
     )
       throw new Error("El informe contiene una sesión no válida.");
     validateAssignedSession(s);
@@ -254,7 +263,7 @@ export function validateReport(data) {
           : s.trail === "resta"
             ? q.a - q.b
             : q.a * q.b;
-      if (s.trail === "razonar" ? !validBankQuestion(q) : q.answer !== expected)
+      if (s.trail === "razonar" ? (s.taskProtocol===3?false:!validBankQuestion(q)) : q.answer !== expected)
         throw new Error("Los resultados no coinciden con los ejercicios.");
     }
   }

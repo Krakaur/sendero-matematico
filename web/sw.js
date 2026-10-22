@@ -1,5 +1,5 @@
 const VERSION = "0.13.0";
-const CACHE = `sendero-${VERSION}-interaction-c5-v8`;
+const CACHE = `sendero-${VERSION}-reasoning-c6-v5`;
 const FILES = [
   "./",
   "./index.html", "./docentes.html",
@@ -14,7 +14,7 @@ const FILES = [
   "./profiles.js", "./enrollment.js", "./cohorts.js", "./reconciliation.js", "./reconciliation-view.js", "./multiplayer-records.js", "./together-profiles.js", "./together-local.js",
   "./backup.js", "./race.js",
   "./classroom.js", "./cloud.js", "./cloud-view.js",
-  "./core.js", "./assignments.js", "./assignment-view.js",
+  "./core.js", "./assignments.js", "./task-content.js", "./assignment-view.js",
   "./fluency.js",
   "./results.js",
   "./bank.js",

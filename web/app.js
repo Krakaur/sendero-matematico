@@ -27,6 +27,7 @@ import {
   VERSION,
   recordAttempt,
   recordSupport,
+  recordSolution,
   newAssignedSession,
   advanceAssignedSession,
   requiresAssignedFinish,
@@ -592,7 +593,77 @@ function raceHTML(from, to) {
   return `<div class="river-scene" role="img" aria-label="Luma ha recorrido ${to} de 8 tramos del río"><svg class="river-world" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="800" height="200" fill="#c5ece8"/><circle cx="674" cy="38" r="24" fill="#ffe7a2"/><path d="M0 87 100 15 198 89 327 26 442 90 578 20 680 85 800 10V170H0" fill="#92c3af"/><path d="M0 110Q130 60 260 104T520 94T800 78V200H0" fill="#4d957c"/><path d="M0 115Q170 97 370 116T800 108V200H0" fill="#68c8d6"/><path d="M0 126Q180 109 370 128T800 120" fill="none" stroke="#b5f1eb" stroke-width="5"/><g fill="#246b58"><path d="m32 109 22-70 23 70zm80-7 18-57 20 57zm428 4 22-67 21 67zm171 5 24-79 24 79z"/></g><g stroke="#b5f1eb" stroke-width="3" stroke-linecap="round"><path d="M25 164h45m75 16h42m53-34h66m81 27h42m96-30h61m29 40h38m75-20h59"/></g><path d="M0 194Q160 169 290 197T570 189T800 188V200H0" fill="#e6d5a1"/></svg><div class="river-track"><div class="race-boat" style="--from:${from / 8 * 100}%;--to:${to / 8 * 100}%"><svg viewBox="0 0 100 90" aria-hidden="true"><ellipse cx="49" cy="79" rx="43" ry="6" fill="#277e8c" opacity=".3"/><path d="m29 49 1-33 15 10 23-11 4 35-19 14z" fill="#dd8242"/><path d="m34 47 16-7 17 6-15 14z" fill="#fff1cf"/><path d="m33 25 7 6-6 4zm31 0-7 6 7 4z" fill="#663d36"/><circle cx="42" cy="39" r="3" fill="#193e3c"/><circle cx="61" cy="39" r="3" fill="#193e3c"/><path d="m47 48 5 5 5-5" fill="#193e3c"/><path d="m10 60 78-2-18 21H30z" fill="#e6ad46"/><path d="M15 63h65" stroke="#fff0a9" stroke-width="5"/><path d="m69 44 17 29" stroke="#614938" stroke-width="5" stroke-linecap="round"/></svg></div><div class="finish-flag" aria-hidden="true">⚑<span>META</span></div></div><div class="river-milestones" aria-hidden="true">${Array.from({length:8},(_,i)=>`<i class="${i < to ? 'passed' : ''}"></i>`).join('')}</div></div>`;
 }
 function reasoningGame(s,q) {
- return `<section class="game-shell"><div class="game-top"><div><strong>El taller de las ideas</strong><small>Reto ${s.index+1} de 8 · ${levelName(q.level)}</small></div><button id="pause" class="soft-button">Pausar</button></div><div class="progress-track" role="progressbar" aria-label="Avance" aria-valuemin="0" aria-valuemax="8" aria-valuenow="${s.index}"><div class="progress-fill" style="width:${s.index/8*100}%"></div></div><div class="question-card reasoning"><div class="question-meta">${esc(q.dimension)}${q.pool==='transfer'?(q.novel?' · Reto nuevo':' · Repaso'):''}</div><h1 class="word-problem">${esc(q.prompt)}</h1>${q.solutionShown||q.done?solutionHTML(s,q):''}<div class="answers ${q.labels?'word-answers':''}">${q.options.map(n=>`<button class="answer ${(q.done||q.solutionShown)&&n===q.answer?'correct':''}" data-answer="${n}" ${q.done||q.attempts.includes(n)?'disabled':''}>${esc(optionText(q,n))}</button>`).join('')}</div><div id="feedback" class="feedback" role="status">${q.done?'¡Un paso más!':q.solutionShown?'Observa la solución y vuelve a intentarlo.':q.attempts.length?'Revisa qué relación pide la situación. Puedes pedir una pista antes de intentarlo de nuevo.':'Piensa qué te pregunta la situación.'}</div>${q.hint?hintHTML(s,q):''}${q.attempts.length&&!q.done&&!q.solutionShown?'<button id="show-reasoning-solution" class="soft-button">Revisar la solución explicada</button>':''}<div class="game-controls">${q.done?`<button id="next" class="primary">${s.index===7?'Ver mis descubrimientos':'Siguiente paso'} →</button>`:`<button id="hint" class="soft-button" ${q.hint?'disabled':''}>Una pista</button>`}</div><p class="micro">Puedes dibujar en papel. Al terminar, explica cómo lo pensaste a alguien que te acompañe.</p></div></section>`;
+ const count=s.assignment?s.questions.length:8,assigned=!!s.assignment;
+ const nextLabel=requiresAssignedFinish(s)?'Terminar tarea':s.index===count-1?'Ver mis descubrimientos':'Siguiente paso';
+ return `<style>/* C6: explanation is a separate reading/writing step, not an inline control. */
+.question-card.reasoning > label {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0 0;
+  min-width: 0;
+  text-align: left;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.reasoning #reasoning-reflection {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 120px;
+  padding: 12px 14px;
+  border: 2px solid #82aa91;
+  border-radius: 14px;
+  background: #fff;
+  color: #173e35;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  resize: vertical;
+}
+.reasoning #reasoning-reflection::placeholder {
+  color: #5a6b61;
+  opacity: 1;
+}
+.reasoning #reasoning-reflection:focus-visible {
+  outline: 3px solid #986626;
+  outline-offset: 3px;
+}
+.reasoning > #show-reasoning-solution {
+  display: block;
+  max-width: 100%;
+  min-height: 48px;
+  margin: 12px 0 0;
+  white-space: normal;
+  line-height: 1.4;
+}
+.reasoning > label + .micro {
+  margin-top: 8px;
+  text-align: left;
+  line-height: 1.5;
+}
+.reasoning .game-controls {
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.reasoning .game-controls > button {
+  min-height: 48px;
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.4;
+}
+@media (max-width: 520px) {
+  .reasoning .game-controls > button {
+    flex: 1 1 10rem;
+  }
+  .reasoning > #show-reasoning-solution {
+    width: 100%;
+  }
+}
+</style><section class="game-shell"><div class="game-top"><div><strong>${assigned?esc(s.assignment.title):'El taller de las ideas'}</strong><small>Reto ${s.index+1} de ${count} · ${levelName(q.level)}${assigned?' · tarea v'+s.assignmentVersion:''}</small></div><button id="pause" class="soft-button">Pausar</button></div><div class="progress-track" role="progressbar" aria-label="Avance" aria-valuemin="0" aria-valuemax="${count}" aria-valuenow="${s.index}"><div class="progress-fill" style="width:${s.index/count*100}%"></div></div><div class="question-card reasoning"><div class="question-meta">${esc(q.dimension)}</div><h1 class="word-problem" tabindex="-1">${esc(q.prompt)}</h1>${q.solutionShown||(q.done&&s.taskProtocol!==3)?solutionHTML(s,q):''}<div class="answers ${q.labels?'word-answers':''}">${q.options.map(n=>`<button class="answer ${(q.done||q.solutionShown)&&n===q.answer?'correct':''}" data-answer="${n}" ${q.done||q.attempts.includes(n)?'disabled':''}>${esc(optionText(q,n))}</button>`).join('')}</div><div id="feedback" class="feedback" role="status">${q.done?'La elección es correcta.':q.solutionShown?'Observa la solución. Puedes corregir tu respuesta.':q.attempts.length?'Revisa qué relación pide la situación. Puedes pedir una pista.':'Piensa qué te pregunta la situación.'}</div>${q.hint?hintHTML(s,q):''}${q.attempts.length&&!q.done&&!q.solutionShown?'<button id="show-reasoning-solution" class="soft-button">Revisar la solución explicada</button>':''}${assigned?`<label>¿Cómo lo pensaste? (opcional)<textarea id="reasoning-reflection" maxlength="600" rows="2" placeholder="Explica la relación que elegiste. No escribas nombres ni datos personales.">${esc(q.reflection||'')}</textarea></label><p class="micro">Tu docente podrá leer tu explicación. No se califica automáticamente. Puedes continuar después de responder, aunque quede un error.</p>`:''}<div class="game-controls">${!q.done?`<button id="hint" class="soft-button" ${q.hint?'disabled':''}>Una pista</button>`:''}${q.done||(assigned&&q.attempts.length)?`<button id="${assigned?'assigned-next':'next'}" class="primary">${nextLabel} →</button>`:''}</div><p class="micro">Puedes dibujar en papel y explicar cómo lo pensaste.</p></div></section>`;
 }
 function hintHTML(s, q) {
   if(q.bankId)return `<aside class="hint-box"><p>${esc(q.hintText)}</p></aside>`;
@@ -614,7 +685,7 @@ function finished() {
   if (!s) return home();
   const r = summarize([s]);
   if(s.race)return raceFinishHTML(s,esc,activeProfile.name,state.adaptive[s.trail]?.level||s.race.level,TRAILS[s.trail].short,learningReviewHTML(s)+statsHTML(r)+fluencyHTML([s]));
-  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ocho ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${s.assignment?`<section class="panel"><h2>${esc(s.assignment.title)} · versión ${s.assignmentVersion}</h2><p>Ocho respuestas registradas; completar no exige acertarlas todas. ${storageOK && KEY && activeProfile?'El cierre está guardado en este dispositivo.':'No se confirmó el guardado del cierre. Exporta una copia de tus resultados antes de salir.'} La recepción se consulta por separado en tu informe.</p>${s.questions.at(-1).attempts.at(-1)!==s.questions.at(-1).answer?solutionHTML(s,s.questions.at(-1)):''}<a href="#progreso" class="secondary">Revisar la tarea y su recepción</a></section>`:''}${learningReviewHTML(s)}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">${s.assignment?'Práctica libre ↗':'Otra aventura ↗'}</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
+  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? raceHTML(7,8) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ${s.questions.length} ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${s.assignment?`<section class="panel"><h2>${esc(s.assignment.title)} · versión ${s.assignmentVersion}</h2><p>${s.questions.length} respuestas registradas; completar no exige acertarlas todas. ${storageOK && KEY && activeProfile?'El cierre está guardado en este dispositivo.':'No se confirmó el guardado del cierre. Exporta una copia de tus resultados antes de salir.'} La recepción se consulta por separado en tu informe.</p>${s.taskProtocol!==3&&s.questions.at(-1).attempts.at(-1)!==s.questions.at(-1).answer?solutionHTML(s,s.questions.at(-1)):''}<a href="#progreso" class="secondary">Revisar la tarea y su recepción</a></section>`:''}${learningReviewHTML(s)}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">${s.assignment?'Práctica libre ↗':'Otra aventura ↗'}</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
 }
 function render(persistState = true) {
   reportReconciliationCache.clear();
@@ -694,7 +765,8 @@ function render(persistState = true) {
   });
   main.querySelector('#written-answer')?.addEventListener('submit',e=>{e.preventDefault();const n=Number(new FormData(e.currentTarget).get('result'));answer(n);});
   main.querySelectorAll('[data-explore]').forEach(b=>b.addEventListener('click',()=>{const q=state.current.questions[state.current.index];q.exploreCount=Math.max(0,Math.min(state.current.trail==='resta'?q.a:Math.max(20,q.b),(q.exploreCount||0)+Number(b.dataset.explore)));save();render(false);main.querySelector(`[data-explore="${b.dataset.explore}"]`)?.focus({preventScroll:true});}));
-  main.querySelector('#show-reasoning-solution')?.addEventListener('click',()=>{const q=state.current.questions[state.current.index];q.solutionShown=true;q.solutionRequested=true;q.hint=true;save();render(false);main.querySelector('.solution-callout')?.focus();});
+  main.querySelector('#reasoning-reflection')?.addEventListener('input',e=>{state.current.questions[state.current.index].reflection=e.target.value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').slice(0,600);save();});
+  main.querySelector('#show-reasoning-solution')?.addEventListener('click',()=>{const q=state.current.questions[state.current.index];recordSolution(q);if(q.supportProtocol!==3)q.hint=true;save();render(false);main.querySelector('.solution-callout')?.focus();});
   main.querySelector("#next")?.addEventListener("click", next);
   $('#race-ready')?.addEventListener('click',launchRace);
   $('#circuit-select')?.addEventListener('change',e=>{if(needsRaceStart(state.current)&&Object.hasOwn(CIRCUITS,e.target.value)){state.current.race.circuit=e.target.value;state.raceCircuit=e.target.value;save();}});
@@ -774,7 +846,7 @@ function goGame() {
 }
 function begin(trail,bankOnly=false,task=null) {
   if(task&&!isAssignedTask(task))throw Error('Tarea no compatible.');
-  if(trail==='razonar'&&!bankOnly){stopTimer(true);save();location.hash='#taller';return;}
+  if(trail==='razonar'&&!bankOnly&&!task){stopTimer(true);save();location.hash='#taller';return;}
   if(!activeProfile){location.hash="#perfiles";return;}
   if (state.current) {
     const sameTask=task?assignmentMatches(state.current,task):!state.current.assignment;
@@ -823,7 +895,7 @@ function answer(n) {
   if (q.done) {
     $("#assigned-next,#next")?.focus({preventScroll:true});
     announce(
-      q.bankId ? `Correcto. ${q.solution}. ${q.explanation}` : `Correcto. ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}.`,
+      q.bankId ? (s.taskProtocol===3?'Correcto. Puedes continuar o explicar tu elección.':`Correcto. ${q.solution}. ${q.explanation}`) : `Correcto. ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}.`,
     );
   } else {
     $(".solution-callout")?.focus({preventScroll:true});
@@ -867,7 +939,7 @@ function next() {
     stopTimer();
     if(advanceAssignedSession(s)){
       state.sessions.push(s);state.current=null;save();syncClassroom();location.hash='#logro';
-    }else{save();render();main.querySelector('.equation,.solution-callout')?.focus({preventScroll:true});}
+    }else{save();render();main.querySelector('.word-problem,.equation,.solution-callout')?.focus({preventScroll:true});}
     return;
   }
   rememberPractice(state,s.trail,s.questions[s.index]);
@@ -950,7 +1022,7 @@ function exportCSV() {
       "pista",
       "solucion_mostrada",
       "interaccion_ms_estimados",
-      "version", "actividad", "banco", "dimension", "reserva", "nueva", "enunciado", "explicacion", "respuesta_texto", "protocolo_tiempo", "primera_respuesta_ms", "tiempo_interrumpido", "tarea_id", "tarea_version", "aula_tarea", "protocolo_evidencia", "secuencia_respuesta_apoyo",
+      "version", "actividad", "banco", "dimension", "reserva", "nueva", "enunciado", "explicacion", "respuesta_texto", "protocolo_tiempo", "primera_respuesta_ms", "tiempo_interrumpido", "tarea_id", "tarea_version", "aula_tarea", "protocolo_evidencia", "secuencia_respuesta_apoyo", "explicacion_propia_opcional", "intentos_etiquetas",
     ],
   ];
   for (const s of state.sessions)
@@ -971,7 +1043,7 @@ function exportCSV() {
         q.hint,
         q.solutionShown ?? "no registrado",
         Math.round(q.activeMs),
-        s.version, q.bankId??"", q.bankVersion??"", q.dimension??"", q.pool??"", q.novel??"", q.prompt??"", q.explanation??"", optionText(q,q.answer), q.timingProtocol??"", q.firstResponseMs??"", q.timingInterrupted??"", s.assignmentId??"", s.assignmentVersion??"", s.assignment?.classId??"", s.taskProtocol??"", q.events?JSON.stringify(q.events):"no registrado",
+        s.version, q.bankId??"", q.bankVersion??"", q.dimension??"", q.pool??"", q.novel??"", q.prompt??"", q.explanation??"", optionText(q,q.answer), q.timingProtocol??"", q.firstResponseMs??"", q.timingInterrupted??"", s.assignmentId??"", s.assignmentVersion??"", s.assignment?.classId??"", s.taskProtocol??"", q.events?JSON.stringify(q.events):"no registrado", q.reflection??"", JSON.stringify(q.attempts.map(n=>optionText(q,n))),
       ]);
   download(
     `sendero-${profileCode()}.csv`,
@@ -1100,7 +1172,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-interaction-c5-v8`);
+    const cache = await caches.open(`sendero-${VERSION}-reasoning-c6-v5`);
     const files = [
       "./index.html",
       "./app.js",

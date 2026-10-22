@@ -229,7 +229,7 @@ export default {
             "chunked-vault",
             "enrollment",
             "multiplayer",
-            "assignments-v2",
+            "assignments-v2", "assignments-reasoning-v1",
           ],
           pageSize: PAGE,
           chunkSize: CHUNK,
