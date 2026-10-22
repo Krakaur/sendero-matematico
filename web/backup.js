@@ -24,7 +24,7 @@ export function validateSnapshot(data) {
   const c=s.current;if(c.assignment||c.taskProtocol!==undefined||c.assignmentId!==undefined||c.assignmentVersion!==undefined)validateAssignedProgress(c);if(c.profile!==s.profile||!Object.hasOwn(TRAILS,c.trail)||!Number.isInteger(c.index)||c.index<0||c.index>7||!Array.isArray(c.questions)||(c.taskProtocol!==5&&!c.questions[c.index]))throw Error('Partida pendiente no válida.');
   for(const [i,q] of c.questions.entries()){ 
    if(!Number.isInteger(q.level)||q.level<1||q.level>4||!Array.isArray(q.attempts)||!Array.isArray(q.options)||q.options.length!==4||new Set(q.options).size!==4||!q.options.includes(q.answer)||!q.attempts.every(n=>q.options.includes(n)||(q.responseMode==='write'&&Number.isInteger(n)&&n>=0&&n<=2500))||!Number.isFinite(q.activeMs)||q.activeMs<0)throw Error('Ejercicio pendiente no válido.');
-   if(q.bankId){if(!(c.taskProtocol===3?validAssignedItem(q,assignedItems(c.assignment)?.[i]):validBankQuestion(q)))throw Error('Banco incompatible.');}
+   if(q.bankId){if(!(c.assignment&&assignedItems(c.assignment)?validAssignedItem(q,assignedItems(c.assignment)[i]):validBankQuestion(q)))throw Error('Banco incompatible.');}
    else {if(![q.a,q.b,q.answer,...q.options].every(n=>Number.isInteger(n)&&n>=0&&n<=2500)||q.a>50||q.b>50)throw Error('Cantidades inválidas.');const answer=c.trail==='suma'?q.a+q.b:c.trail==='resta'?q.a-q.b:q.a*q.b;if(q.answer!==answer)throw Error('Operación pendiente no válida.');}
   }
  }
@@ -46,14 +46,15 @@ export async function decryptBackup(envelope,password) {
  return validateSnapshot(JSON.parse(new TextDecoder().decode(plain)));
  }catch{throw Error('No se pudo abrir el respaldo. Comprueba la contraseña, integridad y versión del archivo.');}
 }
-export async function restoreSnapshot(storage,snapshot,newPassword) {
+export async function restoreSnapshot(storage,snapshot,newPassword,{beforeWrite=()=>{},afterWrite=()=>{}}={}) {
  const {profile,state}=validateSnapshot(structuredClone(snapshot)),credential=await passwordRecord(newPassword),list=profileList(storage),existing=list.findIndex(p=>p.id===profile.id);
  if(existing<0&&list.length>=8)throw Error('No hay espacio para otro perfil.');
  if(list.some(p=>p.id!==profile.id&&p.name.toLocaleLowerCase('es')===profile.name.toLocaleLowerCase('es')))throw Error('Otro perfil ya utiliza ese alias. Cambia su alias antes de recuperar la copia.');
  const key=profileKey(profile.id),previous=storage.getItem(key),oldIndex=storage.getItem(PROFILE_INDEX);
- if(previous)storage.setItem(`sendero.restore.previous.${profile.id}`,previous);
+ beforeWrite();
+ if(previous)storage.setItem(`sendero.restore.previous.${profile.id}.${Date.now()}`,previous);
  const p={...profile,password:credential};if(existing<0)list.push(p);else list[existing]=p;
- try{storage.setItem(key,JSON.stringify(state));storage.setItem(PROFILE_INDEX,JSON.stringify(list));}
- catch(error){if(previous)storage.setItem(key,previous);if(oldIndex)storage.setItem(PROFILE_INDEX,oldIndex);throw error;}
+ try{storage.setItem(key,JSON.stringify(state));storage.setItem(PROFILE_INDEX,JSON.stringify(list));afterWrite(p);}
+ catch(error){try{if(previous===null)storage.removeItem(key);else storage.setItem(key,previous);if(oldIndex===null)storage.removeItem(PROFILE_INDEX);else storage.setItem(PROFILE_INDEX,oldIndex);}catch{throw Error('Restauración parcial: conserva este navegador y consulta el respaldo local anterior.');}throw error;}
  return p;
 }

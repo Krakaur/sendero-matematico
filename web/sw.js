@@ -1,5 +1,5 @@
-const VERSION = "0.18.0";
-const CACHE = `sendero-${VERSION}-contracts-c13-v2`;
+const VERSION = "0.19.0";
+const CACHE = `sendero-${VERSION}-automatic-entry-c14`;
 const FILES = [
   "./teacher-reading-state.js",
   "./cloud-room-ui.js", "./cloud-room-contract.js", "./cloud-room-link.js", "./cloud-room-view.js",
@@ -14,7 +14,7 @@ const FILES = [
       "./juntos.html", "./together.css", "./together.js", "./room.js", "./room-link.js", "./vendor/peerjs-1.5.5.min.js",
   "./art.js", "./art.css", "./assets/luma-forest-c8.webp", "./assets/workshops-atlas-c8.webp",
   "./assets/forest-river-v1.png", "./assets/river-racers-v1.png",
-  "./app.js", "./workshop.js", "./practice-view.js", "./workshop-view.js", "./workshop.css",
+  "./app.js", "./portable-account.js", "./workshop.js", "./practice-view.js", "./workshop-view.js", "./workshop.css",
   "./profiles.js", "./enrollment.js", "./cohorts.js", "./reconciliation.js", "./reconciliation-view.js", "./multiplayer-records.js", "./together-profiles.js", "./together-local.js",
   "./backup.js", "./race.js",
   "./classroom.js", "./cloud.js", "./cloud-view.js",
@@ -49,10 +49,13 @@ self.addEventListener('message', (event) => {
 self.addEventListener("activate", (event) =>
   event.waitUntil(
     (async () => {
-      for (const key of await caches.keys())
+      const old=(await caches.keys()).filter(key=>key.startsWith('sendero-')&&key!==CACHE);
+      for (const key of old)
         if (key.startsWith("sendero-") && key !== CACHE)
           await caches.delete(key);
       await self.clients.claim();
+      // Never force navigation from the worker: only the page can confirm
+      // that an in-memory answer, form or note has been saved safely.
     })(),
   ),
 );
@@ -65,11 +68,14 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     (async () => {
       const cache = await caches.open(CACHE);
-      const cached = await cache.match(event.request);
-      if (cached) return cached;
       try {
-        return await fetch(event.request);
+        const response=await fetch(new Request(event.request,{cache:'no-cache'}));
+        if(response.ok)return response;
+        const fallback=await cache.match(event.request);
+        return fallback||response;
       } catch {
+        const cached=await cache.match(event.request);
+        if(cached)return cached;
         if (event.request.mode === "navigate")
           return (await cache.match("./index.html")) || Response.error();
         return Response.error();

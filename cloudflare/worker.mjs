@@ -1,4 +1,5 @@
 import { validateReport, SCHEMA } from "../web/core.js";
+import { portableRoute } from './portable.mjs';
 import { LIVE_RECORD, liveBytes, isServerLiveId } from '../web/cloud-room-contract.js';
 export { ClassroomRace } from './classroom-race.mjs';
 const liveEnabled = env => env.LIVE_ROOMS_ENABLED === 'true' && !!env.CLASSROOM_RACE;
@@ -46,12 +47,12 @@ class HttpError extends Error {
 const require = (ok, status = 400, code = "invalid_request") => {
   if (!ok) throw new HttpError(status, code);
 };
-async function readBody(request) {
+async function readBody(request, limit = 192 * 1024) {
   require(request.headers
     .get("content-type")
     ?.startsWith("application/json"), 415, "json_required");
   require(Number(request.headers.get("content-length") || 0) <=
-    192 * 1024, 413, "body_limit");
+    limit, 413, "body_limit");
   const reader = request.body?.getReader();
   require(reader);
   const chunks = [];
@@ -60,7 +61,7 @@ async function readBody(request) {
     const { value, done } = await reader.read();
     if (done) break;
     size += value.byteLength;
-    if (size > 192 * 1024) {
+    if (size > limit) {
       await reader.cancel();
       throw new HttpError(413, "body_limit");
     }
@@ -125,7 +126,7 @@ export default {
       if (path === "/health" && request.method === "GET")
         return respond({
           service: "sendero-aula",
-          version: 3,
+          version: 4,
           enabled: env.SERVICE_ENABLED === "true",
         });
       if (
@@ -135,6 +136,8 @@ export default {
         return env.ASSETS.fetch(request);
       require(env.SERVICE_ENABLED === "true", 503, "service_paused");
       require(["GET", "POST"].includes(request.method), 405, "method");
+      if(path.startsWith('/portable/'))
+        return await portableRoute({path,request,env,respond,first,all,run,digest,token,require,readBody,headers});
       const liveSocket = path === '/live/socket' && request.method === 'GET';
       let liveTicket = null;
       if (liveSocket) {
@@ -269,8 +272,9 @@ export default {
       require(!admin, 404, "route");
       if (is("/capabilities"))
         return respond({
-          version: 3,
+          version: 4,
           features: [
+            "portable-encrypted-account-v1",
             "projects",
             "vault",
             "students",

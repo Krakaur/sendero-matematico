@@ -24,6 +24,7 @@ import {RiverAudio} from "./race-audio.js";
 import {raceFinishHTML} from "./race-finish.js";
 import {needsRaceStart,releaseRace,countdownNumber,COUNTDOWN_BEAT_MS,raceStartHTML} from "./race-start.js";
 import {encryptBackup,decryptBackup,restoreSnapshot} from "./backup.js";
+import {createPortable,loginPortable,uploadPortable,fetchPortable,revokePortable,portableAuth,storePortableAuth} from './portable-account.js';
 import {renderFluency} from "./results.js";
 import {narrateLocally} from "./narration.js";
 import {readInvitation, exchangeClassroom, applyExchange, importMultiplayerCopies, applyDeliveryAttempt, deliveryStatus, classroomRequest, validateTasks} from "./classroom.js";
@@ -78,17 +79,20 @@ const fresh = () => ({
 let state = fresh();
 let storageOK = true;
 let flushReflection = null;
+let resumeRequired = false, portableSyncTimer = null, portableBusy = false, portableConflict = false, portableBaseRevision = null, localBaseline = null, localConflict = false, localConflictArchived = false, portableNotice = '', pendingFrontend = false;
 try {
   const migrated = migrateLegacy(localStorage);
   const id = sessionStorage.getItem('sendero.active') || migrated?.id;
   activeProfile = profileList(localStorage).find(p=>p.id===id) || null;
   if(activeProfile) {
     KEY=profileKey(activeProfile.id);
-    state=JSON.parse(localStorage.getItem(KEY));
+    localBaseline=localStorage.getItem(KEY);state=JSON.parse(localBaseline);
     if(!state || state.profile!==activeProfile.id || !Array.isArray(state.sessions))throw Error();
     sessionStorage.setItem('sendero.active',activeProfile.id);
+    portableBaseRevision=portableAuth(localStorage,activeProfile.id)?.revision??null;
   }
 } catch { activeProfile=null;KEY=null;storageOK=false; }
+resumeRequired = !!state.current && location.hash === '#jugar';
 let timerStart = null,
   idleTimer = null,
   installPrompt = null;
@@ -229,15 +233,55 @@ function storageWarning() {
 function save() {
   if(!KEY || !activeProfile) return;
   try {
-    const stored=JSON.parse(localStorage.getItem(KEY)||'null');
+    const previous=localStorage.getItem(KEY),stored=JSON.parse(previous||'null');
+    if(localConflict)throw Error('conflict');
+    if(localBaseline!==null&&previous!==localBaseline){
+      if(previous===JSON.stringify(state)){localBaseline=previous;storageOK=true;return;}
+      localConflict=true;portableConflict=true;
+      try{localStorage.setItem(`sendero.conflict.${activeProfile.id}.${Date.now()}`,JSON.stringify(state));localConflictArchived=true;}catch{localConflictArchived=false;}
+      const alert=$('#storage-alert');alert.hidden=false;alert.textContent=localConflictArchived?'Otra pestaña cambió este perfil. Se conservó una rama local separada; no se enviará a la nube. Cierra las otras pestañas y recupera tu copia antes de continuar.':'Otra pestaña cambió este perfil y no pudo guardarse la rama separada. Conserva esta pestaña abierta y exporta una copia antes de continuar.';
+      throw Error('conflict');
+    }
     if(stored?.multiplayerHistory)state.multiplayerHistory=mergeMultiplayer(state.multiplayerHistory||[],stored.multiplayerHistory);
-    localStorage.setItem(KEY, JSON.stringify(state));
+    const serialized=JSON.stringify(state);
+    if(previous!==serialized){localStorage.setItem(KEY,serialized);localBaseline=serialized;schedulePortableSync();}
     storageOK = true;
   } catch {
     storageOK = false;
-    storageWarning();
+    if(!localConflict)storageWarning();
   }
 }
+function portableMessage(message) {
+  portableNotice=message;
+  const node=$('#portable-status');if(node)node.textContent=message;
+}
+function schedulePortableSync(delay=30000) {
+  if(!activeProfile||!portableAuth(localStorage,activeProfile.id)||portableConflict||portableSyncTimer)return;
+  portableSyncTimer=setTimeout(()=>{portableSyncTimer=null;syncPortable();},delay);
+}
+async function syncPortable() {
+  if(portableBusy||portableConflict||!activeProfile||!navigator.onLine||!storageOK)return;
+  const id=activeProfile.id,auth=portableAuth(localStorage,id);
+  if(!auth)return;
+  if(portableBaseRevision!==auth.revision){portableConflict=true;portableMessage('Otra pestaña confirmó una revisión distinta. Se detuvo la sincronización para conservar ambas ramas.');return;}
+  portableBusy=true;portableMessage('Guardado local; enviando copia cifrada…');
+  try {
+    const sentState=JSON.stringify(state);
+    const hadPending=!!auth.pending;
+    const next=await uploadPortable(activeProfile,state,auth,fetch,pending=>{
+      const current=portableAuth(localStorage,id);
+      if(current?.token!==auth.token||current.revision!==auth.revision)throw Error('La cuenta cambió durante el guardado; vuelve a abrir el perfil.');
+      storePortableAuth(localStorage,id,{...current,pending});
+    });
+    const latest=portableAuth(localStorage,id);
+    if(latest?.token===auth.token&&latest.revision===auth.revision){storePortableAuth(localStorage,id,next);if(activeProfile?.id===id)portableBaseRevision=next.revision;}
+    else if(activeProfile?.id===id){portableConflict=true;portableMessage('Otra pestaña cambió la cuenta durante el envío. Revisa ambas copias antes de continuar.');return;}
+    if(activeProfile?.id===id){if(hadPending||JSON.stringify(state)!==sentState){portableMessage('Una copia quedó confirmada; los cambios posteriores siguen pendientes.');schedulePortableSync(1000);}else portableMessage('Progreso confirmado en la nube: '+new Date(next.syncedAt).toLocaleString('es'));}
+  }catch(error){
+    if(activeProfile?.id===id){if(error.status===409)portableConflict=true;portableMessage(error.message+' El progreso local se conserva.');}
+  }finally{portableBusy=false;}
+}
+window.addEventListener('online',()=>schedulePortableSync(1000));
 if (!storageOK) storageWarning();
 else save();
 if(!needsRaceStart(state.current))interruptTiming(state.current?.questions[state.current.index]);
@@ -314,10 +358,16 @@ function bindClassroom() {
 }
 window.addEventListener('online',syncClassroom);
 setInterval(()=>{if(!document.hidden)syncClassroom();},60000);
+function portablePanel() {
+  if(!activeProfile)return `<section class="panel"><h2>Entrar con mi código</h2><p>Recupera en este dispositivo tu cuenta y el último progreso confirmado en la nube.</p><form id="portable-login" class="profile-form"><label>Código de cuenta<input name="code" autocomplete="off" required></label><label>Contraseña de la cuenta<input name="password" type="password" autocomplete="current-password" required></label><button class="primary">Recuperar progreso</button></form><p id="portable-status" role="status">${esc(portableNotice)}</p></section>`;
+  const auth=portableAuth(localStorage,activeProfile.id);
+  if(!auth)return `<section class="panel"><h2>Guardar mi progreso en la nube</h2><p>Crea una cuenta con código y contraseña. La copia se cifra en este navegador antes de enviarse; conserva el código y la contraseña fuera de este dispositivo.</p><form id="portable-create" class="profile-form"><label>Contraseña de la cuenta<input name="password" type="password" minlength="10" maxlength="128" autocomplete="new-password" required></label><label>Repetir contraseña<input name="repeat" type="password" minlength="10" maxlength="128" autocomplete="new-password" required></label><button class="primary">Crear cuenta y guardar copia cifrada</button></form><p id="portable-status" role="status">${esc(portableNotice)}</p></section>`;
+  return `<section class="panel"><h2>Mi progreso en la nube</h2><p>${portableConflict?'Se detectó una versión más reciente en otro dispositivo; la sincronización está detenida para proteger ambos avances.':'Tu cuenta está vinculada. El progreso se guarda también aquí para jugar sin conexión.'}</p><p id="portable-status" role="status">${portableNotice?esc(portableNotice):`Última confirmación en la nube: ${esc(auth.syncedAt?new Date(auth.syncedAt).toLocaleString('es'):'sin confirmar')}. Los cambios posteriores pueden estar pendientes.`}</p><p>${auth.code?`Código para entrar en otro dispositivo: <strong class="account-code">${esc(auth.code)}</strong>`:'El código anterior no se guardó en este navegador; usa el que anotaste al crear la cuenta.'}</p><div class="button-row"><button id="portable-sync" class="secondary">Sincronizar ahora</button><button id="portable-load" class="soft-button">Recuperar copia confirmada</button><button id="portable-unlink" class="soft-button">Desvincular este dispositivo</button></div><p class="micro">Recuperar conserva una copia local anterior. Cerrar el perfil local no revoca la vinculación; «Desvincular» sí revoca este acceso a la nube. Tu cuenta no reemplaza la invitación del aula ni su acuse docente.</p></section>`;
+}
 function profilesScreen() {
   let profiles=[];try{profiles=profileList(localStorage);}catch{return '<section class="panel"><h1>No se pudo abrir la lista de perfiles</h1><p>El almacenamiento está dañado. No se ha reemplazado. Conserva los datos del navegador para recuperación técnica.</p></section>';}
-  return `<header class="page-head"><span class="eyebrow">Un cuaderno para cada persona</span><h1>¿Quién va a usar Sendero?</h1><p>Los perfiles y las contraseñas funcionan sin internet en este navegador o instalación. No son cuentas en línea.</p></header>
-  ${activeProfile?`<section class="panel"><h2>Estás usando: ${esc(activeProfile.name)}</h2><div class="button-row"><a class="primary" href="#explorar">Continuar</a><button class="secondary" id="logout">Cerrar sesión</button></div><details><summary>Mi alias y contraseña</summary><form id="edit-profile" class="profile-form"><label>Alias<input name="alias" value="${esc(activeProfile.name)}" minlength="2" maxlength="24" required></label>${activeProfile.password?'<label>Contraseña actual<input name="previous" type="password" autocomplete="current-password" required></label>':'<p>Tu registro anterior está conservado. Añade una contraseña para separar el acceso.</p>'}<label>Nueva contraseña<input name="password" type="password" autocomplete="new-password" minlength="6" maxlength="128" ${activeProfile.password?'':'required'}></label><button class="primary">Guardar cambios</button></form></details>${activeProfile.role==='student'?`<details open><summary>Mi escuela, grado, grupo y número de lista</summary><form id="edit-enrollment" class="profile-form">${enrollmentFields(state.enrollment)}<p>Los cambios se aplican a las actividades nuevas. Si vinculaste un aula, se actualizarán estos datos para tu docente.</p><button class="primary">Guardar datos escolares</button></form></details>`:''}</section>`:''}
+  return `<header class="page-head"><span class="eyebrow">Un cuaderno para cada persona</span><h1>¿Quién va a usar Sendero?</h1><p>Puedes jugar sin conexión y activar una cuenta recuperable con código y contraseña.</p></header>${portablePanel()}
+  ${activeProfile?`<section class="panel"><h2>Estás usando: ${esc(activeProfile.name)}</h2><div class="button-row"><a class="primary" href="#explorar">Continuar</a><button class="secondary" id="logout">Cerrar sesión</button></div><details><summary>Mi alias y contraseña de este dispositivo</summary><p>Cambiar esta contraseña local no cambia la contraseña de la cuenta recuperable en la nube.</p><form id="edit-profile" class="profile-form"><label>Alias<input name="alias" value="${esc(activeProfile.name)}" minlength="2" maxlength="24" required></label>${activeProfile.password?'<label>Contraseña local actual<input name="previous" type="password" autocomplete="current-password" required></label>':'<p>Tu registro anterior está conservado. Añade una contraseña para separar el acceso.</p>'}<label>Nueva contraseña local<input name="password" type="password" autocomplete="new-password" minlength="6" maxlength="128" ${activeProfile.password?'':'required'}></label><button class="primary">Guardar cambios</button></form></details>${activeProfile.role==='student'?`<details open><summary>Mi escuela, grado, grupo y número de lista</summary><form id="edit-enrollment" class="profile-form">${enrollmentFields(state.enrollment)}<p>Los cambios se aplican a las actividades nuevas. Si vinculaste un aula, se actualizarán estos datos para tu docente.</p><button class="primary">Guardar datos escolares</button></form></details>`:''}</section>`:''}
   ${profiles.length?`<section class="panel"><h2>Entrar en un perfil</h2><form id="login-profile" class="profile-form"><label>Perfil<select name="profile">${profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ${p.role==='teacher'?'Docente':'Estudiante'}${p.password?'':' · sin contraseña'}</option>`).join('')}</select></label><label>Contraseña<input name="password" type="password" autocomplete="current-password" maxlength="128"></label><button class="primary">Entrar</button></form></section>`:''}
   ${profiles.length<8?`<section class="panel"><h2>Crear un perfil</h2><form id="create-profile" class="profile-form"><label>Alias<input name="alias" minlength="2" maxlength="24" autocomplete="nickname" placeholder="Por ejemplo, Colibrí" required></label><label>Usaré Sendero como<select name="role"><option value="student">Estudiante</option><option value="teacher">Docente o acompañante</option></select></label><label>Contraseña<input name="password" type="password" autocomplete="new-password" minlength="6" maxlength="128" required></label><label>Repetir contraseña<input name="repeat" type="password" autocomplete="new-password" minlength="6" maxlength="128" required></label>${enrollmentFields()}<button class="primary">Crear y entrar</button></form></section>`:''}
   <section class="panel"><h2>Copia protegida y recuperación</h2><p>Conserva aventuras, partida pendiente y adaptación. La contraseña del respaldo permite recuperar el perfil y elegir una nueva contraseña de acceso. Guarda el archivo y la clave por separado. El aula debe volver a vincularse.</p>${activeProfile?`<form id="backup-profile" class="profile-form"><label>Contraseña para el respaldo<input name="password" type="password" minlength="10" maxlength="128" autocomplete="new-password" required></label><button class="primary">Descargar copia protegida</button></form>`:''}<form id="restore-profile" class="profile-form"><label>Archivo de respaldo<input name="file" type="file" accept=".json,application/json" required></label><label>Contraseña del respaldo<input name="password" type="password" minlength="10" maxlength="128" required></label><label>Nueva contraseña del perfil<input name="new-password" type="password" minlength="6" maxlength="128" autocomplete="new-password" required></label><button class="secondary">Recuperar perfil</button></form><p class="micro">La copia está cifrada. Los datos activos del navegador no lo están. Este formato recupera perfiles web y Windows; no restaura una base Android.</p></section>${cloudProfileHTML(activeProfile,state)}<p id="profile-message" role="status"></p><p class="micro">Hasta ocho perfiles por instalación. El acceso local no cifra los datos guardados ni verifica identidad docente. No hay recuperación remota de contraseñas. Conserva una copia de tus datos.</p>`;
@@ -325,12 +375,75 @@ function profilesScreen() {
 function enterProfile(p,s) {
   stopTimer(true);save();
   if(KEY && !storageOK)throw Error("No se pudo guardar el perfil anterior. Exporta una copia antes de cambiar.");
-  activeProfile=p;KEY=profileKey(p.id);state=s;
+  activeProfile=p;KEY=profileKey(p.id);state=s;portableConflict=false;localConflict=false;localConflictArchived=false;portableNotice='';localBaseline=localStorage.getItem(KEY);portableBaseRevision=portableAuth(localStorage,p.id)?.revision??null;resumeRequired=false;
   if(!needsRaceStart(state.current))interruptTiming(state.current?.questions[state.current.index]);
   sessionStorage.setItem('sendero.active',p.id);
   location.hash=p.role==='teacher'?'#docentes':'#explorar';render();syncClassroom();
+  if(portableAuth(localStorage,p.id))schedulePortableSync(1000);
 }
 function bindProfiles() {
+  $('#portable-create')?.addEventListener('submit',async event=>{
+    event.preventDefault();const form=event.currentTarget,button=form.querySelector('button'),values=new FormData(form);button.disabled=true;
+    let generatedCode='';const id=activeProfile?.id;
+    try{
+      if(values.get('password')!==values.get('repeat'))throw Error('Las contraseñas no coinciden.');
+      stopTimer(true);flushReflection?.();save();if(!storageOK)throw Error('No se pudo confirmar el guardado local.');
+      const result=await createPortable(activeProfile,state,values.get('password'),localStorage,fetch,code=>{generatedCode=code;if(activeProfile?.id===id&&form.isConnected)portableMessage('Código generado: '+code+'. Consérvalo mientras se confirma la cuenta.');});
+      if(activeProfile?.id!==id||!form.isConnected)return;
+      portableBaseRevision=result.auth.revision;
+      form.remove();portableMessage('Cuenta creada y copia confirmada. Tu código es '+result.code+'. Guárdalo con la contraseña fuera de este dispositivo; no podremos recuperarla si la olvidas.'+(result.localSaved?'':' Este navegador no pudo conservar la credencial; usa el código para recuperar la cuenta.'));
+    }catch(error){if(activeProfile?.id===id&&form.isConnected)portableMessage(error.message+' El progreso local se conserva.'+(generatedCode?' Código generado: '+generatedCode+'. Si la respuesta del servidor se perdió, prueba recuperarlo con tu contraseña.':''));button.disabled=false;}
+  });
+  $('#portable-login')?.addEventListener('submit',async event=>{
+    event.preventDefault();const form=event.currentTarget,button=form.querySelector('button'),values=new FormData(form);button.disabled=true;
+    try{
+      if(activeProfile)throw Error('Cierra el perfil activo antes de recuperar otro.');
+      const {snapshot,auth}=await loginPortable(values.get('code'),values.get('password'));
+      if(activeProfile||!form.isConnected)throw Error('La pantalla cambió durante la recuperación. No se cargó la copia.');
+      const current=localStorage.getItem(profileKey(snapshot.profile.id));
+      if(current&&!confirm('Ya existe una copia de este perfil en este dispositivo. Se conservará una copia local anterior y se cargará la última versión confirmada en la nube. ¿Continuar?'))return;
+      if(activeProfile||!form.isConnected)throw Error('La pantalla cambió durante la recuperación. No se cargó la copia.');
+      const authKey=`sendero.portable.${snapshot.profile.id}`,priorAuth=localStorage.getItem(authKey);
+      let p;
+      try{p=await restoreSnapshot(localStorage,snapshot,values.get('password'),{beforeWrite:()=>{if(activeProfile||!form.isConnected)throw Error('La pantalla cambió durante la recuperación. No se cargó la copia.');},afterWrite:profile=>storePortableAuth(localStorage,profile.id,auth)});}
+      catch(error){if(priorAuth===null)localStorage.removeItem(authKey);else localStorage.setItem(authKey,priorAuth);throw error;}
+      portableConflict=false;
+      enterProfile(p,snapshot.state);location.hash='#perfiles';render(false);portableMessage('Progreso recuperado desde la nube. La invitación del aula debe volver a vincularse.');
+    }catch(error){if(!activeProfile&&form.isConnected)portableMessage(error.message+' Si la recuperación quedó parcial, conserva este navegador y la copia anterior.');}finally{button.disabled=false;}
+  });
+  $('#portable-sync')?.addEventListener('click',syncPortable);
+  $('#portable-load')?.addEventListener('click',async()=>{
+    if(!activeProfile)return;
+    const id=activeProfile.id,key=profileKey(id),auth=portableAuth(localStorage,id);
+    try{
+      if(!auth)throw Error('La cuenta ya no está vinculada en este dispositivo.');
+      const result=await fetchPortable(auth);
+      if(result.snapshot.profile.id!==id)throw Error('La cuenta y el perfil no corresponden.');
+      if(activeProfile?.id!==id||KEY!==key||portableAuth(localStorage,id)?.token!==auth.token)throw Error('Cambió el perfil durante la consulta; vuelve a intentarlo.');
+      if(!confirm('Se conservará una copia local anterior y se cargará el progreso confirmado en la nube. Los cambios locales posteriores a esa copia dejarán de estar activos. ¿Continuar?'))return;
+      if(activeProfile?.id!==id||KEY!==key||portableAuth(localStorage,id)?.revision!==auth.revision)throw Error('Cambió el perfil o su copia durante la confirmación; vuelve a intentarlo.');
+      stopTimer(true);flushReflection?.();
+      if(localConflict)localStorage.setItem(`sendero.conflict.${id}.${Date.now()}`,JSON.stringify(state));
+      else{save();if(!storageOK)throw Error('No se pudo confirmar el guardado local; conserva este dispositivo.');}
+      const previous=localStorage.getItem(key),authKey=`sendero.portable.${id}`,previousAuth=localStorage.getItem(authKey);
+      localStorage.setItem(`sendero.restore.previous.${id}.${Date.now()}`,previous);
+      try {
+        localStorage.setItem(key,JSON.stringify(result.snapshot.state));
+        storePortableAuth(localStorage,id,{...auth,revision:result.revision,syncedAt:new Date().toISOString(),pending:undefined});
+      }catch(error){
+        try{if(previous===null)localStorage.removeItem(key);else localStorage.setItem(key,previous);if(previousAuth===null)localStorage.removeItem(authKey);else localStorage.setItem(authKey,previousAuth);}catch{throw Error('Restauración parcial: conserva este navegador y recupera la copia local anterior antes de continuar.');}
+        throw error;
+      }
+      state=result.snapshot.state;localBaseline=localStorage.getItem(key);localConflict=false;localConflictArchived=false;storageOK=true;portableBaseRevision=result.revision;resumeRequired=!!state.current;
+      portableConflict=false;render(false);portableMessage('Copia remota recuperada. El estado anterior quedó conservado en este dispositivo.');
+    }catch(error){if(activeProfile?.id===id)portableMessage(error.message);}
+  });
+  $('#portable-unlink')?.addEventListener('click',async()=>{
+    if(!activeProfile||!confirm('Se revocará el acceso a la nube de este dispositivo. Tu progreso local seguirá aquí. ¿Continuar?'))return;
+    const id=activeProfile.id,auth=portableAuth(localStorage,id);
+    try{await revokePortable(auth);if(activeProfile?.id!==id)return;localStorage.removeItem(`sendero.portable.${id}`);render(false);portableMessage('Dispositivo desvinculado. El progreso local permanece.');}
+    catch(error){if(activeProfile?.id===id)portableMessage('No se confirmó la revocación: '+error.message+' Vuelve a intentarlo cuando haya conexión.');}
+  });
   $('#edit-enrollment')?.addEventListener('submit',e=>{e.preventDefault();try{state.enrollment=enrollmentFromForm(new FormData(e.currentTarget));save();if(!storageOK)throw Error('No se pudieron guardar los datos.');$('#profile-message').textContent='Datos escolares guardados. Las actividades anteriores conservan sus datos originales.';syncClassroom();}catch(error){$('#profile-message').textContent=error.message;}});
   const role=$('#create-profile select[name=role]');role?.addEventListener('change',()=>{const fields=$('#create-profile .enrollment-fields');fields.hidden=role.value!=='student';fields.disabled=role.value!=='student';});
   $('#backup-profile')?.addEventListener('submit',async e=>{
@@ -342,11 +455,11 @@ function bindProfiles() {
     e.preventDefault();const form=e.currentTarget,b=form.querySelector('button');b.disabled=true;
     try {const f=new FormData(form),file=f.get('file');if(file.size>30*1024*1024)throw Error('El respaldo supera 30 MB.');const copy=await decryptBackup(JSON.parse(await file.text()),f.get('password'));
       if(!confirm(`¿Restaurar el perfil ${copy.profile.name}? Si ya existe, se reemplazará su estado con esta copia y cambiará su contraseña. Se conservará un registro local previo para recuperación técnica.`))return;
-      stopTimer(true);save();await restoreSnapshot(localStorage,copy,f.get('new-password'));activeProfile=null;KEY=null;state=fresh();sessionStorage.removeItem('sendero.active');render(false);$('#profile-message').textContent='Perfil recuperado. Entra con la nueva contraseña.';
+      stopTimer(true);save();await restoreSnapshot(localStorage,copy,f.get('new-password'));activeProfile=null;KEY=null;state=fresh();portableNotice='';localBaseline=null;portableBaseRevision=null;sessionStorage.removeItem('sendero.active');render(false);$('#profile-message').textContent='Perfil recuperado. Entra con la nueva contraseña.';
     }catch(err){$('#profile-message').textContent=err.message;}finally{b.disabled=false;}
   });
   $('#logout')?.addEventListener('click',()=>{
-    stopTimer(true);save();if(!storageOK)return;activeProfile=null;KEY=null;state=fresh();sessionStorage.removeItem('sendero.active');render(false);
+    stopTimer(true);save();if(!storageOK)return;activeProfile=null;KEY=null;state=fresh();portableNotice='';localBaseline=null;portableBaseRevision=null;sessionStorage.removeItem('sendero.active');render(false);
   });
   for(const id of ['create-profile','login-profile','edit-profile']) {
     $('#'+id)?.addEventListener('submit',async e=>{
@@ -515,7 +628,7 @@ function levelTable(sessions) {
     : "<p>Aún no hay aventuras completas. El informe aparecerá después de la primera.</p>";
 }
 function teacher() {
-  return `<header class="page-head fade-in"><span class="eyebrow">Observar para acompañar</span><h1>Una mirada<br>a cada paso.</h1><p>Informes locales para orientar la práctica. Perfiles locales e informes por estudiante. La entrega automática requiere una invitación a un aula configurada; la investigación permanece desactivada.</p></header><section class="panel"><h3>Práctica del perfil activo · ${profileCode()}</h3><p>Perfil activo: ${esc(activeProfile?.name || "")}. Cada estudiante tiene su propio acceso local. El código del informe no verifica la identidad ni crea una cuenta en línea.</p>${statsHTML(summarize(state.sessions))}${levelTable(state.sessions)}<div class="button-row"><button id="export-report" class="primary" ${state.sessions.length ? "" : "disabled"}>Exportar informe JSON ↓</button><button id="export-csv" title="Sólo preguntas; los talleres asignados se conservan en el informe completo JSON y en el seguimiento por tarea" class="secondary" ${state.sessions.length ? "" : "disabled"}>Detalle CSV ↓</button></div><p class="micro">${state.exportedAt ? `Última exportación: ${fmtDate(state.exportedAt)}. Exportar no confirma recepción por el docente.` : "Sin exportaciones registradas."} Solo se exportan aventuras completas.</p></section>${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}<section class="panel"><h3>Intercambiar evidencias de proyectos</h3><p>Estos archivos contienen construcciones, revisiones y notas opcionales, sin cifrado. Compártelos solo con la persona autorizada. No necesitas un servidor para entregarlos.</p><button id="export-projects" class="secondary" ${state.workshopHistory?.length?'':'disabled'}>Descargar mis proyectos</button><label for="import-projects">Recibir proyectos de estudiantes</label><input id="import-projects" type="file" accept=".json,application/json" multiple><p id="project-import-status" role="status"></p></section><section class="panel"><h3>Recibir informes de estudiantes</h3><p>El estudiante lleva su archivo JSON al centro educativo. Puedes abrir varios informes aquí; las sesiones repetidas se cuentan una sola vez.</p><div class="button-row"><label for="import-file" class="sr-only">Seleccionar informes JSON de Sendero</label><input id="import-file" type="file" accept=".json,application/json" multiple></div><p id="import-status" role="status" class="micro"></p>${state.teacher.length ? `<div class="table-wrap"><table><caption class="sr-only">Partidas individuales válidas y únicas recibidas en este dispositivo; no incluye construcciones ni participaciones</caption><thead><tr><th>Perfil</th><th>Contenido</th><th>Aventuras</th><th>Ejercicios</th><th>Última práctica</th></tr></thead><tbody>${teacherRows()}</tbody></table></div>${importedProfiles()}` : '<p class="micro">No hay informes recibidos. Se guardarán solamente en este dispositivo.</p>'}</section><section class="panel"><h3>Cómo interpretar los resultados</h3><details open><summary>Condiciones de práctica, no diagnóstico</summary><p>Las tareas versionadas fijan contenido, nivel y longitud: ocho respuestas en multiplicación clásica y 4, 6 u 8 en los paquetes de representación, suma, resta y tablas ampliadas. No aplican adaptación. La condición de apoyo se identifica por protocolo en cada informe; no se deben combinar como si fueran iguales. En la práctica libre hay cuatro niveles de cantidades. Tres respuestas consecutivas correctas al primer intento y sin ayuda suben un nivel; dos ejercicios consecutivos con error o ayuda lo reducen. En carrera se conserva el nivel durante ocho retos: siete u ocho aciertos iniciales sin ayuda suben un nivel para la siguiente; cuatro o menos lo reducen. Los rivales ajustan su ritmo a tiempos previos del mismo contenido y nivel. El tiempo no decide el nivel matemático. Son reglas iniciales transparentes, todavía sin validación educativa.</p></details><details><summary>Qué significan los indicadores</summary><p>Primer intento: la primera respuesta coincide con el resultado, haya o no ayuda. Sin ayuda: acierto al primer intento sin abrir la pista. Los errores anteriores a la corrección se conservan. El tiempo es una estimación de interacción: se pausa al salir, ocultar la app o tras 60 segundos sin interacción. No equivale a atención ni asistencia escolar.</p></details><details><summary>Comparaciones y evaluación formal</summary><p>Compara por contenido y dificultad; un porcentaje global puede cambiar porque cambiaron los ejercicios. Estas actividades domiciliarias no verifican identidad, supervisión ni ayuda externa. Complementan el criterio docente; no acreditan por sí solas aprendizaje, autoría o una calificación.</p></details><details><summary>Privacidad y conservación</summary><p>Puedes usar un alias; no necesitas nombre completo ni correo. Escuela, grado, grupo y número de lista son opcionales y se reservan para tus informes privados. Los códigos persistentes y las fechas pueden permitir vincular registros: estos informes no deben considerarse anónimos. Entrégalos solo al adulto autorizado. Solo se transmiten al servidor docente si se vincula expresamente una invitación. La investigación requerirá un procedimiento separado.</p></details></section>`;
+  return `<header class="page-head fade-in"><span class="eyebrow">Observar para acompañar</span><h1>Una mirada<br>a cada paso.</h1><p>Informes locales para orientar la práctica. Perfiles locales e informes por estudiante. La entrega automática requiere una invitación a un aula configurada; la investigación permanece desactivada.</p></header><section class="panel"><h3>Práctica del perfil activo · ${profileCode()}</h3><p>Perfil activo: ${esc(activeProfile?.name || "")}. Cada estudiante tiene su propio acceso local. El código del informe no verifica la identidad ni crea una cuenta en línea.</p>${statsHTML(summarize(state.sessions))}${levelTable(state.sessions)}<div class="button-row"><button id="export-report" class="primary" ${state.sessions.length ? "" : "disabled"}>Exportar informe JSON ↓</button><button id="export-csv" title="Sólo preguntas; los talleres asignados se conservan en el informe completo JSON y en el seguimiento por tarea" class="secondary" ${state.sessions.length ? "" : "disabled"}>Detalle CSV ↓</button></div><p class="micro">${state.exportedAt ? `Última exportación: ${fmtDate(state.exportedAt)}. Exportar no confirma recepción por el docente.` : "Sin exportaciones registradas."} Solo se exportan aventuras completas.</p></section>${dimensionsHTML(state.sessions)}${fluencyHTML(state.sessions)}${reasoningHTML(state.sessions)}<section class="panel"><h3>Intercambiar evidencias de proyectos</h3><p>Estos archivos contienen construcciones, revisiones y notas opcionales, sin cifrado. Compártelos solo con la persona autorizada. No necesitas un servidor para entregarlos.</p><button id="export-projects" class="secondary" ${state.workshopHistory?.length?'':'disabled'}>Descargar mis proyectos</button><label for="import-projects">Recibir proyectos de estudiantes</label><input id="import-projects" type="file" accept=".json,application/json" multiple><p id="project-import-status" role="status"></p></section><section class="panel"><h3>Recibir informes de estudiantes</h3><p>El estudiante lleva su archivo JSON al centro educativo. Puedes abrir varios informes aquí; las sesiones repetidas se cuentan una sola vez.</p><div class="button-row"><label for="import-file" class="sr-only">Seleccionar informes JSON de Sendero</label><input id="import-file" type="file" accept=".json,application/json" multiple></div><p id="import-status" role="status" class="micro"></p>${state.teacher.length ? `<div class="table-wrap"><table><caption class="sr-only">Partidas individuales válidas y únicas recibidas en este dispositivo; no incluye construcciones ni participaciones</caption><thead><tr><th>Perfil</th><th>Contenido</th><th>Aventuras</th><th>Ejercicios</th><th>Última práctica</th></tr></thead><tbody>${teacherRows()}</tbody></table></div>${importedProfiles()}` : '<p class="micro">No hay informes recibidos. Permanecen en este dispositivo; si activas una cuenta recuperable, también forman parte de su copia personal cifrada. Esto no acredita recepción docente.</p>'}</section><section class="panel"><h3>Cómo interpretar los resultados</h3><details open><summary>Condiciones de práctica, no diagnóstico</summary><p>Las tareas versionadas fijan contenido, nivel y longitud: ocho respuestas en multiplicación clásica y 4, 6 u 8 en los paquetes de representación, suma, resta y tablas ampliadas. No aplican adaptación. La condición de apoyo se identifica por protocolo en cada informe; no se deben combinar como si fueran iguales. En la práctica libre hay cuatro niveles de cantidades. Tres respuestas consecutivas correctas al primer intento y sin ayuda suben un nivel; dos ejercicios consecutivos con error o ayuda lo reducen. En carrera se conserva el nivel durante ocho retos: siete u ocho aciertos iniciales sin ayuda suben un nivel para la siguiente; cuatro o menos lo reducen. Los rivales ajustan su ritmo a tiempos previos del mismo contenido y nivel. El tiempo no decide el nivel matemático. Son reglas iniciales transparentes, todavía sin validación educativa.</p></details><details><summary>Qué significan los indicadores</summary><p>Primer intento: la primera respuesta coincide con el resultado, haya o no ayuda. Sin ayuda: acierto al primer intento sin abrir la pista. Los errores anteriores a la corrección se conservan. El tiempo es una estimación de interacción: se pausa al salir, ocultar la app o tras 60 segundos sin interacción. No equivale a atención ni asistencia escolar.</p></details><details><summary>Comparaciones y evaluación formal</summary><p>Compara por contenido y dificultad; un porcentaje global puede cambiar porque cambiaron los ejercicios. Estas actividades domiciliarias no verifican identidad, supervisión ni ayuda externa. Complementan el criterio docente; no acreditan por sí solas aprendizaje, autoría o una calificación.</p></details><details><summary>Privacidad y conservación</summary><p>Puedes usar un alias; no necesitas nombre completo ni correo. Escuela, grado, grupo y número de lista son opcionales y se reservan para tus informes privados. Los códigos persistentes y las fechas pueden permitir vincular registros: estos informes no deben considerarse anónimos. Entrégalos solo al adulto autorizado. Solo se transmiten al servidor docente si se vincula expresamente una invitación. La investigación requerirá un procedimiento separado.</p></details></section>`;
 }
 let reportReconciliationCache=new Map();
 let cloudReportPage=0;
@@ -549,7 +662,7 @@ function importedProfiles() {
   return canonicalTeacherGroups().map(({label,sessions})=>`<details><summary>Perfil ${esc(label)} · ${sessions.length} partidas individuales válidas y únicas</summary><p>Detalle sólo de preguntas de estas partidas; los talleres asignados están en Seguimiento por tarea y versión. No incorpora talleres libres ni participaciones multijugador. Cada indicador declara su propia unidad.</p>${dimensionsHTML(sessions)}${fluencyHTML(sessions)}${reasoningHTML(sessions)}${levelTable(sessions)}</details>`).join('');
 }
 function about() {
-  return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. La práctica libre contiene ocho ejercicios; cada tarea asignada declara su longitud. Puedes pausar y continuar. Las pistas forman parte del aprendizaje. Cada reto completado da puntos; el acierto inicial sin ayuda añade una bonificación.</p><p>El registro es local. Conserva una copia del informe antes de borrar datos o cambiar de equipo. La entrega al docente solo se activa al vincular una invitación. No tiene publicidad ni activa la participación en investigación. <a href="./terminos.html">Consulta las condiciones, el tratamiento de datos y la investigación prevista</a>.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p><a href="./docentes.html" target="_blank" rel="noopener">Guía breve para familias y docentes</a></p><p>Responsable: Dr. Hans Krakaur Floranes. Proyecto aún sin adscripción institucional. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales y circuito con curvas. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas de la aventura individual permanecen en este dispositivo salvo exportación manual o vinculación explícita con un servidor docente. Si eliges una sala por enlace, los retos, respuestas y tiempos de esa partida se comparten con sus participantes. La conexión utiliza PeerJS y servidores STUN; no se comparte tu perfil ni historial. En la sala de cuatro de un aula, Cloudflare conserva el estado compartido y los registros docentes. El docente ve el código de perfil y las respuestas; los compañeros ven alias, conexión y avance, y el lugar final si la carrera tiene clasificación. No reciben errores, pistas ni tiempos individuales. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
+  return `<header class="page-head fade-in"><span class="eyebrow">Matemáticas que van contigo</span><h1>Un pequeño juego.<br>Muchos caminos.</h1><p>Sendero es un recurso gratuito de práctica matemática pensado para aprender a tu ritmo, incluso con conectividad intermitente.</p></header><section class="panel"><h3>Llévalo contigo</h3><p id="offline-explanation">${bundled ? "Esta edición incluye todos los recursos del juego y funciona sin conexión desde la instalación." : "Abre esta página con internet y espera el indicador «Lista sin conexión». Después podrás volver al mismo enlace sin internet en este navegador."}</p><div class="button-row"><button class="primary" id="install">Instalar o preparar ↗</button><button class="secondary" id="persist">Proteger almacenamiento local</button></div><p id="install-status" class="micro" role="status"></p><p>En Android: menú del navegador → Instalar aplicación o Añadir a pantalla de inicio. En Windows con Edge o Chrome: usa la opción de instalación del navegador.</p><p><a href="https://github.com/Krakaur/sendero-matematico/releases/latest" target="_blank" rel="noopener">Descargas para Android y Windows ↗</a></p></section><section class="panel"><h3>Para familias y docentes</h3><p>Si aún está aprendiendo a leer, una persona adulta puede leer el enunciado sin indicar la operación. Empieza con sumas y restas pequeñas; explora los grupos iguales cuando tenga sentido para el estudiante. La práctica libre contiene ocho ejercicios; cada tarea asignada declara su longitud. Puedes pausar y continuar. Las pistas forman parte del aprendizaje. Cada reto completado da puntos; el acierto inicial sin ayuda añade una bonificación.</p><p>El progreso se guarda primero en este dispositivo. Si activas una cuenta con código y contraseña, se sincroniza una copia cifrada para recuperarlo en otro equipo. Conserva también una copia descargada de los informes importantes. La entrega al docente solo se activa al vincular una invitación. No tiene publicidad ni activa la participación en investigación. <a href="./terminos.html">Consulta las condiciones, el tratamiento de datos y la investigación prevista</a>.</p></section><section class="panel"><h3>Una invitación a colaborar</h3><p><a href="./docentes.html" target="_blank" rel="noopener">Guía breve para familias y docentes</a></p><p>Responsable: Dr. Hans Krakaur Floranes. Proyecto aún sin adscripción institucional. Buscamos colaboración docente e investigadora para evaluar usabilidad, pertinencia y funcionamiento en contextos de conectividad intermitente.</p><p><a href="https://github.com/Krakaur/sendero-matematico" target="_blank" rel="noopener">Código, documentación y contacto en GitHub ↗</a></p><p class="micro">Versión ${VERSION} · Prototipo educativo. No es un instrumento diagnóstico validado. Ilustraciones originales y circuito con curvas. Licencia MIT.</p></section><section class="panel"><h3>Datos y alojamiento</h3><p>Las respuestas de la aventura individual permanecen en este dispositivo salvo exportación manual, activación explícita de la cuenta recuperable o vinculación con un servidor docente. La cuenta personal almacena una copia cifrada en Cloudflare D1; los informes docentes vinculados al aula tienen un tratamiento distinto. Si eliges una sala por enlace, los retos, respuestas y tiempos de esa partida se comparten con sus participantes. La conexión utiliza PeerJS y servidores STUN; no se comparte tu perfil ni historial. En la sala de cuatro de un aula, Cloudflare conserva el estado compartido y los registros docentes. El docente ve el código de perfil y las respuestas; los compañeros ven alias, conexión y avance, y el lugar final si la carrera tiene clasificación. No reciben errores, pistas ni tiempos individuales. GitHub Pages aloja la versión web y puede registrar datos técnicos de acceso, como la dirección IP. No incorporamos analítica ni rastreadores.</p><details><summary>Borrar los datos de este dispositivo</summary><p>Esta acción elimina aventuras, dificultad adaptativa e informes recibidos aquí. Guarda antes las copias que necesites.</p><div class="button-row"><button class="soft-button danger" id="reset-data">Borrar datos locales…</button></div></details></section>`;
 }
 function stopTimer(interrupted = false) {
   if (interrupted && !needsRaceStart(state.current)) interruptTiming(state.current?.questions[state.current.index]);
@@ -569,6 +682,7 @@ function stopTimer(interrupted = false) {
   if (interrupted || location.hash !== '#jugar') syncRaceAudio();
 }
 function startTimer() {
+  if(resumeRequired||localConflict)return;
   if(state.current?.taskProtocol===5)return;
   if(!activeProfile) return;
   if(needsRaceStart(state.current))return;
@@ -751,6 +865,8 @@ function render(persistState = true) {
       logro: finished,
     }[route] || home
   )();
+  main.querySelector('.resume-overlay')?.remove();
+  for(const node of main.children)node.inert=false;
   const previousScene = main.querySelector('.regatta');
   if (route === 'jugar' && state.current?.race && previousScene?.dataset.raceId === state.current.id) {
     // Keep the live scene in the document: reparenting it would restart CSS
@@ -761,6 +877,14 @@ function render(persistState = true) {
       main.querySelector(selector).replaceWith(updated.content.querySelector(selector));
     }
   } else {disposeMotion();main.innerHTML = content;}
+  if(route==='jugar'&&state.current&&(resumeRequired||localConflict)){
+    const overlay=document.createElement('section');overlay.className='resume-overlay panel';
+    overlay.innerHTML=localConflict?`<h2>Partida detenida por conflicto</h2><p>${localConflictArchived?'Se guardó una rama local separada.':'No se pudo guardar una rama separada: conserva esta pestaña y exporta una copia.'} Cierra las otras pestañas y revisa tu progreso antes de continuar.</p><a class="primary" href="#perfiles">Revisar copias</a>`:'<h2>Partida en pausa</h2><p>Tu avance está conservado. El tiempo del reto continuará cuando elijas seguir.</p><button id="resume-game" class="primary">Continuar partida</button>';
+    main.prepend(overlay);main.dataset.resumePending='true';
+    const pausedContent=[...main.children].filter(node=>node!==overlay);pausedContent.forEach(node=>node.inert=true);
+    overlay.querySelector('button')?.addEventListener('click',()=>{resumeRequired=false;pausedContent.forEach(node=>node.inert=false);overlay.remove();delete main.dataset.resumePending;startTimer();main.querySelector('.equation,[data-answer]')?.focus({preventScroll:true});});
+    overlay.querySelector('button,a')?.focus({preventScroll:true});
+  }else delete main.dataset.resumePending;
   document.querySelectorAll("[data-nav]").forEach((a) => {
     const active = a.dataset.nav === route;
     a.classList.toggle("active", active);
@@ -882,6 +1006,7 @@ function goGame() {
   else location.hash = "#jugar";
 }
 function begin(trail,bankOnly=false,task=null) {
+  resumeRequired=false;
   if(task&&!isAssignedTask(task))throw Error('Tarea no compatible.');
   if(trail==='razonar'&&!bankOnly&&!task){stopTimer(true);save();location.hash='#taller';return;}
   if(!activeProfile){location.hash="#perfiles";return;}
@@ -1145,7 +1270,14 @@ window.addEventListener("hashchange", () => {
   render();
   window.scrollTo(0, 0);
   main.focus({ preventScroll: true });
+  if(pendingFrontend)applyFrontendWhenSafe();
 });
+function applyFrontendWhenSafe() {
+  if(!pendingFrontend||!activeProfile||portableBusy||localConflict||!['','#explorar','#logro','#acerca'].includes(location.hash))return;
+  if(document.activeElement?.closest?.('form')||document.querySelector('form:focus-within'))return;
+  flushReflection?.();stopTimer(true);save();
+  if(storageOK)location.reload();
+}
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     resetLaunch();
@@ -1210,7 +1342,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-contracts-c13-v2`);
+    const cache = await caches.open(`sendero-${VERSION}-automatic-entry-c14`);
     const files = [
       "./teacher-reading-state.js",
       "./cloud-room-ui.js", "./cloud-room-contract.js", "./cloud-room-link.js", "./cloud-room-view.js",
@@ -1245,13 +1377,7 @@ async function offline() {
     cached().then(ready => { if(ready) badge.textContent = 'Lista sin conexión'; });
   });
   navigator.serviceWorker.addEventListener('message', event => {
-    if(event.data?.type === 'SENDER_VERSION' && event.data.version !== VERSION)
-      $('#update-banner').hidden = false;
-  });
-  $('#apply-update').addEventListener('click', () => {
-    stopTimer(true);
-    save();
-    if(storageOK) location.reload();
+    if(event.data?.type === 'SENDER_VERSION' && event.data.version !== VERSION){pendingFrontend=true;applyFrontendWhenSafe();}
   });
   try {
     if (await cached()) badge.textContent = "Lista sin conexión";
@@ -1271,16 +1397,18 @@ async function offline() {
 window.addEventListener("storage", (event) => {
   if (!KEY || event.key !== KEY || !event.newValue) return;
   try {
-    stopTimer();
     const incoming = JSON.parse(event.newValue);
     if (
-      incoming.profile &&
+      incoming.profile === activeProfile?.id &&
       Array.isArray(incoming.sessions) &&
       Array.isArray(incoming.teacher)
     ) {
-      state = incoming;
+      if(event.newValue===JSON.stringify(state)){localBaseline=event.newValue;return;}
+      stopTimer(true);localConflict=true;portableConflict=true;storageOK=false;flushReflection?.();
+      try{localStorage.setItem(`sendero.conflict.${activeProfile.id}.${Date.now()}`,JSON.stringify(state));localConflictArchived=true;}catch{localConflictArchived=false;}
+      const alert=$('#storage-alert');alert.hidden=false;alert.textContent=localConflictArchived?'Otra pestaña cambió este perfil. Se guardó una rama separada; esta pestaña no sustituirá sus datos ni enviará una copia antigua a la nube. Cierra las demás pestañas antes de resolver el conflicto.':'Otra pestaña cambió este perfil y no se pudo guardar la rama separada. Conserva esta pestaña abierta y exporta una copia antes de cerrarla.';
+      announce('Se detuvo la partida para conservar dos ramas del progreso.');
       render(false);
-      announce("El progreso se actualizó desde otra pestaña.");
     }
   } catch {
     storageWarning();

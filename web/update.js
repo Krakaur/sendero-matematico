@@ -1,5 +1,4 @@
-// This entry point also works when an old app tab cannot receive update notices.
-// It never reads, rewrites or clears the learner's stored data.
+// Legacy bookmarks reach the normal entry point; players do not update the app.
 const status = document.querySelector('#update-status');
 const retry = document.querySelector('#retry');
 retry.addEventListener('click', () => location.reload());
@@ -14,8 +13,8 @@ async function update() {
   navigator.serviceWorker.addEventListener('message', event => {
     if(waitingForVersion && event.data?.type === 'SENDER_VERSION') {
       clearTimeout(deadline);
-      status.textContent = `Versión ${event.data.version} preparada. Abriendo el juego…`;
-      location.replace('./#jugar');
+      status.textContent = `Versión ${event.data.version} disponible. Abriendo Sendero…`;
+      location.replace('./'+location.hash);
     }
   });
   const registration = await navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'});

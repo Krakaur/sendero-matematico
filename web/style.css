@@ -1272,9 +1272,8 @@ th {
 .arcade .solution-callout { margin: 10px 0 16px; padding: 10px; }
 .arcade .solution-callout > strong { font: 800 clamp(1.6rem, 6vw, 2.6rem) system-ui, sans-serif; }
 .arcade .solution-callout .solution-action { margin-top: 3px; }
-.update-banner { max-width: 840px; margin: 0 auto 12px; padding: 12px; background: #fff0ba; border-radius: 12px; text-align: center; }
-.update-banner[hidden] { display: none; }
-.update-banner button { margin: 5px; min-height: 44px; }
+.resume-overlay { position:relative;z-index:5;margin:18px auto;max-width:680px;text-align:center;box-shadow:0 12px 28px #122d2650; }
+main[data-resume-pending] > :not(.resume-overlay) { pointer-events:none;filter:blur(2px); }
 @media (max-width: 600px) {
   .arcade-playing .topbar { padding: 8px 14px; }
   .arcade-playing .brand { font-size: 1.4rem; }
