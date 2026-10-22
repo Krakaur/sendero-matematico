@@ -1,0 +1,49 @@
+{
+  "scope": "C8, dirección gráfica decorativa de Sendero",
+  "art_version": "c8-1",
+  "tool": "image_gen (herramienta nativa)",
+  "assets": [
+    {
+      "path": "web/assets/luma-forest-c8.webp",
+      "purpose": "Portada con Luma",
+      "width": 1056,
+      "height": 704,
+      "max_bytes": 220000
+    },
+    {
+      "path": "web/assets/workshops-atlas-c8.webp",
+      "purpose": "Ocho viñetas decorativas, cuatro columnas y dos filas",
+      "width": 1152,
+      "height": 576,
+      "max_bytes": 240000
+    }
+  ],
+  "vectors": {
+    "module": "web/art.js",
+    "count": 13,
+    "max_bytes": 24000
+  },
+  "max_new_asset_bytes": 500000,
+  "prompts": {
+    "hero": "Use case: illustration-story. Asset type: finished landscape illustration for the welcome panel of Sendero Matemático, a free educational math adventure for children. Primary request: an original richly crafted, inviting forest discovery scene, suitable as a polished website illustration, NOT a screenshot or UI mockup. Wide landscape composition, 3:2 proportions. Luma, a small friendly orange and cream fox with a warm golden scarf, stands in the right foreground looking curiously toward a winding ochre footpath crossing a little wooden footbridge. Deep emerald and teal woodland, turquoise stream, sunny distant mountains, a little wooden study cabin partially hidden among trees, delicate ferns and a few warm coral wildflowers. Painterly storybook illustration with clear rounded silhouettes and sophisticated layered foliage, tactile brushwork, restrained depth and warm dappled sunlight. The fox is charming and expressive without exaggerated giant eyes, visually readable at small scale. Balance intricate edges with calm open glades; strong foreground/middle/distant planes. Color palette: dark pine green, turquoise, warm ivory, muted leaf green, amber light and terracotta accents. Warm, hopeful, exploratory mood. No text, letters, numbers, labels, signs, charts, UI, watermarks, trophies, badges, extra characters or logos. This is decorative art, do not depict mathematical quantities that invite counting. Original composition, no imitation of a specific franchise or artist.",
+    "atlas": "Use case: illustration-story. Asset type: ONE atlas texture of eight decorative mini-illustrations for eight workshop cards in Sendero Matemático. Generate an exactly rectangular image with aspect ratio 2:1, composed of exactly FOUR equal columns and TWO equal rows, an edge-to-edge 4x2 grid, eight equal SQUARE cells, no gutters, borders or labels. Each cell is a distinct beautifully composed small scene, center its main subject safely inside that cell. Coherent professional painterly storybook woodland art, readable shapes with tactile detail, emerald/teal forest shadows, warm cream sunlight, amber timber, coral and periwinkle accents. Top row left to right: (1) a charming wooden footbridge over a forest brook, (2) a wicker harvest basket among pear branches, (3) a sunlit little woodland greenhouse with varied green seedlings, (4) a cozy picnic cloth with an unsliced rustic bread loaf in a clearing. Bottom row left to right: (5) a cozy enclosed woodland vegetable garden with a wooden fence, (6) a small inviting woodland observation hut with telescope and fruit trees around it, (7) a dreamy string of glowing amber lanterns hanging along a winding forest path at dusk, (8) an illustrated overhead decorative map of a winding turquoise river through trees and little bridges. No people, animals, foxes or other characters. Each cell must remain fully separate from its neighbors. No text, letters, numerals, symbols, charts, arrows, interface, logos, watermarks. These illustrations are decorative identifiers, not diagrams: no countable mathematical model, equal-group displays, measured scales, bar graphs or pie fractions. Clear bright focal point per cell and quieter background. Deliver one coherent atlas image, not a picture of a screen or cards."
+  },
+  "palette": {
+    "ink": "#163e35",
+    "cream": "#fff9ed",
+    "teal": "#236873",
+    "amber": "#a95820"
+  },
+  "invariants": [
+    "No sustituye modelos matemáticos evaluados.",
+    "Sin nuevos cronómetros, premios ni presión temporal.",
+    "Etiquetas visibles acompañan a iconos; color no es el único indicador.",
+    "Sin fuentes, rastreadores ni recursos remotos nuevos.",
+    "Imágenes originales generadas; no se copiaron imágenes de Arcademics."
+  ],
+  "limits": [
+    "Revisión experta y sintética; no prueba de preferencia infantil ni efecto causal en aprendizaje.",
+    "La optimización de descarga no acredita rendimiento en equipos reales de comunidades destinatarias."
+  ],
+  "optimization": "Conversión WebP, remuestreo para web y retirada de metadatos con ImageMagick; originales conservados, sin retoque semántico."
+}

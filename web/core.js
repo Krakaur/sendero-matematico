@@ -1,3 +1,4 @@
+import {newAssignedWorkshop} from './assigned-workshop.js';
 import {assignedItems} from './task-content.js';
 import {assignmentSnapshot,validateAssignedSession,equivalent,sessionKey} from './assignments.js';
 import {validEnrollment} from './enrollment.js';
@@ -71,6 +72,7 @@ export function recordSolution(question) {
 export function newAssignedSession(task,profile) {
   const assignment=assignmentSnapshot(task);
   if(!task.recipientProfileIds.includes(profile))throw Error('Esta tarea no está asignada a este perfil.');
+  if(task.contentId==='workshop-fixed-project')return {id:uid(),profile,trail:'razonar',level:task.parameters.level,version:VERSION,startedAt:new Date().toISOString(),completedAt:null,index:0,questions:[],assignment,assignmentId:task.id,assignmentVersion:task.version,taskProtocol:5,responseMode:'construction',workshop:newAssignedWorkshop(task)};
   const pack=assignedItems(task);
   const level=pack?pack[0].level:task.parameters.table<=3?1:task.parameters.table<=5?2:task.parameters.table<=8?3:4;
   const s=newSession(task.trail,level,profile);
@@ -85,6 +87,7 @@ export function newAssignedSession(task,profile) {
 // Protocol2 waits for an explicit finish action, including after a correct last answer.
 export const requiresAssignedFinish=s=>!!s?.assignment&&s.taskProtocol>=2&&s.index===s.questions.length-1&&!s.completedAt;
 export function advanceAssignedSession(s,at=new Date().toISOString()) {
+  if(s.taskProtocol===5){if(s.completedAt||s.workshop?.phase!=='review')throw Error('Completa las tres fases antes de entregar.');const closure={...s,completedAt:at,completionAction:{kind:'finish-task',at}};validateAssignedSession(closure);Object.assign(s,closure);return true;}
   if(!s.assignment||s.completedAt||!s.questions[s.index]?.attempts.length)throw Error('Responde el reto antes de continuar.');
   if(s.index===s.questions.length-1){
     const closure={...s,completedAt:at,...(s.taskProtocol>=2?{completionAction:{kind:'finish-task',at}}:{})};
@@ -171,6 +174,7 @@ export function newSession(trail, level, profile) {
   };
 }
 export function summarize(sessions) {
+  sessions=sessions.filter(s=>s.taskProtocol!==5);
   const questions = sessions.flatMap((s) =>
     s.questions.filter((q) => q.attempts.length),
   );
@@ -229,7 +233,7 @@ export function validateReport(data) {
       !Number.isFinite(Date.parse(s.startedAt)) ||
       !Number.isFinite(Date.parse(s.completedAt)) ||
       !Array.isArray(s.questions) ||
-      s.questions.length !== (s.assignment?.completionRule?.count??8)
+      s.questions.length !== (s.taskProtocol===5?0:s.assignment?.completionRule?.count??8)
     )
       throw new Error("El informe contiene una sesión no válida.");
     validateAssignedSession(s);

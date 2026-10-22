@@ -1,0 +1,60 @@
+/* C8 art is decorative; mathematical models retain their exact geometry. */
+:root{--art-ink:#163e35;--art-cream:#fff9ed;--art-teal:#236873;--art-amber:#a95820}
+.sendero-icon{display:block;width:56px;height:56px;flex-shrink:0;color:var(--art-ink)}
+.hero-art{isolation:isolate}
+.hero-art>img{aspect-ratio:3/2;object-fit:cover;object-position:center;border-radius:28px;box-shadow:0 18px 36px #153f3520;border:1px solid #183f3530}
+.hero-art .art-label{position:static;margin:0 16px;padding:16px 20px;background:var(--art-cream);border:1px solid #d4dfcc;border-radius:0 0 18px 18px;box-shadow:0 6px 15px #173e3510;color:var(--art-ink);max-width:none}
+.trail-pic{isolation:isolate;min-height:150px;background:linear-gradient(145deg,#dce9c6,#93be9c);color:#164b3e}
+.trail-pic.blue{background:linear-gradient(145deg,#d1e9eb,#8bc5c9)}
+.trail-pic.orange{background:linear-gradient(145deg,#fae7b7,#e6b67f)}
+.trail-pic.purple{background:linear-gradient(145deg,#e6def0,#b5acd2)}
+.trail-pic .sendero-icon{position:relative;z-index:1;width:104px;height:104px;filter:drop-shadow(0 4px 0 #fff7e970)}
+.trail-symbol{position:absolute;right:18px;bottom:10px;font-size:24px;line-height:1;z-index:2;color:#163e35;background:#fff9edeb;padding:8px 12px;border-radius:12px;box-shadow:none;transform:none}
+.trail-pic:before{background:#fff9ed50;width:180px;height:180px;border-radius:50%;top:-50px;left:-25px;transform:none}
+.trail-pic:after{background:#fff9ed30;width:120px;height:120px;border-radius:50%;right:-25px;bottom:-30px;transform:none}
+.project-catalog article{position:relative;padding:0 0 20px;overflow:hidden;border-color:#c5d4bf;box-shadow:0 5px 0 #d7e1ce;gap:0}
+.workshop-vignette{width:100%;aspect-ratio:1;background-color:#dce7d2;background-image:url('./assets/workshops-atlas-c8.webp');background-size:400% 200%;background-position:var(--art-x) var(--art-y);background-repeat:no-repeat;border-bottom:1px solid #163e3520;flex-shrink:0}
+.project-catalog article>.project-icon{position:relative;margin:-27px 18px 0;border:2px solid #fff9ed;background:#fff9ed;width:56px;height:56px;box-shadow:0 3px 9px #173e3520;border-radius:16px}
+.project-catalog .project-icon .sendero-icon{width:48px;height:48px}
+.project-catalog article>h2,.project-catalog article>p{margin-left:18px;margin-right:18px}
+.project-catalog article>h2{line-height:1.22;margin-top:12px}
+.project-catalog article>button{margin:16px 18px 0;min-height:48px;border:1px solid #a2baa4;background:#f5f8ef;white-space:normal;text-align:left}
+.project-map .sendero-icon{width:34px;height:34px}
+.project-map .complete .sendero-icon{background:#fff9ed;border-radius:8px}
+.art-workshop-link{display:flex;align-items:center;gap:18px;margin:28px 0;background:linear-gradient(110deg,#edf2df,#fff7e7);border:1px solid #c8d5bf;border-radius:22px;padding:22px 26px}
+.art-workshop-link p{margin:8px 0 14px}
+.art-workshop-link .sendero-icon{width:76px;height:76px}
+.art-workshop-link h2{font-size:1.7rem}
+.project-hero{background:#174438}
+.project-hero p{max-width:760px}
+.trail:hover .sendero-icon{transform:translateY(-3px);transition:transform 160ms ease}
+@media(max-width:640px){
+ .hero-art>img{height:auto!important;min-height:0;border-radius:20px}
+ .hero-art .art-label{padding:12px 16px;font-size:.9rem;margin:0 10px}
+ .trail-pic .sendero-icon{width:76px;height:76px}
+ .trail-pic{min-height:112px}
+ .trail-symbol{font-size:18px;right:8px;bottom:8px;padding:5px 7px}
+ .art-workshop-link{align-items:start;padding:18px;gap:12px}
+ .art-workshop-link>.sendero-icon{width:46px;height:46px}
+ .art-workshop-link h2{font-size:1.4rem}
+ .project-catalog article>h2,.project-catalog article>p{margin-left:14px;margin-right:14px}
+ .project-catalog article>button{margin-left:14px;margin-right:14px}
+ .project-catalog article>.project-icon{margin-left:14px}
+}
+@media(prefers-reduced-motion:reduce){.trail:hover .sendero-icon{transform:none;transition:none}}
+@media(forced-colors:active){.sendero-icon g{stroke:CanvasText}.project-icon{border:1px solid CanvasText}.workshop-vignette{display:none}}
+
+
+@media(max-width:520px){.project-map .sendero-icon{width:26px;height:26px}}
+
+/* Small supporting text on the page background: measured contrast 5.0585:1. */
+.hero .micro, .mode-picker > .micro, .section-header > .micro, .project-game > .micro { color:#536f5e; }
+
+/* Recipient labels keep the touch target while the native checkbox keeps its shape. */
+#class-task fieldset label{display:flex;align-items:center;gap:12px;min-height:48px;padding:8px 4px;margin:0}
+#class-task input[type="checkbox"]{width:22px;height:22px;min-height:22px;flex:0 0 22px;margin:0;accent-color:#174438}
+
+#assignment-report .assignment-scroll:focus-visible{outline:3px solid #174438;outline-offset:3px}
+#assignment-report .assignment-scroll th:first-child,#assignment-report .assignment-scroll td:first-child{position:sticky;left:0;z-index:1;background:#fffdf8;box-shadow:2px 0 #c5d4bf}
+
+.assigned-workshop button:disabled{background:#e4e9e1;color:#465547;border:2px solid #778773;box-shadow:none;opacity:1;cursor:not-allowed}

@@ -120,7 +120,8 @@ test("C4: canonical closures, explicit exclusions and exclusive teacher partitio
       assert.equal(summary.records.filter((row) => row.id === "c4-000101-1").length, 4);
       assert.equal(summary.records.filter((row) => row.id === "c4-free").length, 1);
       assert.deepEqual(summary.totals.evidenceUnits, { sessionQuestions: 112, participationQuestions: 8,
-        constructionMissions: 8, cooperativeMissions: 0, constructionChecks: 8, cooperativeChecks: 0 });
+        constructionMissions: 8, cooperativeMissions: 0, constructionChecks: 8, cooperativeChecks: 0,
+        assignedWorkshopMissions: 0, assignedInitialChecks: 0, assignedProbeChecks: 0, assignedExplanationChoices: 0 });
       assert.equal(summary.memberships.levels.overlapMemberships, 3);
       assert.equal(summary.memberships.groups.overlapMemberships, 1);
       assert.equal(summary.partitions.content.find((bucket) => bucket.value === UNKNOWN).count, 1);

@@ -21,7 +21,7 @@ export function validateSnapshot(data) {
  if(!Array.isArray(s.teacher)||s.teacher.length>5000||!s.adaptive||typeof s.adaptive!=='object')throw Error('Estado no válido.');
  for(const item of s.teacher)validateReport({schema:SCHEMA,profile:item.profile,sessions:[item]});
  if(s.current){
-  const c=s.current;if(c.assignment)validateAssignedProgress(c);if(c.profile!==s.profile||!Object.hasOwn(TRAILS,c.trail)||!Number.isInteger(c.index)||c.index<0||c.index>7||!Array.isArray(c.questions)||!c.questions[c.index])throw Error('Partida pendiente no válida.');
+  const c=s.current;if(c.assignment||c.taskProtocol!==undefined||c.assignmentId!==undefined||c.assignmentVersion!==undefined)validateAssignedProgress(c);if(c.profile!==s.profile||!Object.hasOwn(TRAILS,c.trail)||!Number.isInteger(c.index)||c.index<0||c.index>7||!Array.isArray(c.questions)||(c.taskProtocol!==5&&!c.questions[c.index]))throw Error('Partida pendiente no válida.');
   for(const [i,q] of c.questions.entries()){ 
    if(!Number.isInteger(q.level)||q.level<1||q.level>4||!Array.isArray(q.attempts)||!Array.isArray(q.options)||q.options.length!==4||new Set(q.options).size!==4||!q.options.includes(q.answer)||!q.attempts.every(n=>q.options.includes(n)||(q.responseMode==='write'&&Number.isInteger(n)&&n>=0&&n<=2500))||!Number.isFinite(q.activeMs)||q.activeMs<0)throw Error('Ejercicio pendiente no válido.');
    if(q.bankId){if(!(c.taskProtocol===3?validAssignedItem(q,assignedItems(c.assignment)?.[i]):validBankQuestion(q)))throw Error('Banco incompatible.');}

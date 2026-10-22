@@ -1,0 +1,44 @@
+{
+  "cycle": "C8",
+  "schema": "sendero.cycle-contract.v1",
+  "authorization": "Ocho talleres asignables y versionados, ampliación de razonamiento y dirección gráfica original; revisión y publicación autorizadas con respaldo y vigilancia de cuotas.",
+  "workshops": {
+    "contentId": "workshop-fixed-project",
+    "version": 1,
+    "protocol": 5,
+    "configurations": 64,
+    "families": 8,
+    "levels": 4,
+    "variants": 2,
+    "phases": [
+      "build",
+      "explain",
+      "verify",
+      "review"
+    ],
+    "closure": "Explicit reviewed_project; errors may remain; closure is not mastery.",
+    "units": "Two constructions and one explanation selection; retain checks, support, revisions, stimuli, note and delivery provenance; never merge into numerical question accuracy.",
+    "limits": {
+      "checksPerConstruction": 20,
+      "noteCharacters": 600,
+      "UTF8SessionBytes": 32768,
+      "chronologicalReasonSelections": 20,
+      "events": 66
+    },
+    "explanationRevision": "Prior alternatives may be selected again; consecutive repeat of the current selection rejected. Chronology, first and final choices retained;20 selections are not20 independent observations."
+  },
+  "reasoning": {
+    "contentId": "reasoning-fixed-pack",
+    "version": 1,
+    "packs": 6,
+    "itemsPerPack": 4,
+    "source": "24 existing bank items selected and frozen; not 24 newly authored problems.",
+    "scope": "dos_pasos levels3/4; dato_faltante level2; two variants each.",
+    "limits": "Repeated structural templates, no empirical difficulty calibration or broad domain mastery."
+  },
+  "compatibility": "Historical protocols/content remain immutable; free workshops continue through their existing channel. Cloud imports updated validators and advertises new capabilities. Deploy backend before frontend.",
+  "offline": "All five modules and graphics included in coherent cache contracts-c8-v6.",
+  "research": "Synthetic evidence only; no learning-effect or child-preference claim. Research use remains disabled pending separate governance.",
+  "graphics": "See ARTE-C8.json. Decorative assets do not encode task quantities.",
+  "operational": "No migration, new service, paid plan or public test student records. Tests sequential, transient local D1, bounded file I/O."
+}

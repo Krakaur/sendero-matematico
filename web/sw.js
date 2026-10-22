@@ -1,6 +1,7 @@
 const VERSION = "0.13.0";
-const CACHE = `sendero-${VERSION}-routes-c7-v5`;
+const CACHE = `sendero-${VERSION}-contracts-c8-v6`;
 const FILES = [
+  "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js",
   "./",
   "./index.html", "./docentes.html",
   "./style.css", "./research-notice.js", "./research-notice.css", "./terminos.html",
@@ -9,6 +10,7 @@ const FILES = [
   "./race-start.js", "./race-start.css",
   "./race-motion.js", "./race-world.css", "./circuit.js", "./circuit.css", "./learning-review.js",
       "./juntos.html", "./together.css", "./together.js", "./room.js", "./room-link.js", "./vendor/peerjs-1.5.5.min.js",
+  "./art.js", "./art.css", "./assets/luma-forest-c8.webp", "./assets/workshops-atlas-c8.webp",
   "./assets/forest-river-v1.png", "./assets/river-racers-v1.png",
   "./app.js", "./workshop.js", "./practice-view.js", "./workshop-view.js", "./workshop.css",
   "./profiles.js", "./enrollment.js", "./cohorts.js", "./reconciliation.js", "./reconciliation-view.js", "./multiplayer-records.js", "./together-profiles.js", "./together-local.js",

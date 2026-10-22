@@ -1,3 +1,17 @@
+# C8 y diseño gráfico · candidata verificada, 22 de octubre de 2026 UTC
+
+Los ocho talleres tienen contrato de tarea versionado: 64 configuraciones congeladas, dos construcciones y una elección de explicación. Los informes conservan estímulos, revisiones, pistas por fase y nota opcional. Seis paquetes añaden 24 ítems seleccionados del banco existente en dos familias de razonamiento; no constituyen cobertura curricular amplia ni una dificultad calibrada. Se mantienen los talleres libres anteriores.
+
+La portada del bosque y ocho escenas originales, trece iconos SVG y estilos suman 425 610 bytes. Las ilustraciones son decorativas; no sustituyen los modelos matemáticos. Sus originales, prompts y procedencia se conservan localmente, y el contrato público está en `contracts/ARTE-C8.json`.
+
+La batería local final fue secuencial: 195 comprobaciones, 194 aprobadas, ninguna fallida y una opcional omitida. El grupo sintético contiene 56 cierres: diez ejecutados mediante la interfaz y 46 mediante el motor. Las campañas HTTP y D1 locales son independientes de ese grupo: no se enviaron estas pruebas a un aula pública. No inferir eficacia, preferencia infantil, transferencia o superioridad frente a Arcademics.
+
+La publicación sigue la cadena existente de GitHub Actions: verificación, backend compatible con protocolo 5 y Pages. Antes de publicar, debe constar aceptación docente y crítica vigente. El resultado definitivo, commit, cuotas y verificación HTTP se registra en `qa-private/publish-c8-20261021/` y el informe local en `qa-private/ciclo-c8-20261021/informe-c8.html`. Ese directorio privado no se publica. La referencia previa es 05797e85a5c3b14e415d2f533982e796903e15f2, respaldada como fuente y 65 archivos HTTP coincidentes. No restaurar un backend anterior que rechace protocolo 5 después de recibir esas entregas; restaurar sólo la interfaz o avanzar con una corrección compatible.
+
+La prioridad posterior es ampliar la diversidad del razonamiento, facilitar la previsualización/comparación de versiones y evaluar la experiencia con participantes mediante un diseño de investigación explícito. Mantener lecturas de cuota antes y después de cada tanda, recursos acotados y diferencias entre revisores. El harness se invoca expresamente: no hay servicio residente ni ejecución ilimitada.
+
+## Historial anterior
+
 # Web 0.10.0 y backend publicados automáticamente · paquetes 0.4.0
 
 14 de octubre de 2026: receptor Workers/D1 desplegado y probado en `https://sendero-aula.dirkhans.workers.dev`; leer `CLOUDFLARE.md`. No necesita un proceso Node local. GitHub Pages conserva el juego. La ejecución automática `38626259381`, desde `2178863ff5d2982cd19a9777045b19760ef12a57`, completó pruebas, migraciones D1, Worker y Pages; 52 archivos públicos coincidentes con Git. PR #7 y #8 integradas. Worker `6064bd46-e2c1-4fe3-8e20-6e6b547dcb69`. El titular autorizó guardar la credencial restringida como secreto cifrado de GitHub; no ampliar sus permisos ni activar Workers Builds en paralelo. El acceso administrativo del juego se guarda en `server/private/cloudflare-admin.json`, excluido de Git; nunca imprimir ni publicar su token.

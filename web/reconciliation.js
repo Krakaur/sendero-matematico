@@ -24,7 +24,7 @@ const sourceLabels = {
   [UNKNOWN]: "Sin clasificar",
 };
 const gameLabels = {
-  assigned: "Tarea asignada", race: "Carrera individual con rivales digitales",
+  "assigned-construction": "Taller asignado", assigned: "Tarea asignada", race: "Carrera individual con rivales digitales",
   "free-write": "Práctica libre · escritura", "free-choice": "Práctica libre · opciones",
   construction: "Construcción individual", "multiplayer-race": "Participación competitiva",
   "multiplayer-coop": "Participación cooperativa", [UNKNOWN]: "Sin clasificar",
@@ -100,13 +100,13 @@ function describe(entry, context, profile) {
   const group = groupKnown ? JSON.stringify([context.classId, enrollment.school, enrollment.grade, enrollment.group]) : UNKNOWN;
   const student = JSON.stringify([context.classId, profile]);
   const game = entry.kind === "project" ? "construction" : entry.kind === "participation"
-    ? `multiplayer-${record.mode}` : record.assignment ? "assigned" : record.race ? "race"
+    ? `multiplayer-${record.mode}` : record.taskProtocol===5 ? "assigned-construction" : record.assignment ? "assigned" : record.race ? "race"
       : record.responseMode === "write" ? "free-write" : "free-choice";
   const content = Object.hasOwn(TRAILS, record.trail) ? record.trail : UNKNOWN;
   const project = entry.kind === "project" ? record : entry.kind === "participation" ? record.project : null;
-  const contentMemberships = project ? [...new Set(project.records.map((item) => `mission:${item.kind}`))]
+  const contentMemberships = record.taskProtocol===5 ? [`mission:${record.assignment.parameters.project}`] : project ? [...new Set(project.records.map((item) => `mission:${item.kind}`))]
     : [content];
-  const levels = [...new Set(project ? [project.level] : record.questions.map((question) => question.level))];
+  const levels = record.taskProtocol===5 ? [record.level] : [...new Set(project ? [project.level] : record.questions.map((question) => question.level))];
   return { key: context.key, kind: entry.kind, classId: context.classId, profile, id: record.id,
     sourceRecord: structuredClone(record), enrollment, provenance: context.provenance,
     dimensions: { group, student, game, content, source: context.provenance.source },
@@ -146,9 +146,10 @@ function membership(records, field, label) {
 
 function evidenceUnits(records) {
   const result = { sessionQuestions: 0, participationQuestions: 0, constructionMissions: 0,
-    cooperativeMissions: 0, constructionChecks: 0, cooperativeChecks: 0 };
+    cooperativeMissions: 0, constructionChecks: 0, cooperativeChecks: 0, assignedWorkshopMissions: 0, assignedInitialChecks: 0, assignedProbeChecks: 0, assignedExplanationChoices: 0 };
   for (const { kind, sourceRecord: record } of records) {
-    if (kind === "session") result.sessionQuestions += record.questions.length;
+    if (kind === "session" && record.taskProtocol===5) {result.assignedWorkshopMissions++;result.assignedInitialChecks+=record.workshop.initial.checks.length;result.assignedProbeChecks+=record.workshop.probe.checks.length;result.assignedExplanationChoices+=record.workshop.explanation.attempts.length;}
+    else if (kind === "session") result.sessionQuestions += record.questions.length;
     else if (kind === "participation" && !record.project) result.participationQuestions += record.questions.length;
     else {
       const project = kind === "project" ? record : record.project;
