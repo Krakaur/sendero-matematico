@@ -1,4 +1,5 @@
 import {validateAssignedWorkshop,workshopEvidence} from './assigned-workshop.js';
+import {validateReasoningSupportEvents,reasoningSupportEvidence} from './reasoning-support.js';
 import {assignedItems,taskDescription,validContentTask,validAssignedItem} from './task-content.js';
 export {taskDescription};
 // Runtime contract C2. C1's demonstration remains unchanged and is not a transport format.
@@ -18,7 +19,7 @@ function validateTask(t,recipients=true) {
   keys(t,'schema classId id version title trail contentId contentVersion parameters completionRule assignedAt'+(recipients?' recipientProfileIds':''));
   require(isAssignedTask(t)&&id(t.classId)&&id(t.id)&&int(t.version,1,100000));
   require(typeof t.title==='string'&&t.title.trim().length>0&&t.title.length<=100);
-  if(['represent-fixed-pack','arithmetic-fixed-pack','reasoning-fixed-pack','workshop-fixed-project'].includes(t.contentId)){require(validContentTask(t),'Paquete de contenido no compatible.');}
+  if(['represent-fixed-pack','arithmetic-fixed-pack','reasoning-fixed-pack','reasoning-supported-pack','workshop-fixed-project'].includes(t.contentId)){require(validContentTask(t),'Paquete de contenido no compatible.');}
   else {require(t.trail==='multi'&&t.contentId==='multiply-fixed-table'&&t.contentVersion===1,'Paquete de contenido no compatible. Actualiza Sendero para abrir contenidos nuevos.');
   keys(t.parameters,'table');require(int(t.parameters.table,1,12));
   keys(t.completionRule,'kind count');require(t.completionRule.kind==='answered_items'&&t.completionRule.count===8);}
@@ -64,7 +65,8 @@ export function validateAssignedSession(s,tasks=null,classId=null,pending=false)
   require(id(s.id)&&typeof s.version==='string'&&s.version.length<=20,'Identidad de sesión no válida.');
   if(s.taskProtocol>=3)require(new TextEncoder().encode(JSON.stringify(s)).length<=32768,'El registro supera el límite de entrega de 32 KiB.');
   if(pending)require(int(s.index,0,a.completionRule.count-1)&&s.completedAt===null&&s.completionAction===undefined,'Avance pendiente incompatible con la tarea.');
-  require(s.assignmentId===a.id&&typeof s.assignmentId==='string'&&int(s.assignmentVersion,1,100000)&&s.assignmentVersion===a.version&&(a.contentId==='workshop-fixed-project'?s.taskProtocol===5:['represent-fixed-pack','reasoning-fixed-pack'].includes(a.contentId)?s.taskProtocol===3:a.contentId==='arithmetic-fixed-pack'?s.taskProtocol===4:[1,2].includes(s.taskProtocol)),'Referencia de tarea no coincide.');
+  if(s.taskProtocol===6)require(s.adaptation===undefined&&(pending||s.index===a.completionRule.count-1),'Condición o índice de cierre no compatible con la interacción 6.');
+  require(s.assignmentId===a.id&&typeof s.assignmentId==='string'&&int(s.assignmentVersion,1,100000)&&s.assignmentVersion===a.version&&(a.contentId==='workshop-fixed-project'?s.taskProtocol===5:a.contentId==='reasoning-supported-pack'?s.taskProtocol===6:['represent-fixed-pack','reasoning-fixed-pack'].includes(a.contentId)?s.taskProtocol===3:a.contentId==='arithmetic-fixed-pack'?s.taskProtocol===4:[1,2].includes(s.taskProtocol)),'Referencia de tarea no coincide.');
   require(id(s.profile)&&s.trail===a.trail&&!s.race&&s.responseMode===(s.taskProtocol===5?'construction':'choice'),'Condiciones de práctica asignada incompatibles.');
   require(Array.isArray(s.questions)&&s.questions.length===(s.taskProtocol===5?0:a.completionRule.count)&&iso(s.startedAt)&&(pending||iso(s.completedAt)&&Date.parse(s.completedAt)>=Date.parse(s.startedAt)),'Cierre de tarea no válido.');
   if(pending){}
@@ -84,15 +86,21 @@ export function validateAssignedSession(s,tasks=null,classId=null,pending=false)
     require(q&&Number.isFinite(q.activeMs)&&q.activeMs>=0&&q.activeMs<=86400000&&typeof q.hint==='boolean'&&(typeof q.solutionShown==='boolean'||s.taskProtocol<3&&q.solutionShown===undefined),'Estado de ítem no transportable.');
     if(q.timingProtocol!==undefined)require(q.timingProtocol===1&&typeof q.timingInterrupted==='boolean'&&((pending&&q.attempts?.length===0&&q.firstResponseMs===undefined)||(Number.isFinite(q.firstResponseMs)&&q.firstResponseMs>=0&&q.firstResponseMs<=q.activeMs)),'Tiempo de respuesta no válido.');
     require(pack?validAssignedItem(q,pack[i]):q.itemId===`item-${i+1}`&&q.a===a.parameters.table&&q.b===i+1&&q.answer===q.a*q.b,'Estímulo diferente del contenido asignado.');
-    if(a.contentId==='reasoning-fixed-pack'){
+    if(['reasoning-fixed-pack','reasoning-supported-pack'].includes(a.contentId)){
       const fields=[...Object.keys(pack[i]),'attempts','events','hint','solutionShown','solutionRequested','done','activeMs','supportProtocol','responseMode','reflection'];
       require(Object.keys(q).every(k=>fields.includes(k)),'Campos ajenos al contenido congelado de razonamiento.');
     }
     if(s.taskProtocol===4){const fields=[...Object.keys(pack[i]),'attempts','events','hint','solutionShown','solutionRequested','done','activeMs','supportProtocol','responseMode','timingProtocol','timingInterrupted','firstResponseMs'];require(Object.keys(q).every(k=>fields.includes(k))&&q.solutionRequested===false,'Campos ajenos al paquete aritmético.');}
-    require(q.reflection===undefined||(s.taskProtocol===3&&typeof q.reflection==='string'&&q.reflection.length<=600&&new TextEncoder().encode(JSON.stringify(q.reflection)).length<=2402),'Explicación propia no válida.');
+    require(q.reflection===undefined||([3,6].includes(s.taskProtocol)&&typeof q.reflection==='string'&&q.reflection.length<=600&&new TextEncoder().encode(JSON.stringify(q.reflection)).length<=2402),'Explicación propia no válida.');
     require(Array.isArray(q.attempts),'Faltan respuestas.');
     require(q.level===level&&[undefined,'choice'].includes(q.responseMode)&&Array.isArray(q.options)&&q.options.length===4&&new Set(q.options).size===4&&q.options.every(n=>int(n,0,2500))&&q.options.includes(q.answer)&&q.attempts.every(n=>q.options.includes(n)),'Opciones incompatibles con la tarea.');
     require(Array.isArray(q.events)&&q.events.length>=(pending?0:1)&&q.events.length<=42&&Array.isArray(q.attempts)&&(pending&&i>=s.index||q.attempts.length>=1),'Falta secuencia de evidencia.');
+    if(s.taskProtocol===6){
+      const replay=validateReasoningSupportEvents(q,q.events,{pending:pending&&i>=s.index});
+      require(q.supportProtocol===6&&equivalent(replay.attempts,q.attempts)&&replay.hint===q.hint&&replay.solutionShown===q.solutionShown&&replay.solutionRequested===q.solutionRequested&&replay.done===q.done,'El estado del ítem no coincide con la secuencia de interacción 6.');
+      if(pending&&i>s.index)require(q.events.length===0&&q.attempts.length===0&&!q.hint&&!q.solutionShown&&!q.reflection,'Evidencia en un reto que aún no se ha abierto.');
+      return;
+    }
     const answers=[];let hint=false,solution=false,correct=false;
     for(const ev of q.events){
       require(!correct,'No se registran acciones después de una respuesta correcta terminal.');
@@ -115,10 +123,12 @@ export function validateAssignedSession(s,tasks=null,classId=null,pending=false)
 export function assignedEvidence(s) {
   if(s.taskProtocol===5)return workshopEvidence(s);
   const answered=s.questions.filter(q=>q.attempts.length);
+  const support=s.taskProtocol===6?answered.map(q=>reasoningSupportEvidence(q,q.events)):null;
   return {answered:answered.length,first:answered.filter(q=>q.attempts[0]===q.answer).length,
     independent:answered.filter(q=>q.events?.[0]?.type==='correct').length,
     final:answered.filter(q=>q.attempts.at(-1)===q.answer).length,
-    hints:answered.filter(q=>q.hint).length,solutions:answered.filter(q=>q.solutionShown).length,reflections:answered.filter(q=>q.reflection?.trim()).length};
+    hints:answered.filter(q=>q.hint).length,solutions:answered.filter(q=>q.solutionShown).length,reflections:answered.filter(q=>q.reflection?.trim()).length,
+    ...(support?{scaffolds:support.reduce((n,e)=>n+e.scaffolds,0),feedbackItems:support.reduce((n,e)=>n+e.feedbackItems,0),feedbackRequests:support.reduce((n,e)=>n+e.feedbackRequests,0)}:{})};
 }
 export const assignmentMatches=(s,t)=>!!s.assignment&&assignmentKey(s.assignment)===assignmentKey(t)&&equivalent(s.assignment,assignmentSnapshot(t));
 export function assignmentRows(task,sessions,confirmations={},perspective='teacher',current=null) {

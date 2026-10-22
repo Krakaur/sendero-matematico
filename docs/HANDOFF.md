@@ -1,3 +1,13 @@
+# Continuidad C10: apoyos solicitados y evidencia docente
+
+Aplicación 0.15.0, caché `contracts-c10-v3`; nuevo contrato `reasoning-supported-pack@1`, protocolo 6, capability `assignments-reasoning-supported-v1`. Los 48 apoyos derivan del banco C9 inmutable; no son 48 conceptos nuevos. Leer `C10-APOYOS-E-INFORMES.md`. No hay migración de D1 en C10.
+
+La evidencia local diferencia cuatro cierres mediante la interfaz, 76 complementarios generados por motor, 80 importados manualmente y cuatro recibidos en una campaña D1 local separada. Un cierre con 3/4 aciertos finales conserva el error y la nota discordante. Exportación UI: 80 sesiones únicas, 1.299 filas. No atribuir eficacia, preferencia o recepción pública a estos datos. La versión publicada sólo queda acreditada por `qa-private/publish-c10-20261021/release.json`; la mera presencia de este handoff no demuestra despliegue.
+
+C11 está autorizado y en revisión: autoridad de sala persistente, cuatro asientos, cooperación predeterminada y carrera opcional. Mantener diferenciados registros de servidor, participaciones históricas e informes individuales. C12 debe completar la cohorte pública acotada, comprobar recuperación, actualizar los 97 compromisos y conservar diferencias entre expertos. El estudio con personas reales no es condición de cierre de esta campaña.
+
+---
+
 # Continuidad C9: razonamiento, vista previa y docencia móvil
 
 C9 añade `reasoning-fixed-pack@2`: 48 problemas nuevos en seis familias y doce paquetes. Conserva `@1`. Las bandas de requisitos no son dificultad calibrada ni equivalencia de grado. Toda tarea nueva debe previsualizarse; publicar conserva el mismo contrato, ID, fecha y destinatarios. Modificar el formulario obliga a revisar otra vez.

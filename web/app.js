@@ -1,3 +1,6 @@
+import {bindBufferedReflection} from './buffered-reflection.js';
+import {teachingInsights,teachingInsightsHTML,teachingEvidenceCSV} from './teaching-insights.js';
+import {reasoningSupportEvent,reasoningScaffoldHTML,reasoningFeedbackHTML} from './reasoning-support.js';
 import {artIcon} from './art.js';
 import {assignedWorkshopHTML,assignedWorkshopFinishedHTML,bindAssignedWorkshop} from './assigned-workshop-view.js';
 import {sessionKey,isAssignedTask,assignmentKey,assignmentMatches} from './assignments.js';
@@ -29,6 +32,7 @@ import {
   VERSION,
   recordAttempt,
   recordSupport,
+  recordReasoningSupport,
   recordSolution,
   newAssignedSession,
   advanceAssignedSession,
@@ -70,6 +74,7 @@ const fresh = () => ({
 });
 let state = fresh();
 let storageOK = true;
+let flushReflection = null;
 try {
   const migrated = migrateLegacy(localStorage);
   const id = sessionStorage.getItem('sendero.active') || migrated?.id;
@@ -297,8 +302,8 @@ function bindClassroom() {
     e.preventDefault();const b=e.currentTarget.querySelector('button[type=submit],button:not([type])');b.disabled=true;
     const f=new FormData(e.currentTarget),id=state.profile,link=structuredClone(state.classroom);
     try {const tasks=validateTasks([...(link.tasks||[]),(e.currentTarget.id==='class-task-legacy'?legacyTaskFromForm(f,uid):taskPreview.taskForPublish(f,link))]);const result=await classroomRequest(link,'/tasks',{tasks,expectedRevision:link.taskRevision});if(state.profile===id&&state.classroom?.token===link.token){state.classroom.tasks=validateTasks(result.tasks);state.classroom.taskRevision=result.revision;save();render(false);}}
-    catch(err){if(state.profile===id){state.classroom.error=err.message;save();render(false);}}
-    finally{b.disabled=false;}
+    catch(err){if(state.profile===id&&state.classroom?.token===link.token&&state.classroom?.classId===link.classId&&state.classroom?.endpoint===link.endpoint){state.classroom.error=err.message;save();const status=form.querySelector('#task-preview-status');if(status){taskPreview?.invalidate();const preview=form.querySelector('#task-preview');if(preview){preview.hidden=true;preview.innerHTML='';}status.textContent='No se publicó. Tu borrador sigue aquí. '+err.message+' Revisa la vista previa antes de reintentar.';form.dataset.taskDirty='true';}else{let message=form.querySelector('[data-publish-error]');if(!message){message=document.createElement('p');message.dataset.publishError='true';message.setAttribute('role','status');form.append(message);}message.textContent='No se publicó. El borrador se conserva. '+err.message;}}}
+    finally{if(form.id==='class-task')b.disabled=!form.querySelector('#task-preview')||form.querySelector('#task-preview').hidden;else b.disabled=false;}
   }));
 }
 window.addEventListener('online',syncClassroom);
@@ -669,7 +674,7 @@ function reasoningGame(s,q) {
     width: 100%;
   }
 }
-</style><section class="game-shell"><div class="game-top"><div><strong>${assigned?esc(s.assignment.title):'El taller de las ideas'}</strong><small>Reto ${s.index+1} de ${count} · ${levelName(q.level)}${assigned?' · tarea v'+s.assignmentVersion:''}</small></div><button id="pause" class="soft-button">Pausar</button></div><div class="progress-track" role="progressbar" aria-label="Avance" aria-valuemin="0" aria-valuemax="${count}" aria-valuenow="${s.index}"><div class="progress-fill" style="width:${s.index/count*100}%"></div></div><div class="question-card reasoning"><div class="question-meta">${esc(q.dimension)}</div><h1 class="word-problem" tabindex="-1">${esc(q.prompt)}</h1>${q.solutionShown||(q.done&&s.taskProtocol!==3)?solutionHTML(s,q):''}<div class="answers ${q.labels?'word-answers':''}">${q.options.map(n=>`<button class="answer ${(q.done||q.solutionShown)&&n===q.answer?'correct':''}" data-answer="${n}" ${q.done||q.attempts.includes(n)?'disabled':''}>${esc(optionText(q,n))}</button>`).join('')}</div><div id="feedback" class="feedback" role="status">${q.done?'La elección es correcta.':q.solutionShown?'Observa la solución. Puedes corregir tu respuesta.':q.attempts.length?'Revisa qué relación pide la situación. Puedes pedir una pista.':'Piensa qué te pregunta la situación.'}</div>${q.hint?hintHTML(s,q):''}${q.attempts.length&&!q.done&&!q.solutionShown?'<button id="show-reasoning-solution" class="soft-button">Revisar la solución explicada</button>':''}${assigned?`<label>¿Cómo lo pensaste? (opcional)<textarea id="reasoning-reflection" maxlength="600" rows="2" placeholder="Explica la relación que elegiste. No escribas nombres ni datos personales.">${esc(q.reflection||'')}</textarea></label><p class="micro">Tu docente podrá leer tu explicación. No se califica automáticamente. Puedes continuar después de responder, aunque quede un error.</p>`:''}<div class="game-controls">${!q.done?`<button id="hint" class="soft-button" ${q.hint?'disabled':''}>Una pista</button>`:''}${q.done||(assigned&&q.attempts.length)?`<button id="${assigned?'assigned-next':'next'}" class="primary">${nextLabel} →</button>`:''}</div><p class="micro">Puedes dibujar en papel y explicar cómo lo pensaste.</p></div></section>`;
+</style><section class="game-shell"><div class="game-top"><div><strong>${assigned?esc(s.assignment.title):'El taller de las ideas'}</strong><small>Reto ${s.index+1} de ${count} · ${levelName(q.level)}${assigned?' · tarea v'+s.assignmentVersion:''}</small></div><button id="pause" class="soft-button">Pausar</button></div><div class="progress-track" role="progressbar" aria-label="Avance" aria-valuemin="0" aria-valuemax="${count}" aria-valuenow="${s.index}"><div class="progress-fill" style="width:${s.index/count*100}%"></div></div><div class="question-card reasoning"><div class="question-meta">${esc(q.dimension)}</div><h1 class="word-problem" tabindex="-1">${esc(q.prompt)}</h1>${q.solutionShown||(q.done&&![3,6].includes(s.taskProtocol))?solutionHTML(s,q):''}<div class="answers ${q.labels?'word-answers':''}">${q.options.map(n=>`<button class="answer ${(q.done||q.solutionShown)&&n===q.answer?'correct':''}" data-answer="${n}" ${q.done||q.attempts.includes(n)?'disabled':''}>${esc(optionText(q,n))}</button>`).join('')}</div><div id="feedback" class="feedback" role="status">${q.done?'La elección es correcta.':q.solutionShown?'Observa la solución. Puedes corregir tu respuesta.':q.attempts.length?'Revisa qué relación pide la situación. Puedes pedir una pista.':'Piensa qué te pregunta la situación.'}</div>${q.hint?hintHTML(s,q):''}${s.taskProtocol===6?`<div class="reasoning-support-actions">${reasoningSupportEvent(q,q.events,'scaffold')?'<button data-reasoning-support="scaffold" class="secondary">Solicitar apoyo visual</button>':''}${reasoningSupportEvent(q,q.events,'feedback')?'<button data-reasoning-support="feedback" class="secondary">Revisar esta elección</button>':''}</div>${reasoningScaffoldHTML(q,q.events)}${reasoningFeedbackHTML(q,q.events)}`:''}${q.attempts.length&&!q.done&&!q.solutionShown?'<button id="show-reasoning-solution" class="soft-button">Revisar la solución explicada</button>':''}${assigned?`<label>¿Cómo lo pensaste? (opcional)<textarea id="reasoning-reflection" maxlength="600" rows="2" placeholder="Explica la relación que elegiste. No escribas nombres ni datos personales.">${esc(q.reflection||'')}</textarea></label><p class="micro">Tu docente podrá leer tu explicación. No se califica automáticamente. Puedes continuar después de responder, aunque quede un error.</p>`:''}<div class="game-controls">${!q.done?`<button id="hint" class="soft-button" ${q.hint?'disabled':''}>Una pista</button>`:''}${q.done||(assigned&&q.attempts.length)?`<button id="${assigned?'assigned-next':'next'}" class="primary">${nextLabel} →</button>`:''}</div><p class="micro">Puedes dibujar en papel y explicar cómo lo pensaste.</p></div></section>`;
 }
 function hintHTML(s, q) {
   if(q.bankId)return `<aside class="hint-box"><p>${esc(q.hintText)}</p></aside>`;
@@ -692,9 +697,10 @@ function finished() {
   if(s.taskProtocol===5)return assignedWorkshopFinishedHTML(s,storageOK&&KEY&&activeProfile);
   const r = summarize([s]);
   if(s.race)return raceFinishHTML(s,esc,activeProfile.name,state.adaptive[s.trail]?.level||s.race.level,TRAILS[s.trail].short,learningReviewHTML(s)+statsHTML(r)+fluencyHTML([s]));
-  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? (s.assignment?`<div class="medal" aria-hidden="true">${s.questions.length}</div>`:raceHTML(7,8)) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ${s.questions.length} ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${s.assignment?`<section class="panel"><h2>${esc(s.assignment.title)} · versión ${s.assignmentVersion}</h2><p>${s.questions.length} respuestas registradas; completar no exige acertarlas todas. ${storageOK && KEY && activeProfile?'El cierre está guardado en este dispositivo.':'No se confirmó el guardado del cierre. Exporta una copia de tus resultados antes de salir.'} La recepción se consulta por separado en tu informe.</p>${s.taskProtocol!==3&&s.questions.at(-1).attempts.at(-1)!==s.questions.at(-1).answer?solutionHTML(s,s.questions.at(-1)):''}<a href="#progreso" class="secondary">Revisar la tarea y su recepción</a></section>`:''}${learningReviewHTML(s)}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">${s.assignment?'Práctica libre ↗':'Otra aventura ↗'}</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
+  return `<section class="celebration fade-in"><span class="eyebrow">Aventura completada</span>${s.race?competitionHTML(s,esc,activeProfile.name):s.trail !== "razonar" ? (s.assignment?`<div class="medal" aria-hidden="true">${s.questions.length}</div>`:raceHTML(7,8)) : '<div class="medal" aria-hidden="true">❋</div>'}<h1>${s.trail !== "razonar" ? "¡Llegaste a la meta!" : "¡Tu sendero florece!"}</h1><p>${esc(activeProfile?.name||"Estudiante")}, completaste ${s.questions.length} ejercicios. Aquí están tus resultados.</p>${s.race?`<div class="race-award"><strong>¡${raceStats(s).rank}.º lugar · ${raceStats(s).points} puntos!</strong><p>${raceStats(s).best} aciertos seguidos como mejor racha. Tu próxima carrera empieza en nivel ${state.adaptive[s.trail]?.level||1}.</p><small>Puntos de juego: 10 por reto completado + 5 por acierto inicial sin ayuda. Nunca pierdes puntos.</small></div>`:""}${s.assignment?`<section class="panel"><h2>${esc(s.assignment.title)} · versión ${s.assignmentVersion}</h2><p>${s.questions.length} respuestas registradas; completar no exige acertarlas todas. ${storageOK && KEY && activeProfile?'El cierre está guardado en este dispositivo.':'No se confirmó el guardado del cierre. Exporta una copia de tus resultados antes de salir.'} La recepción se consulta por separado en tu informe.</p>${![3,6].includes(s.taskProtocol)&&s.questions.at(-1).attempts.at(-1)!==s.questions.at(-1).answer?solutionHTML(s,s.questions.at(-1)):''}<a href="#progreso" class="secondary">Revisar la tarea y su recepción</a></section>`:''}${learningReviewHTML(s)}${statsHTML(r)}${s.trail !== "razonar" ? fluencyHTML([s]) : ""}<div class="panel"><h3>Una semilla más para tu camino</h3><p>Llevas ${state.sessions.length} ${state.sessions.length === 1 ? "aventura completa" : "aventuras completas"}. Las pistas y los nuevos intentos también te ayudan a aprender.</p></div><div class="button-row"><button class="primary" id="play-again" data-trail="${s.trail}">${s.assignment?'Práctica libre ↗':'Otra aventura ↗'}</button><a class="secondary" href="#progreso">Ver mi progreso</a></div><a class="micro" href="#explorar">Explorar otro camino</a></section>`;
 }
 function render(persistState = true) {
+  flushReflection?.();flushReflection=null;
   reportReconciliationCache.clear();
   cancelLaunch();
   clearTimeout(arrivalTimer);
@@ -772,8 +778,9 @@ function render(persistState = true) {
   });
   main.querySelector('#written-answer')?.addEventListener('submit',e=>{e.preventDefault();const n=Number(new FormData(e.currentTarget).get('result'));answer(n);});
   main.querySelectorAll('[data-explore]').forEach(b=>b.addEventListener('click',()=>{const q=state.current.questions[state.current.index];q.exploreCount=Math.max(0,Math.min(state.current.trail==='resta'?q.a:Math.max(20,q.b),(q.exploreCount||0)+Number(b.dataset.explore)));save();render(false);main.querySelector(`[data-explore="${b.dataset.explore}"]`)?.focus({preventScroll:true});}));
-  main.querySelector('#reasoning-reflection')?.addEventListener('input',e=>{state.current.questions[state.current.index].reflection=e.target.value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').slice(0,600);save();});
-  main.querySelector('#show-reasoning-solution')?.addEventListener('click',()=>{const q=state.current.questions[state.current.index];recordSolution(q);if(q.supportProtocol!==3)q.hint=true;save();render(false);main.querySelector('.solution-callout')?.focus();});
+  flushReflection=bindBufferedReflection(main.querySelector('#reasoning-reflection'),state.current?.questions?.[state.current.index],()=>{save();return storageOK;});
+  for(const type of ['scaffold','feedback'])main.querySelector('[data-reasoning-support="'+type+'"]')?.addEventListener('click',()=>{const q=state.current.questions[state.current.index];stopTimer();if(recordReasoningSupport(q,type)){save();if(storageOK){render(false);announce(type==='scaffold'?'Apoyo visual solicitado.':'Orientación de la elección solicitada.');}else{q.events.pop();announce('No se pudo guardar la solicitud de apoyo. Conserva una copia antes de salir.');}}});
+  main.querySelector('#show-reasoning-solution')?.addEventListener('click',()=>{const q=state.current.questions[state.current.index];recordSolution(q);if(![3,6].includes(q.supportProtocol))q.hint=true;save();render(false);main.querySelector('.solution-callout')?.focus();});
   main.querySelector("#next")?.addEventListener("click", next);
   $('#race-ready')?.addEventListener('click',launchRace);
   $('#circuit-select')?.addEventListener('change',e=>{if(needsRaceStart(state.current)&&Object.hasOwn(CIRCUITS,e.target.value)){state.current.race.circuit=e.target.value;state.raceCircuit=e.target.value;save();}});
@@ -831,9 +838,10 @@ function render(persistState = true) {
   $('#sound').setAttribute('aria-pressed',String(state.sound));
   $('#sound').setAttribute('aria-label',state.sound?'Desactivar sonidos':'Activar sonidos');
   if(['docentes','progreso'].includes(route)&&activeProfile){
-    main.insertAdjacentHTML('beforeend','<p class="micro">Seguimiento de tareas: historial completo por tarea, versión y destinatario. No hereda el filtro de periodo de Progreso. Su cobertura de destinatarios es distinta del recuento de cierres del tablero.</p>'+assignmentReportHTML(state,route==='docentes'&&activeProfile.role==='teacher'));
     const teacher=route==='docentes'&&activeProfile.role==='teacher';
-    if(teacher)main.querySelector('.page-head').insertAdjacentHTML('afterend',reconciliationPanel(state,true,reconciliationFor(true)));
+    const fullTaskReport='<p class="micro">Seguimiento de tareas: historial completo por tarea, versión y destinatario. No hereda el filtro de periodo de Progreso. Su cobertura de destinatarios es distinta del recuento de cierres del tablero.</p>'+assignmentReportHTML(state,teacher);
+    main.insertAdjacentHTML('beforeend',teacher?'<details class="panel teacher-evidence-history"><summary>Consultar expedientes por tarea y perfil</summary>'+fullTaskReport+'</details>':fullTaskReport);
+    if(teacher){const insights=teachingInsights(state);main.querySelector('.page-head').insertAdjacentHTML('afterend',teachingInsightsHTML(insights)+'<div class="button-row"><button id="teaching-evidence-csv" class="secondary">Exportar evidencia docente completa CSV</button></div><p class="micro">Incluye modelos, respuestas, ayudas, revisiones y notas; contiene códigos escolares. Entrégalo sólo a personas autorizadas.</p><details class="panel"><summary>Auditar el conjunto de cierres y sus filtros</summary>'+reconciliationPanel(state,true,reconciliationFor(true))+'</details>');$('#teaching-evidence-csv').addEventListener('click',()=>download('sendero-evidencia-docente.csv',teachingEvidenceCSV(teachingInsights(state)),'text/csv;charset=utf-8'));}
     else main.insertAdjacentHTML('beforeend',reconciliationPanel(state,false,reconciliationFor(false)));
     main.insertAdjacentHTML('beforeend',`<section class="panel"><h2>Informe de participaciones multijugador</h2><p>Se conservan separadas de la práctica individual. No verifican quién respondió ni excluyen ayuda de compañeros.</p><button id="export-multiplayer" class="secondary" ${(state.multiplayerHistory||[]).length?'':'disabled'}>Descargar mis participaciones JSON</button>${teacher?'<label>Recibir participaciones de estudiantes<input id="import-multiplayer" type="file" accept=".json,application/json" multiple></label>':''}<p id="multiplayer-import-status" role="status"></p></section>`);
     bindReconciliation(main,state,teacher,download,reconciliationFor(teacher));
@@ -904,7 +912,7 @@ function answer(n) {
   if (q.done) {
     $("#assigned-next,#next")?.focus({preventScroll:true});
     announce(
-      q.bankId ? (s.taskProtocol===3?'Correcto. Puedes continuar o explicar tu elección.':`Correcto. ${q.solution}. ${q.explanation}`) : `Correcto. ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}.`,
+      q.bankId ? ([3,6].includes(s.taskProtocol)?'Correcto. Puedes continuar o explicar tu elección.':`Correcto. ${q.solution}. ${q.explanation}`) : `Correcto. ${q.a} ${TRAILS[s.trail].symbol} ${q.b} es ${q.answer}.`,
     );
   } else {
     $(".solution-callout")?.focus({preventScroll:true});
@@ -1112,6 +1120,7 @@ $("#sound").addEventListener("click", () => {
   }
 });
 window.addEventListener("hashchange", () => {
+  flushReflection?.();
   if(location.hash !== "#jugar") stopTimer(true);
   render();
   window.scrollTo(0, 0);
@@ -1181,9 +1190,9 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-contracts-c9-v1`);
+    const cache = await caches.open(`sendero-${VERSION}-contracts-c10-v3`);
     const files = [
-      "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js", "./reasoning-c9.js", "./task-preview.js", "./teacher-c9.css",
+      "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js", "./reasoning-c9.js","./reasoning-support.js","./buffered-reflection.js","./teaching-insights.js","./teaching-insights.css", "./task-preview.js", "./teacher-c9.css",
       "./index.html",
       "./app.js",
       "./core.js",

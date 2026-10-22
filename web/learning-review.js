@@ -57,10 +57,11 @@ export function mathSupportHTML(trail, q) {
   }
   return `<aside class="hint-box math-support"><strong>${s.title}</strong><p>${s.text}</p>${visual}<p class="math-relation">${s.relation}</p><p>${s.inverse}</p></aside>`;
 }
+const hasRequestedSupport=q=>q.hint||q.supportProtocol===6&&q.events?.some(e=>['scaffold','feedback','solution'].includes(e.type));
 export function learningReviewHTML(session) {
   const needs = session.questions.filter(
-      (q) => q.hint || q.attempts?.[0] !== q.answer,
+      (q) => hasRequestedSupport(q) || q.attempts?.[0] !== q.answer,
     ),
     items = needs.length ? needs : session.questions.slice(-1);
-  return `<section class="learning-review"><h2>Lo que aprendemos del recorrido</h2><p>${needs.length ? `${needs.length} ${needs.length===1?'reto necesitó':'retos necesitaron'} ayuda o corrección. Revisa la idea que permite resolverlos.` : "Completaste los retos sin ayuda inicial. Elige una estrategia y explica por qué funciona."} ${session.race?'La posición en la carrera no mide comprensión.':'La corrección con ayuda se distingue de la resolución independiente.'}</p>${items.map((q) => `<details><summary>${q.bankId ? esc(q.prompt) : `${q.a} ${session.trail === "suma" ? "+" : session.trail === "resta" ? "−" : "×"} ${q.b}`} · ${q.hint ? "con ayuda" : q.attempts?.length > 1 ? "corregido" : "para explicar"}</summary>${mathSupportHTML(session.trail, q)}<p>Sin mirar la solución, explica el procedimiento a otra persona. Después compruébalo.</p></details>`).join("")}</section>`;
+  return `<section class="learning-review"><h2>Lo que aprendemos del recorrido</h2><p>${needs.length ? `${needs.length} ${needs.length===1?'reto necesitó':'retos necesitaron'} ayuda o corrección. Revisa la idea que permite resolverlos.` : "Completaste los retos sin ayuda inicial. Elige una estrategia y explica por qué funciona."} ${session.race?'La posición en la carrera no mide comprensión.':'La corrección con ayuda se distingue de la resolución independiente.'}</p>${items.map((q) => `<details><summary>${q.bankId ? esc(q.prompt) : `${q.a} ${session.trail === "suma" ? "+" : session.trail === "resta" ? "−" : "×"} ${q.b}`} · ${hasRequestedSupport(q) ? "con ayuda" : q.attempts?.length > 1 ? "corregido" : "para explicar"}</summary>${mathSupportHTML(session.trail, q)}<p>Sin mirar la solución, explica el procedimiento a otra persona. Después compruébalo.</p></details>`).join("")}</section>`;
 }
