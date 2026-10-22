@@ -1,5 +1,5 @@
 const VERSION = "0.18.0";
-const CACHE = `sendero-${VERSION}-contracts-c13-v1`;
+const CACHE = `sendero-${VERSION}-contracts-c13-v2`;
 const FILES = [
   "./teacher-reading-state.js",
   "./cloud-room-ui.js", "./cloud-room-contract.js", "./cloud-room-link.js", "./cloud-room-view.js",
