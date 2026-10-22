@@ -26,7 +26,8 @@ test('C10 apoyado: 48 copias semánticas C9 conservan procedencia sin cambiar el
   assert.equal(REASONING_SUPPORT_PROTOCOL,6);assert.deepEqual(REASONING_SUPPORT_FAMILIES,REASONING_C9_FAMILIES);
   assert.equal(tasks().length,12);const items=all();assert.equal(items.length,48);
   assert.equal(new Set(items.map(q=>q.bankId)).size,48);assert.equal(new Set(items.map(q=>q.sourceBankId)).size,48);
-  const sourceHash=createHash('sha256').update(readFileSync(new URL('../web/reasoning-c9.js',import.meta.url))).digest('hex');
+  assert.equal(REASONING_SUPPORT_SOURCE.sha256Encoding,'utf8-lf');
+  const sourceHash=createHash('sha256').update(readFileSync(new URL('../web/reasoning-c9.js',import.meta.url),'utf8').replace(/\r\n/g,'\n')).digest('hex');
   assert.equal(sourceHash,REASONING_SUPPORT_SOURCE.sha256,'La derivación exige la fuente C9 congelada declarada.');
   for(const task of tasks()){
     assert.equal(validReasoningSupportedTask(task),true);

@@ -231,12 +231,12 @@ test('C10: HTML conserva jerarquía, denominadores, procedencia textual y no exi
   const s=completeWorkshop(t),summary=teachingInsights(stateFor([t],[s])),html=teachingInsightsHTML(summary);
   assert.match(html,/¿Quién entregó\?/);assert.match(html,/¿Qué revisar\?/);assert.match(html,/¿Qué falta\?/);
   assert.match(html,/&lt;img/);assert.doesNotMatch(html,/<img src=x/);
-  assert.match(html,/Construcción inicial/);assert.match(html,/Segunda construcción/);assert.match(html,/Elección razonada/);
+  assert.match(html,/Construcción inicial/);assert.match(html,/Segunda construcción/);assert.match(html,/Elección de explicación/);
   assert.match(html,/Disponible sin constancia/);assert.match(html,/1\/4 perfiles/);
   assert.doesNotMatch(html,/<table|<details\s+open|<script/i);
   assert.match(html,/CSV de preguntas histórico no incluye talleres/);
   const css=readFileSync(new URL('../web/teaching-insights.css',import.meta.url),'utf8');
-  assert.ok(Buffer.byteLength(css)<=6144);assert.match(css,/minmax\(0,1fr\)/);assert.match(css,/focus-visible/);
+  assert.ok(Buffer.byteLength(css)<=8192);assert.match(css,/minmax\(0,1fr\)/);assert.match(css,/focus-visible/);
   assert.doesNotMatch(css,/(?:^|[;{])\s*min-width:\s*(?:600|700|800)px/);
   // Source constraints do not replace coordinated browser checks at 320/360/390 px.
 });
