@@ -47,3 +47,16 @@ test('C7 restores a classic pending task without fabricating future first-respon
  s.questions[0].activeMs=2000;recordAttempt(s.questions[0],s.questions[0].answer);advanceAssignedSession(s);validateAssignedProgress(structuredClone(s));assert.equal(s.questions[1].firstResponseMs,undefined);
  const bad=structuredClone(s);delete bad.questions[0].firstResponseMs;assert.throws(()=>validateAssignedProgress(bad));
 });
+
+test('C7 legacy reports retain numeric evidence despite unused representation fields without rewriting history',()=>{
+ const t={...task('suma',1,8),trail:'multi',contentId:'multiply-fixed-table',parameters:{table:3}};
+ for(const protocol of [1,2]){
+  const s=complete(t,profiles[0]);s.taskProtocol=protocol;if(protocol===1)delete s.completionAction;
+  for(const q of s.questions){q.prompt='ALTERADA';q.labels=Array(30).fill('ETIQUETA ALTERADA');q.bankId='injected';}
+  validateReport(report(s));const before=JSON.stringify(s);
+  const html=assignmentReportHTML({teacher:[s],classroom:{tasks:[t]},teacherConfirmations:{[sessionKey(s)]:{classId:t.classId,profile:s.profile,confirmedAt:s.completedAt}}},true);
+  assert(html.includes('3 × 1'));assert(html.includes('acierto 3'));assert(html.includes('Respuesta esperada: 3.'));
+  assert(!html.includes('ALTERADA'));assert(!html.includes('Representación esperada'));assert.equal(JSON.stringify(s),before);
+  if(process.env.C7_LEGACY_EVIDENCE)writeFileSync(process.env.C7_LEGACY_EVIDENCE.replace('.json',`-${protocol}.json`),JSON.stringify({task:t,session:s},null,2));
+ }
+});

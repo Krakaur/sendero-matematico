@@ -1173,7 +1173,7 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-routes-c7-v4`);
+    const cache = await caches.open(`sendero-${VERSION}-routes-c7-v5`);
     const files = [
       "./index.html",
       "./app.js",
