@@ -23,7 +23,7 @@ test('C2 runtime: completion means eight responses; final error remains visible 
  const unfinished=newAssignedSession(task(),'000101');assert.throws(()=>advanceAssignedSession(unfinished));assert.equal(unfinished.completedAt,null);
 });
 test('C2 runtime: first response, independent response, hint and automatic solution are distinct',()=>{
- const supported=play(task(),'000102',1);assert.deepEqual(assignedEvidence(supported),{answered:8,first:8,independent:7,final:8,hints:1,solutions:0});
+ const supported=play(task(),'000102',1);assert.deepEqual(assignedEvidence(supported),{answered:8,first:8,independent:7,final:8,hints:1,solutions:0,reflections:0});
  const corrected=play(task(),'000103',2);assert.deepEqual(corrected.questions[0].events.map(e=>e.type),['wrong','solution','hint','correct']);assert.equal(assignedEvidence(corrected).first,7);assert.equal(assignedEvidence(corrected).independent,7);
 });
 test('C2 runtime: snapshot and conditions cannot be forged or assigned retrospectively',()=>{

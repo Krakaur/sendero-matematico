@@ -7,7 +7,7 @@ const task=(id,table,version=1)=>({...base,assignment:{classId:'A',id,version,ti
 test('C4 separates fixed conditions and task versions from adaptive practice',()=>{
  const rows=resultGroups([base,task('T1',2),task('T2',12),task('T1',2,2)]);
  assert.equal(rows.length,4);assert.equal(new Set(rows.map(x=>x.condition)).size,4);assert(rows.every(r=>r.total===1));
- const html=renderFluency([base,task('T2',12)]);assert(html.includes('tabla 12'));assert(html.includes('1/1 ejercicios con tiempo válido'));
+ const html=renderFluency([base,task('T2',12)]);assert(html.includes('Tabla del 12'));assert(html.includes('1/1 ejercicios con tiempo válido'));
 });
 import {newAssignedSession,recordAttempt,advanceAssignedSession} from '../web/core.js';
 import {TASK_SCHEMA,sessionKey} from '../web/assignments.js';
