@@ -1,6 +1,7 @@
-const VERSION = "0.15.0";
-const CACHE = `sendero-${VERSION}-contracts-c10-v3`;
+const VERSION = "0.16.0";
+const CACHE = `sendero-${VERSION}-contracts-c11-v2`;
 const FILES = [
+  "./cloud-room-contract.js", "./cloud-room-link.js", "./cloud-room-view.js",
   "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js", "./reasoning-c9.js", "./reasoning-support.js", "./buffered-reflection.js", "./teaching-insights.js", "./teaching-insights.css", "./task-preview.js", "./teacher-c9.css",
   "./",
   "./index.html", "./docentes.html",

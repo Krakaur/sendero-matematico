@@ -647,3 +647,36 @@
     gap: 5px;
   }
 }
+
+/* C11: participant identities share the individual renderer without moving boats. */
+.together .room-scene.circuit-has-callouts{min-height:180px}
+.room-scene.circuit-has-legend .circuit-legend{
+  grid-template-columns:repeat(var(--circuit-count,4),minmax(0,1fr));
+  width:min(390px,calc(100% - 16px));z-index:4
+}
+.room-scene.circuit-has-legend .circuit-legend-item{font-size:12px}
+.room-scene.circuit-has-callouts .lane-label{display:none}
+.room-scene.circuit-has-callouts .room-scene-status{
+  top:auto;bottom:5px;left:8px;max-width:calc(100% - 16px);
+  padding:3px 7px;font-size:11px;line-height:16px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:4
+}
+.room-scene.circuit-has-callouts .circuit-callouts{z-index:4}
+.room-scene.circuit-has-callouts .room-countdown{z-index:5}
+.room-scene.circuit-has-callouts .competitor:is([data-edge="ahead"],[data-edge="behind"]) .lane-label{
+  display:flex;align-items:center;justify-content:center;
+  top:58px;bottom:auto;left:50%;width:64px;height:18px;
+  transform:translate(-50%,-50%);padding:0;box-sizing:border-box;
+  border:1px dashed #244a3f;border-radius:10px;background:#fff9e9;
+  color:#17352e;font-size:0;line-height:1;z-index:4
+}
+.room-scene.circuit-has-callouts .competitor[data-edge="ahead"] .lane-label::before,
+.room-scene.circuit-has-callouts .competitor[data-edge="behind"] .lane-label::after{content:none}
+.room-scene.circuit-has-callouts .competitor[data-edge="ahead"] .lane-label::after{content:"Fuera →";font:700 11px/1 system-ui,sans-serif}
+.room-scene.circuit-has-callouts .competitor[data-edge="behind"] .lane-label::before{content:"← Fuera";font:700 11px/1 system-ui,sans-serif}
+@media(max-width:700px){
+  .room-scene.circuit-has-callouts .competitor:is([data-edge="ahead"],[data-edge="behind"]) .lane-label{top:45px}
+}
+@media(min-width:1150px){
+  .room-many-local:not(.room-reasoning) .room-scene.circuit-has-callouts .competitor:is([data-edge="ahead"],[data-edge="behind"]) .lane-label{top:36px}
+}

@@ -27,6 +27,11 @@ import {
   matchResults,
 } from "./room.js";
 import { RoomLink, readRoomInvitation } from "./room-link.js";
+import {profileKey} from './profiles.js';
+import {CloudRoomLink,cloudAccessFromState} from './cloud-room-link.js';
+import {cloudEntryHTML,cloudSetupHTML,cloudRoomHTML,mountCloudScene} from './cloud-room-view.js';
+let cloudLink=null,cloudSnapshot=null,cloudRecords=[],cloudCurrent=null,cloudMessage='',cloudAccess=null,cloudDispose=null;
+const cloudPositions=new Map();
 const main = document.querySelector("#main"),
   esc = (s) =>
     String(s).replace(
@@ -90,6 +95,7 @@ function stopView() {
   consoleKeys.clear();
 }
 function reset(keepRecovery=false) {
+  cloudLink?.close();cloudLink=null;cloudDispose?.();cloudDispose=null;cloudSnapshot=null;cloudRecords=[];cloudPositions.clear();
   stopView();
   document.body.classList.remove("room-many-local", "room-reasoning");
   link?.close();
@@ -134,7 +140,46 @@ function setup() {
       "La invitación está incompleta. Pide que te compartan el enlace completo.";
   }
   main.innerHTML = `<section class="room-intro"><div><span class="eyebrow">JUGAR, PENSAR Y COMPARTIR</span><h1>El río se disfruta<br>en compañía.</h1><p>Resuelvan los mismos ocho retos. Pueden competir o ayudar a que todo el equipo llegue a la meta.</p><p class="room-notice">Personajes diferentes, mismas condiciones: contenido, nivel y circuito compartidos. Cada persona responde sus propios retos.</p></div><div class="room-hero" aria-hidden="true"><strong>La copa compartida</strong>${canoeSVG(0)}${canoeSVG(1)}</div></section>${errorHTML()}<section class="room-setup"><label class="room-local-count">Personas en esta pantalla<select id="local-count">${[2,3,4].map(n=>`<option value="${n}" ${n===localCount?"selected":""}>${n} estudiantes</option>`).join("")}</select></label>${profiles.panel(localCount)}<h2>Preparen el recorrido</h2><div class="room-fields"><label>Contenido<select id="room-trail">${["suma", "resta", "multi", "tablas20", "razonar"].map((t) => `<option value="${t}" ${t === "multi" ? "selected" : ""}>${TRAILS[t].short}</option>`).join("")}</select></label><label>Nivel de cantidades<select id="room-level">${[1, 2, 3, 4].map((l) => `<option value="${l}">Nivel ${l}</option>`).join("")}</select></label><label>Forma de jugar<select id="room-mode"><option value="race">Carrera amistosa</option><option value="coop">Llegar en equipo</option></select></label>${circuitPicker()}</div><div class="room-choices"><button class="primary" id="local-create" ${busy ? "disabled" : ""}>Jugar ${localCount} en esta pantalla</button><button class="secondary" id="online-create" ${busy ? "disabled" : ""}>Crear sala por enlace</button></div><p class="room-notice">En esta pantalla: de dos a cuatro zonas de respuesta. Cada participante puede tocar sus botones o usar su grupo de teclas. Para tres o cuatro, conviene una pantalla grande o táctil; en teléfonos pequeños, usen un dispositivo por persona. Funciona sin internet cuando el juego está preparado. Por enlace: de dos a cuatro personas, cada una en su dispositivo.</p><details><summary>Cómo funcionan las salas privadas</summary><p class="room-notice">Solo entra quien tenga la invitación. Al crear o unirse, PeerJS conecta los navegadores y recibe datos técnicos de conexión; los retos y respuestas viajan entre participantes. No se envía tu perfil ni historial. No hay cámara, micrófono ni chat. Algunas redes impiden la conexión directa: si ocurre, prueben otra red o compartan pantalla. Mantén abierta la pestaña que creó la sala.</p></details><div class="room-join"><label for="invite-input">¿Te compartieron una invitación?</label><input id="invite-input" type="text" maxlength="500" placeholder="Pega aquí el enlace de la sala" value="${esc(incoming)}"><button class="secondary" id="online-join" ${busy ? "disabled" : ""}>Entrar en la sala</button></div><p id="connect-status" role="status" class="room-notice">${busy ? "Conectando…" : ""}</p></section><a class="room-return" href="./">Volver a mi aventura individual</a><p class="room-notice">Los perfiles vinculados conservan un registro multijugador separado: puede incluir colaboración y no verifica quién responde. Web ${VERSION}.</p>`;
+  main.insertAdjacentHTML('beforeend',cloudEntryHTML());
 }
+function renderCloud(){
+  cloudDispose?.();cloudDispose=null;
+  const focus=document.activeElement,focusId=focus?.id,focusChoice=focus?.dataset?.cloudChoice;
+  main.innerHTML=cloudSnapshot?cloudRoomHTML(cloudSnapshot,{message:cloudMessage,pending:!!cloudLink?.pending,records:cloudRecords,connected:cloudLink?.connected===true}):cloudSetupHTML(cloudAccess,cloudCurrent,cloudMessage);
+  if(cloudSnapshot)cloudDispose=mountCloudScene(main,cloudSnapshot,{reduced:getReduced(),previous:cloudPositions});
+  const replacement=focusId?document.getElementById(focusId):focusChoice!==undefined?main.querySelector(`[data-cloud-choice="${focusChoice}"]`):null;
+  if(replacement&&!replacement.disabled)replacement.focus({preventScroll:true});
+}
+async function openCloud(){
+  reset();
+  try{
+    const id=sessionStorage.getItem('sendero.active'),state=id&&JSON.parse(localStorage.getItem(profileKey(id)));
+    cloudAccess=cloudAccessFromState(state);kind='cloud';cloudMessage='Consultando disponibilidad del aula…';cloudCurrent=null;renderCloud();
+    cloudLink=new CloudRoomLink(cloudAccess,{accessCurrent:access=>{try{const state=JSON.parse(localStorage.getItem(profileKey(access.profile))),current=cloudAccessFromState(state);return ['endpoint','token','classroom','role','profile'].every(k=>current[k]===access[k]);}catch{return false;}},snapshot:(snapshot,records=[])=>{if(kind!=='cloud')return;cloudSnapshot=snapshot;cloudRecords=records;renderCloud();},status:message=>{if(kind!=='cloud')return;cloudMessage=message;renderCloud();},receipt:receipt=>{if(kind!=='cloud')return;cloudMessage=receipt.committed?'Acción aceptada por el servidor.':`La acción anterior no cambió el juego (${receipt.code}). Revisa el estado y vuelve a intentarlo si corresponde.`;renderCloud();}});
+    cloudCurrent=await cloudLink.current();if(kind==='cloud')renderCloud();
+  }catch(e){error=e.message;kind=null;setup();}
+}
+async function cloudClick(button){
+  try{
+    if(button.id==='cloud-exit'){reset();setup();return;}
+    if(button.id==='cloud-discover'){cloudCurrent=await cloudLink.current();cloudSnapshot=null;renderCloud();return;}
+    if(button.id==='cloud-enter'){cloudLink.roomId=cloudCurrent.id;if(cloudAccess.role==='teacher'||cloudCurrent.terminal)await cloudLink.refreshTeacher();else await cloudLink.connect(cloudCurrent.id);return;}
+    if(button.id==='cloud-teacher-refresh'){await cloudLink.refreshTeacher();return;}
+    if(button.id==='cloud-close-room'){await cloudLink.request(`/live/rooms/${cloudSnapshot.id}/close`,{actionId:crypto.randomUUID(),expectedVersion:cloudSnapshot.version});await cloudLink.refreshTeacher();return;}
+    if(button.id==='cloud-archive'){await cloudLink.request(`/live/rooms/${cloudSnapshot.id}/archive`,{});await cloudLink.refreshTeacher();return;}
+    if(button.id==='cloud-reconnect'||button.id==='cloud-transfer'){await cloudLink.connect(cloudSnapshot?.id||cloudCurrent.id,{transfer:button.id==='cloud-transfer'});return;}
+    const s=cloudSnapshot;if(!s?.self)return;
+    if(button.id==='cloud-ready')cloudLink.action({type:'ready',value:!s.players.find(p=>p.seat===s.self.seat)?.ready});
+    if(button.id==='cloud-pause')cloudLink.action({type:'pause',reason:'requested'});
+    if(button.id==='cloud-hint')cloudLink.action({type:'hint',questionId:s.question.id,questionIndex:s.question.index});
+    if(button.dataset.cloudChoice!==undefined)cloudLink.action({type:'answer',questionId:s.question.id,questionIndex:s.question.index,choiceIndex:Number(button.dataset.cloudChoice)});
+  }catch(e){cloudMessage=e.message;renderCloud();}
+}
+main.addEventListener('submit',async event=>{
+  if(event.target.id!=='cloud-create-form')return;event.preventDefault();const values=new FormData(event.target);event.target.querySelector('button').disabled=true;
+  try{await cloudLink.create({trail:values.get('trail'),level:Number(values.get('level')),mode:values.get('mode'),circuit:values.get('circuit')});}
+  catch(e){cloudMessage=e.message;renderCloud();}
+});
 function roster() {
   return `<div class="room-roster">${match.players.map((p) => `<article class="room-person" data-ready="${p.ready}">${canoeSVG(p.seat)}<strong>${p.name}${p.id === localId && !local() ? " · Tú" : ""}</strong><small>${!p.connected ? "Sin conexión" : p.ready ? "Preparado para salir" : "Preparando el recorrido"}</small>${!p.connected&&authority()&&match.status==='lobby'?`<button class="soft-button" data-remove-waiting="${esc(p.id)}">Liberar esta plaza</button>`:""}${local() || p.id === localId ? `<button class="${p.ready ? "secondary" : "primary"}" data-ready="${esc(p.id)}" ${!p.connected ? "disabled" : ""}>${p.ready ? "Todavía no" : `Estoy listo · ${p.name}`}</button>` : ""}</article>`).join("")}</div>`;
 }
@@ -246,6 +291,7 @@ function finish() {
   );
 }
 function render(force = false) {
+  if(kind==='cloud'){renderCloud();return;}
   if (!match) {
     setup();
     return;
@@ -295,11 +341,11 @@ function frame(t) {
   const scene = main.querySelector(".room-scene"),
     w = scene.clientWidth,
     h = scene.clientHeight,
-    cam = view.draw(follow, w, h, getReduced());
+    cam = view.draw(follow, w, h, getReduced(),local()?null:match.players.find(p=>p.id===localId)?.seat??0);
   scene.querySelectorAll("[data-room-racer]").forEach((el, i) => {
     const p = view.project(
       displayPositions[i].position,
-      i,
+      match.players[i].seat,
       cam,
       w,
       h,
@@ -313,7 +359,7 @@ function frame(t) {
     const p = coursePoint(
       match.config.circuit,
       displayPositions[i].position,
-      i,
+      match.players[i].seat,
     );
     el.setAttribute("cx", p.x);
     el.setAttribute("cy", p.y);
@@ -527,6 +573,8 @@ main.addEventListener("change", (e) => {
 main.addEventListener("click", async (e) => {
   const b = e.target.closest("button");
   if (!b || b.disabled || e.detail > 1) return;
+  if(b.id==='cloud-open'){await openCloud();return;}
+  if(kind==='cloud'){await cloudClick(b);return;}
   if (b.id === "local-create") {
     const config = configuration();
     reset();
@@ -614,8 +662,11 @@ document.querySelector("#motion-toggle").addEventListener("click", (e) => {
   reduced = !reduced;
   document.body.classList.toggle("reduced-motion", reduced);
   e.currentTarget.setAttribute("aria-pressed", reduced);
+  if(kind==='cloud')renderCloud();
 });
+window.addEventListener('storage',event=>{if(kind==='cloud'&&cloudAccess&&(!event.key||event.key===profileKey(cloudAccess.profile)))cloudLink?.ensureAccess();});
 document.addEventListener("visibilitychange", () => {
+  if(kind==='cloud'&&document.hidden){cloudLink?.hidden();return;}
   if (
     document.hidden &&
     match &&
@@ -626,6 +677,7 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 window.addEventListener("pagehide", () => {
+  cloudLink?.close();cloudDispose?.();
   if (local()) {
     pauseMatch(
       match,

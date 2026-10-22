@@ -3,11 +3,13 @@ import { sessionKey } from "./assignments.js";
 import { validWorkshop } from "./workshop.js";
 import { validateMultiplayerRecord } from "./multiplayer-records.js";
 import { normalizeEnrollment } from "./enrollment.js";
+import {LIVE_RECORD} from './cloud-room-contract.js';
 
 export const RECONCILIATION_UNKNOWN = "__unknown__";
 export const RECONCILIATION_STATUS_LABELS = Object.freeze({ included: "Incluida",
   duplicate: "Copia equivalente omitida", incomplete: "Sin cierre local",
-  invalid: "Formato no admitido", conflicting: "Identidad con contenidos discrepantes" });
+  invalid: "Formato no admitido", conflicting: "Identidad con contenidos discrepantes",
+  outside_legacy: "Fuera del universo histórico: partida de aula con autoridad del servidor" });
 const UNKNOWN = RECONCILIATION_UNKNOWN;
 const dimensions = ["group", "student", "game", "content", "source"];
 const filterDimensions = ["group", "student", "game", "content"];
@@ -167,11 +169,21 @@ export function summarizeReconciliation(state, teacher = false, filters = {}) {
   const selected = Object.fromEntries(filterDimensions.map((key) => [key, filters[key] ?? ""]));
   if (Object.values(selected).some((value) => typeof value !== "string")) throw Error("Filtro de conciliación no válido.");
   const ledger = [], groups = new Map();
-  const entries = entriesOf(state, teacher);
+  const inspected=entriesOf(state,teacher).map((entry,inputIndex)=>({...entry,inputIndex}));
+  // A cloud participation is another measurement condition, not an incomplete
+  // historical session. Preserve it in state and describe this boundary separately.
+  const outside=inspected.filter(entry=>entry.record?.schema===LIVE_RECORD).map(entry=>({
+    index:entry.inputIndex,path:entry.path,kind:entry.kind,status:'outside_legacy',
+    profile:typeof entry.record.profile==='string'?entry.record.profile:null,
+    id:typeof entry.record.id==='string'?entry.record.id:null,
+    reason:'Partida de aula con cierre por corrección y reloj del servidor. Se revisa en su panel propio; no integra denominadores, preguntas ni filtros históricos.',
+    href:'#cloud-participation-report'
+  }));
+  const entries=inspected.filter(entry=>entry.record?.schema!==LIVE_RECORD);
   entries.forEach((entry, index) => {
     const record = entry.record;
     const profile = entry.kind === "project" ? entry.profile : record?.profile;
-    const row = { index, path: entry.path, kind: entry.kind, key: null, classId: null,
+    const row = { index:entry.inputIndex, path: entry.path, kind: entry.kind, key: null, classId: null,
       profile: typeof profile === "string" ? profile : null, id: typeof record?.id === "string" ? record.id : null,
       originalTrail: typeof record?.trail === "string" ? record.trail : null,
       status: "invalid", reason: "", visible: false };
@@ -236,14 +248,14 @@ export function summarizeReconciliation(state, teacher = false, filters = {}) {
     profileGroups.get(record.dimensions.student).add(record.dimensions.group);
   }
   const groupMemberships = [...profileGroups.values()].reduce((sum, values) => sum + values.size, 0);
-  const totals = { inputEntries: entries.length, canonicalEntries: allRecords.length, visibleEntries: records.length,
+  const totals = { inputEntries: entries.length, inspectedEntries:inspected.length,outsideLegacyEntries:outside.length,canonicalEntries: allRecords.length, visibleEntries: records.length,
     filteredOut: allRecords.length - records.length, duplicates: counts.duplicate, incomplete: counts.incomplete,
     invalid: counts.invalid, conflicting: counts.conflicting, profiles: profiles.size,
     canonicalProfiles: new Set(allRecords.map((record) => record.dimensions.student)).size,
     kinds: kinds(records), canonicalKinds: kinds(allRecords), evidenceUnits: evidenceUnits(records),
     denominator: records.length, unit: "cierres únicos admisibles", profileUnit: "perfiles contextualizados por aula; no personas verificadas" };
   const diagnostics = {
-    conservationDifference: entries.length - Object.values(counts).reduce((sum, count) => sum + count, 0),
+    conservationDifference: inspected.length-outside.length-Object.values(counts).reduce((sum, count) => sum + count, 0),
     inclusionDifference: counts.included - allRecords.length,
     partitionDifferences: Object.fromEntries(dimensions.map((dimension) => [dimension, partitions[dimension]
       .reduce((sum, bucket) => sum + bucket.count, 0) - records.length])),
@@ -253,6 +265,7 @@ export function summarizeReconciliation(state, teacher = false, filters = {}) {
       "Disponibilidad, importación, acuse y consulta no demuestran aprendizaje ni identidad personal.",
       "Las pertenencias a niveles, contenidos o grupos históricos no son recuentos aditivos de perfiles."] };
   return { totals, partitions, ledger, options, records, allRecords, filters: selected, diagnostics,
+    outsideLegacy:{count:outside.length,unit:'entradas disponibles; no salas ni personas',label:RECONCILIATION_STATUS_LABELS.outside_legacy,href:'#cloud-participation-report',entries:outside},
     memberships: {
       content: membership(records, "contentMemberships", (value) => value.startsWith("mission:") ? `Tipo de misión: ${value.slice(8)}` : TRAILS[value]?.name || value),
       levels: membership(records, "levels", (value) => `Nivel de cantidades ${value}`),

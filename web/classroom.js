@@ -3,6 +3,7 @@ export {validateTasks} from './assignments.js';
 import { validWorkshop, mergeWorkshopReports } from "./workshop.js";
 import { SCHEMA, TRAILS, validateReport, mergeSessions } from "./core.js";
 import { normalizeEnrollment, validEnrollment } from "./enrollment.js";
+import {LIVE_RECORD,isServerLiveId} from './cloud-room-contract.js';
 import {
   MULTIPLAYER_SCHEMA,
   validateMultiplayerReport,
@@ -282,7 +283,7 @@ export async function exchangeClassroom(state, fetcher = fetch, {onAttempt} = {}
   }
   if (link.includeMultiplayer && capabilities.includes("multiplayer")) {
     const pending = (state.multiplayerHistory || [])
-      .filter((r) => !link.multiplayerReceived?.includes(r.id))
+      .filter((r) => r.schema!==LIVE_RECORD&&!isServerLiveId(r.id)&&!link.multiplayerReceived?.includes(r.id))
       .slice(0, 1);
     if (pending.length) {
       const report = {
@@ -375,6 +376,14 @@ export async function exchangeClassroom(state, fetcher = fetch, {onAttempt} = {}
     at: receipt.receivedAt,
   };
 }
+// A manual copy does not manufacture a server receipt or bind a historical room
+// to the classroom currently configured in this device.
+export function importMultiplayerCopies(state,incoming){
+  if(!Array.isArray(incoming))throw Error('Las participaciones deben formar una lista.');
+  const merged=mergeMultiplayer(state.teacherMultiplayer||[],incoming);
+  state.teacherMultiplayer=merged;
+  return merged;
+}
 export function applyExchange(state, result) {
   if (!result) return;
   // Reject incomplete student acknowledgements before changing any state or cursor.
@@ -394,11 +403,10 @@ export function applyExchange(state, result) {
   }
   // Validate conflicts before changing cursors or other state.
   const mergedTeacher=result.sessions?mergeSessions(state.teacher,result.sessions).sessions:null;
+  const mergedMultiplayer=result.multiplayer?mergeMultiplayer(state.teacherMultiplayer||[],result.multiplayer):null;
+  const mergedProjects=result.projects?mergeWorkshopReports(state.teacherProjects||[],result.projects):null;
   if (result.multiplayer)
-    state.teacherMultiplayer = mergeMultiplayer(
-      state.teacherMultiplayer || [],
-      result.multiplayer,
-    );
+    state.teacherMultiplayer = mergedMultiplayer;
   if (
     Number.isSafeInteger(result.multiplayerCursor) &&
     result.multiplayerCursor >= 0
@@ -414,10 +422,7 @@ export function applyExchange(state, result) {
       ]),
     ];
   if (result.projects)
-    state.teacherProjects = mergeWorkshopReports(
-      state.teacherProjects || [],
-      result.projects,
-    );
+    state.teacherProjects = mergedProjects;
   if (result.students) state.classroom.students = result.students;
   if (result.capabilities) {
     state.classroom.capabilities = result.capabilities;

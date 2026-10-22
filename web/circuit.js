@@ -126,39 +126,51 @@ export class CircuitView {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d", { alpha: false });
     this.course = courseGeometry(id);
-    this.scene = canvas.closest?.(".curved-regatta") || null;
+    this.scene = canvas.closest?.(".curved-regatta, .room-scene") || null;
+    this.roomScene = !!this.scene?.classList.contains("room-scene");
     this.legend = null;
     this.markerLayer = null;
     this.markerNodes = [];
+    this.markerSeats = [];
     this.projectedMarkers = [];
     this.labelPlacements = [];
     this.markerSize = "";
     if (this.scene) {
-      const boats = [...this.scene.querySelectorAll(".race-lane [data-racer]")];
-      if (boats.length === 4) {
-        const keys = ["T", "N", "R", "C"],
+      const boats = [...this.scene.querySelectorAll(this.roomScene
+        ? ".competitor[data-room-racer]" : ".race-lane [data-racer]")];
+      const seats = boats.map(boat => Number(this.roomScene
+        ? boat.dataset.roomRacer : boat.dataset.racer));
+      if (boats.length >= 2 && boats.length <= 4 && new Set(seats).size === boats.length &&
+          seats.every(seat => Number.isInteger(seat) && seat >= 0 && seat < 4)) {
+        const keys = this.roomScene ? ["L", "N", "R", "C"] : ["T", "N", "R", "C"],
           colors = ["#f6b94f", "#b6a0d6", "#e48a70", "#8eb98e"];
+        this.markerSeats = [...seats].sort((a, b) => a - b);
         this.scene.querySelector(".circuit-legend")?.remove();
         this.legend = document.createElement("div");
         this.legend.className = "circuit-legend";
+        this.legend.style.setProperty("--circuit-count", String(boats.length));
         this.legend.setAttribute("role", "list");
-        this.legend.setAttribute("aria-label", "Personajes del circuito, en orden fijo, no por posición");
-        boats.forEach((boat, i) => {
-          const item = document.createElement("span"),
+        this.legend.setAttribute("aria-label", "Personajes del circuito, en orden fijo de asiento, no por posición");
+        for (const seat of this.markerSeats) {
+          const boat = boats[seats.indexOf(seat)],
+            item = document.createElement("span"),
             key = document.createElement("b"),
             name = document.createElement("span");
           item.className = "circuit-legend-item";
           item.setAttribute("role", "listitem");
-          item.style.setProperty("--racer-accent", colors[i]);
+          item.dataset.seat = String(seat);
+          item.style.setProperty("--racer-accent", colors[seat]);
           key.className = "circuit-key";
           key.setAttribute("aria-hidden", "true");
-          key.textContent = keys[i];
-          name.textContent = i === 0 ? "Tú" : boat.querySelector(".lane-name")?.textContent?.trim() || "Rival";
+          key.textContent = keys[seat];
+          name.textContent = this.roomScene
+            ? boat.querySelector(".lane-label")?.textContent?.trim() || "Participante"
+            : seat === 0 ? "Tú" : boat.querySelector(".lane-name")?.textContent?.trim() || "Rival";
           item.append(key, name);
           this.legend.append(item);
-          boat.dataset.circuitKey = keys[i];
-          boat.style.setProperty("--racer-accent", colors[i]);
-        });
+          boat.dataset.circuitKey = keys[seat];
+          boat.style.setProperty("--racer-accent", colors[seat]);
+        }
         this.scene.classList.add("circuit-has-legend");
         canvas.parentElement.append(this.legend);
         const ns = "http://www.w3.org/2000/svg",
@@ -167,21 +179,21 @@ export class CircuitView {
         this.markerLayer.classList.add("circuit-callouts");
         this.markerLayer.setAttribute("aria-hidden", "true");
         this.markerLayer.setAttribute("preserveAspectRatio", "none");
-        keys.forEach((key, i) => {
+        for (const seat of this.markerSeats) {
           const group = create("g"), outline = create("path"),
             line = create("path"), circle = create("circle"), text = create("text");
           outline.classList.add("callout-outline");
           line.classList.add("callout-line");
           circle.setAttribute("r", "11");
-          circle.setAttribute("fill", colors[i]);
+          circle.setAttribute("fill", colors[seat]);
           text.setAttribute("text-anchor", "middle");
           text.setAttribute("dy", ".35em");
-          text.textContent = key;
+          text.textContent = keys[seat];
           group.append(circle, text);
           this.markerLayer.append(outline, line);
-          this.markerNodes.push({group, outline, line, lastTransform: "", lastLine: ""});
-        });
-        // Every label paints above every guide, including guides for later racers.
+          this.markerNodes[seat] = {group, outline, line, lastTransform: "", lastLine: ""};
+        }
+        // All identity circles paint above all guides, independent of seat/order.
         this.markerNodes.forEach(({group}) => this.markerLayer.append(group));
         this.scene.classList.add("circuit-has-callouts");
         canvas.parentElement.append(this.markerLayer);
@@ -296,12 +308,14 @@ export class CircuitView {
       ctx.restore();
     }
   }
-  camera(progress, width, height, reduced = false) {
+  camera(progress, width, height, reduced = false, followSeat = 0) {
     const scale = clamp(height / 500, 0.42, 0.9),
-      point = coursePoint(this.course.id, progress, 0);
+      seat = Number.isInteger(followSeat) && followSeat >= 0 && followSeat < 4 ? followSeat : 0,
+      point = coursePoint(this.course.id, progress, seat);
     // Reduced motion keeps a fixed overview with 44px margins. Fitting only the
     // centerline to the viewport can otherwise clamp the learner at start/meta.
-    if (reduced) {
+    // null requests a shared overview without disabling boat animation.
+    if (reduced || followSeat === null) {
       const fixedScale = Math.max(
         0.001,
         Math.min((width - 88) / 3200, (height - 88) / this.course.height),
@@ -311,11 +325,11 @@ export class CircuitView {
         x: (3200 - width / fixedScale) / 2,
         y: (this.course.height - height / fixedScale) / 2,
         follow: progress,
+        followSeat: followSeat === null ? null : seat,
       };
     }
     if (this.course.loop) {
-      // Follow the learner's actual lane. A lane-2 anchor can put lane 0 outside
-      // a short mobile viewport even though the learner is the camera subject.
+      // Follow the actual observed seat; remote guests need not occupy lane 0.
       const center = point;
       return {
         scale,
@@ -323,8 +337,9 @@ export class CircuitView {
         y: center.y,
         angle: point.angle,
         anchorX: width * 0.37,
-        anchorY: height * 0.46,
+        anchorY: this.roomScene ? Math.max(98, height * 0.54) : height * 0.46,
         follow: progress,
+        followSeat: seat,
       };
     }
     return {
@@ -335,14 +350,15 @@ export class CircuitView {
         Math.max(0, 3200 - width / scale),
       ),
       y: clamp(
-        point.y - (height / scale) * 0.48,
+        point.y - (this.roomScene ? Math.max(98, height * 0.54) : height * 0.48) / scale,
         0,
         Math.max(0, 900 - height / scale),
       ),
       follow: progress,
+      followSeat: seat,
     };
   }
-  draw(progress, width, height, reduced = false) {
+  draw(progress, width, height, reduced = false, followSeat = 0) {
     const dpr = Math.min(1.5, devicePixelRatio || 1),
       cw = Math.round(width * dpr),
       ch = Math.round(height * dpr);
@@ -350,7 +366,9 @@ export class CircuitView {
       this.canvas.width = cw;
       this.canvas.height = ch;
     }
-    const cam = this.camera(progress, width, height, reduced),
+    // No stale positions from a preceding frame or a different participant order.
+    this.projectedMarkers = [];
+    const cam = this.camera(progress, width, height, reduced, followSeat),
       ctx = this.ctx;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = "#194d40";
@@ -376,17 +394,18 @@ export class CircuitView {
     return cam;
   }
   paintMarkers(width, height, boatWidth) {
-    if (!this.markerLayer || ![0, 1, 2, 3].every(i => this.projectedMarkers[i])) return;
+    if (!this.markerLayer || !this.markerSeats.length ||
+        !this.markerSeats.every(seat => this.projectedMarkers[seat])) return;
     const size = `0 0 ${width} ${height}`;
     if (size !== this.markerSize) {
       this.markerLayer.setAttribute("viewBox", size);
       this.markerSize = size;
     }
-    const placed = [], left = 14, right = Math.max(left, width - 14),
+    const placed = [], nextPlacements = [], left = 14, right = Math.max(left, width - 14),
       // Keep identity circles above the mobile message strip without DOM reads.
       top = Math.min(48, Math.max(14, height - 14)), bottom = Math.max(top, height - 40),
       offsets = [[0, 30], [60, 0], [-60, 0], [32, 32], [-32, 32], [40, -58], [-40, -58], [0, -82]];
-    for (let i = 0; i < 4; i++) {
+    for (const i of this.markerSeats) {
       const source = this.projectedMarkers[i], previous = this.labelPlacements[i],
         candidates = offsets.map(([dx, dy]) => ({x: source.x + dx, y: source.y + dy}));
       // Eight local positions + eight edge slots = exactly 16 candidates/actor.
@@ -408,6 +427,7 @@ export class CircuitView {
       // Scene CSS has a 160px minimum; the eight edge slots give four labels room.
       best ||= {x: clamp(source.x,left,right), y: clamp(source.y,top,bottom)};
       placed.push(best);
+      nextPlacements[i] = best;
       const node = this.markerNodes[i],
         transform = `translate(${best.x.toFixed(1)} ${best.y.toFixed(1)})`,
         line = `M ${source.x.toFixed(1)} ${source.y.toFixed(1)} L ${best.x.toFixed(1)} ${best.y.toFixed(1)}`;
@@ -421,7 +441,7 @@ export class CircuitView {
         node.lastLine = line;
       }
     }
-    this.labelPlacements = placed;
+    this.labelPlacements = nextPlacements;
   }
   project(progress, lane, cam, width, height, boatWidth) {
     const p = coursePoint(this.course.id, progress, lane);
@@ -455,7 +475,9 @@ export class CircuitView {
       edge,
     };
     this.projectedMarkers[clamp(lane | 0, 0, 3)] = projected;
-    if ((lane | 0) === 3) this.paintMarkers(width, height, boatWidth);
+    // Project every configured participant once per draw; the last may be any seat.
+    if (this.markerLayer && this.markerSeats.every(seat => this.projectedMarkers[seat]))
+      this.paintMarkers(width, height, boatWidth);
     return projected;
   }
   dispose() {

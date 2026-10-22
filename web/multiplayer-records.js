@@ -1,8 +1,10 @@
 import { VERSION, SCHEMA, validateReport } from "./core.js";
+import {LIVE_RECORD,validateLiveParticipation} from './cloud-room-contract.js';
 import { validWorkshop } from "./workshop.js";
 import { normalizeEnrollment, validEnrollment } from "./enrollment.js";
 export const MULTIPLAYER_SCHEMA = "sendero.multiplayer-report.v1";
 export function validateMultiplayerRecord(r) {
+  if(r?.schema===LIVE_RECORD)return validateLiveParticipation(r);
   if (
     !r ||
     typeof r.id !== "string" ||

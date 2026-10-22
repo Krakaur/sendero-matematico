@@ -1,4 +1,7 @@
 import { validateReport, SCHEMA } from "../web/core.js";
+import { LIVE_RECORD, liveBytes, isServerLiveId } from '../web/cloud-room-contract.js';
+export { ClassroomRace } from './classroom-race.mjs';
+const liveEnabled = env => env.LIVE_ROOMS_ENABLED === 'true' && !!env.CLASSROOM_RACE;
 import { isAssignedTask, validateTasks, mergeTaskHistory, visibleTasks, validateAssignedSession } from "../web/assignments.js";
 import { validWorkshop } from "../web/workshop.js";
 import { validEnrollment, normalizeEnrollment } from "../web/enrollment.js";
@@ -132,11 +135,23 @@ export default {
         return env.ASSETS.fetch(request);
       require(env.SERVICE_ENABLED === "true", 503, "service_paused");
       require(["GET", "POST"].includes(request.method), 405, "method");
+      const liveSocket = path === '/live/socket' && request.method === 'GET';
+      let liveTicket = null;
+      if (liveSocket) {
+        require(liveEnabled(env),503,'live_disabled');
+        require(origin && headers['Access-Control-Allow-Origin'] && request.headers.get('Upgrade')?.toLowerCase()==='websocket',403,'origin_or_upgrade');
+        const protocols=(request.headers.get('Sec-WebSocket-Protocol')||'').split(',').map(x=>x.trim());
+        require(protocols.length===2 && protocols.includes('sendero.live.v1'),401,'ticket');
+        const ticket=protocols.find(x=>/^ticket\.[a-f0-9]{64}$/.test(x))?.slice(7);
+        require(ticket,401,'ticket');
+        liveTicket=(await all("DELETE FROM live_tickets WHERE hash=? AND expiresAt>? AND EXISTS(SELECT 1 FROM access a WHERE a.hash=live_tickets.accessHash AND a.room=live_tickets.classroom AND a.profile=live_tickets.profile AND a.role='student') RETURNING *",await digest(ticket),Date.now()))[0];
+        require(liveTicket,401,'ticket');
+      }
       const bearer = request.headers
         .get("Authorization")
         ?.match(/^Bearer ([A-Za-z0-9-]{32,200})$/)?.[1];
-      require(bearer, 401, "unauthorized");
-      const hash = await digest(bearer),
+      require(bearer || liveTicket, 401, "unauthorized");
+      const hash = liveTicket?.accessHash || await digest(bearer),
         admin = path.startsWith("/admin-api/");
       let who;
       if (admin)
@@ -168,8 +183,42 @@ export default {
           }
         }
       }
+      if (liveTicket) {
+        require(who.role==='student' && who.room===liveTicket.classroom && who.profile===liveTicket.profile,403,'membership');
+        const principal={classroom:who.room,role:who.role,profile:who.profile,hash,generation:liveTicket.generation};
+        const stub=env.CLASSROOM_RACE.get(env.CLASSROOM_RACE.idFromName(who.room));
+        const upgraded=await stub.fetch(new Request('https://live.internal/socket',{headers:{Upgrade:'websocket','X-Sendero-Live':JSON.stringify({roomId:liveTicket.roomId,principal})}}));
+        const responseHeaders=new Headers(upgraded.headers);for(const [key,value] of Object.entries(headers))responseHeaders.set(key,value);
+        responseHeaders.set('X-Live-D1-Accounting','frontdoor-only; DO actions and archive require account metrics');
+        if(upgraded.status===101)responseHeaders.delete('Content-Type');
+        return new Response(upgraded.status===101?null:upgraded.body,{status:upgraded.status,headers:responseHeaders,...(upgraded.webSocket?{webSocket:upgraded.webSocket}:{})});
+      }
       const data = request.method === "POST" ? await readBody(request) : null;
       const is = (p, m = "GET") => path === p && request.method === m;
+      if (path.startsWith('/live/')) {
+        headers['X-Live-D1-Accounting']='frontdoor-only; DO actions and archive require account metrics';
+        require(!admin && liveEnabled(env),503,'live_disabled');
+        require(['teacher','student'].includes(who.role) && (who.role==='teacher'||validId(who.profile)),403,'profile_required');
+        require(data===null || liveBytes(data)<=2048,413,'live_body_limit');
+        const principal={classroom:who.room,role:who.role,profile:who.profile||null,hash};
+        const stub=env.CLASSROOM_RACE.get(env.CLASSROOM_RACE.idFromName(who.room));
+        const call=(command,payload)=>stub.fetch(new Request('https://live.internal/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({principal,command,data:payload})}));
+        if (is('/live/rooms','POST')) { const r=await call('create',data);return respond(await r.json(),r.status); }
+        if (is('/live/rooms/current')) { const r=await call('current',{});return respond(await r.json(),r.status); }
+        const match=path.match(/^\/live\/rooms\/([a-zA-Z0-9-]{1,80})(?:\/(join|transfer|tickets|close|archive|receipt))?$/);
+        require(match,404,'route');const roomId=match[1],suffix=match[2];
+        require(suffix?request.method==='POST':request.method==='GET',405,'method');
+        if (suffix==='tickets') {
+          require(who.role==='student' && data && Object.keys(data).length===1 && Number.isSafeInteger(data.generation),400,'ticket_request');
+          const permit=await call('ticket',{roomId,generation:data.generation});if(!permit.ok)return respond(await permit.json(),permit.status);
+          const ticket=token(),expiresAt=Date.now()+60000;
+          await run('DELETE FROM live_tickets WHERE hash IN (SELECT hash FROM live_tickets WHERE classroom=? AND expiresAt<=? LIMIT 60)',who.room,Date.now());
+          const saved=await run("INSERT INTO live_tickets(hash,classroom,roomId,profile,accessHash,generation,expiresAt) SELECT ?,?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM access WHERE hash=? AND room=? AND profile=? AND role='student') ON CONFLICT(classroom,profile) DO UPDATE SET hash=excluded.hash,roomId=excluded.roomId,accessHash=excluded.accessHash,generation=excluded.generation,expiresAt=excluded.expiresAt",await digest(ticket),who.room,roomId,who.profile,hash,data.generation,expiresAt,hash,who.room,who.profile);
+          require(saved.meta.changes===1,401,'revoked');
+          return respond({ticket,expiresAt,socketUrl:url.origin.replace(/^http/,'ws')+'/live/socket'});
+        }
+        const r=await call(suffix||'get',{...(data||{}),roomId});return respond(await r.json(),r.status);
+      }
       if (is("/admin-api/usage"))
         return respond({
           day,
@@ -230,6 +279,7 @@ export default {
             "enrollment",
             "multiplayer",
             "assignments-v2", "assignments-reasoning-v1", "assignments-arithmetic-v1", "assignments-workshops-v1", "assignments-reasoning-expanded-v1", "assignments-reasoning-expanded-v2", "assignments-reasoning-supported-v1",
+            ...(liveEnabled(env)?['classroom-live-four-v1','classroom-live-websocket-v1']:[]),
           ],
           pageSize: PAGE,
           chunkSize: CHUNK,
@@ -326,6 +376,15 @@ export default {
       if (is("/students/revoke", "POST")) {
         require(who.role === "teacher", 403, "role");
         require(validId(data.id));
+        if(liveEnabled(env)) {
+          const access=await first("SELECT hash FROM access WHERE room=? AND id=? AND role='student'",who.room,data.id);
+          if(access){
+            const stub=env.CLASSROOM_RACE.get(env.CLASSROOM_RACE.idFromName(who.room));
+            const fenced=await stub.fetch(new Request('https://live.internal/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({principal:{classroom:who.room,role:who.role,profile:null,hash},command:'revoke',data:{hash:access.hash}})}));
+            require(fenced.ok,503,'revocation_fence_unavailable');
+            await run('DELETE FROM live_tickets WHERE accessHash=?',access.hash);
+          }
+        }
         await run(
           "DELETE FROM access WHERE room=? AND id=? AND role='student'",
           who.room,
@@ -385,7 +444,10 @@ export default {
           for (const session of data.sessions)
             validateAssignedSession(session, catalog, who.room);
         }
-        else if (key === "multiplayer") validateMultiplayerReport(data);
+        else if (key === "multiplayer") {
+          require(data.multiplayer.every(record=>record.schema!==LIVE_RECORD&&!isServerLiveId(record.id)),403,'server_records_only');
+          validateMultiplayerReport(data);
+        }
         else
           require(
             data.projects.every((p) => p.completedAt && validWorkshop(p)),
