@@ -1,7 +1,7 @@
-const VERSION = "0.13.0";
-const CACHE = `sendero-${VERSION}-contracts-c8-v6`;
+const VERSION = "0.14.0";
+const CACHE = `sendero-${VERSION}-contracts-c9-v1`;
 const FILES = [
-  "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js",
+  "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js", "./reasoning-c9.js", "./task-preview.js", "./teacher-c9.css",
   "./",
   "./index.html", "./docentes.html",
   "./style.css", "./research-notice.js", "./research-notice.css", "./terminos.html",

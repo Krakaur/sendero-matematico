@@ -150,7 +150,7 @@ export async function exchangeClassroom(state, fetcher = fetch, {onAttempt} = {}
             "chunked-vault",
             "enrollment",
             "multiplayer",
-            "assignments-v2", "assignments-reasoning-v1", "assignments-arithmetic-v1", "assignments-workshops-v1", "assignments-reasoning-expanded-v1",
+            "assignments-v2", "assignments-reasoning-v1", "assignments-arithmetic-v1", "assignments-workshops-v1", "assignments-reasoning-expanded-v1", "assignments-reasoning-expanded-v2",
           ].includes(f),
         );
       capabilitiesAt = Date.now();

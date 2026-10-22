@@ -3,7 +3,7 @@ import {assignedItems} from './task-content.js';
 import {assignmentSnapshot,validateAssignedSession,equivalent,sessionKey} from './assignments.js';
 import {validEnrollment} from './enrollment.js';
 import { validBankQuestion } from "./bank.js";
-export const VERSION = "0.13.0";
+export const VERSION = "0.14.0";
 export const SCHEMA = "sendero.report.v3";
 export const TRAILS = {
   suma: {

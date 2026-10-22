@@ -30,7 +30,7 @@ test('C5 protocol and closure marker are validated; historical evidence remains 
  const old=structuredClone(s);old.id='historical';old.taskProtocol=1;delete old.completionAction;const bytes=JSON.stringify(old);validateReport(report(old));assert.equal(JSON.stringify(old),bytes);
  const rows=resultGroups([old,s]);assert.equal(rows.length,2);assert(rows.some(r=>r.conditionLabel.includes('interacción 1')));assert(rows.some(r=>r.conditionLabel.includes('interacción 2')));
  const state={teacher:[old,s],teacherConfirmations:Object.fromEntries([old,s].map(x=>[sessionKey(x),{classId:task.classId,profile:x.profile,source:'server-read',confirmedAt:x.completedAt}])),classroom:{tasks:[task]}};
- const html=assignmentReportHTML(state,true);assert(html.includes('Interacción 1 (histórica)'));assert(html.includes('Interacción 2:'));assert(html.includes('2</td>'));
+ const html=assignmentReportHTML(state,true);assert(html.includes('Interacción 1 (histórica)'));assert(html.includes('Interacción 2:'));assert(html.includes('2 intentos recibidos · 2 cierres visibles.'));assert.equal((html.match(/<summary>Intento /g)||[]).length,2);
 });
 
 // Added before r7 execution; r6 was not applied after UI exposed the player's offscreen clamp.

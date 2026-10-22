@@ -92,7 +92,7 @@ export function receiver(db, { origins = [] } = {}) {
       if (req.url === "/capabilities" && req.method === "GET")
         return json(200, {
           version: 2,
-          features: ["projects", "vault", "students", "enrollment", "assignments-v2", "assignments-reasoning-v1", "assignments-arithmetic-v1", "assignments-workshops-v1", "assignments-reasoning-expanded-v1"],
+          features: ["projects", "vault", "students", "enrollment", "assignments-v2", "assignments-reasoning-v1", "assignments-arithmetic-v1", "assignments-workshops-v1", "assignments-reasoning-expanded-v1", "assignments-reasoning-expanded-v2"],
         });
       if (req.url === "/vault" && req.method === "GET") {
         const v = db

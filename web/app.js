@@ -241,7 +241,7 @@ function classroomHTML() {
   const link=state.classroom,teacherRole=activeProfile?.role==='teacher';
   const pending=state.sessions.filter(s=>(s.assignment?deliveryStatus(state,s).stage!=='acknowledged':!link?.received?.includes(s.id))&&(!s.assignment||s.assignment.classId===link?.classId)).length;
   return `<section class="panel"><h2>${teacherRole?'Mi aula y las tareas':'Compartir con mi docente'}</h2>${link?`<p>Aula vinculada: ${esc(new URL(link.endpoint).host)}. ${teacherRole?(link.enabled?'Consulta automática de informes habilitada.':'Conexión pausada; no se consultan informes automáticamente.'):`${pending} aventuras pendientes de confirmar.`}</p><p>${teacherRole?(link.lastSyncAt?'Última consulta del aula: '+esc(new Date(link.lastSyncAt).toLocaleString('es')):'Todavía sin consulta confirmada del aula.'):(link.lastReceipt?'Último acuse de entrega: '+esc(new Date(link.lastReceipt).toLocaleString('es')):'Todavía sin acuse de entrega guardado.')}</p><p role="status">${esc(link.error||'')}</p><div class="button-row"><button id="sync-now" class="primary" ${link.enabled?'':'disabled'}>${link.enabled?'Conectar ahora':'Conexión pausada'}</button>${!link.enabled?'<p>Para reanudar, vuelve a vincular la invitación del aula. Los informes conservados siguen disponibles.</p>':''}<button id="unlink-class" class="secondary">Desvincular</button></div>`:'<p>Importa una invitación entregada por la persona responsable del aula. Sin invitación, puedes seguir compartiendo los informes mediante archivos.</p>'}
-  <details><summary>${link?'Cambiar invitación':'Vincular con un aula'}</summary><p>La invitación contiene una clave privada y el servidor de destino. Al confirmar, se enviarán automáticamente las aventuras completas de este perfil cuando el juego esté abierto y haya conexión. No se enviarán contraseñas ni alias. Si registras escuela, grado, grupo y número de lista, se compartirán privadamente con tu docente.</p><label>Archivo de invitación<input id="class-invite" type="file" accept=".json,application/json"></label><p id="class-status" role="status"></p></details>
+  <details><summary>${link?'Cambiar invitación':'Vincular con un aula'}</summary><p>La invitación contiene una clave privada y el servidor de destino. Al confirmar, se enviarán automáticamente las aventuras y tareas asignadas completas de este perfil, con sus respuestas, ayudas, revisiones y notas opcionales, cuando el juego esté abierto y haya conexión. El control de talleres libres no detiene las entregas asignadas. No se enviarán contraseñas ni alias. Si registras escuela, grado, grupo y número de lista, se compartirán privadamente con tu docente.</p><label>Archivo de invitación<input id="class-invite" type="file" accept=".json,application/json"></label><p id="class-status" role="status"></p></details>
   ${taskListHTML(state,teacherRole)}
   ${teacherRole&&link?taskFormHTML(state):''}<p class="micro">La confirmación registra recepción técnica, no que el docente haya leído el informe. Las tareas versionadas mantienen sus condiciones de práctica; estos registros no son exámenes.</p></section>`;
 }
@@ -278,25 +278,25 @@ async function syncClassroom() {
       state.classroom.error=e.message;state.classroom.retryAt=Date.now()+(e.retryAfter||60)*1000;save();
     }
   }
-  finally {syncBusy=false;if(activeProfile?.id===id&&['#docentes','#progreso'].includes(location.hash))render(false);if(syncQueued){syncQueued=false;queueMicrotask(syncClassroom);}}
+  finally {syncBusy=false;if(activeProfile?.id===id&&['#docentes','#progreso'].includes(location.hash)){if(main.querySelector('#class-task[data-task-dirty="true"]')){const notice=main.querySelector('#task-preview-status');if(notice)notice.textContent='Consulta del aula terminada. Tu borrador se conserva; al publicar se comprobará la versión actual del aula. '+(state.classroom?.error||'');}else render(false);}if(syncQueued){syncQueued=false;queueMicrotask(syncClassroom);}}
 }
 function bindClassroom() {
-  bindTaskFields(main);
+  const taskPreview = bindTaskFields(main,{link:state.classroom,uid});
   $('#sync-now')?.addEventListener('click',syncClassroom);
   $('#unlink-class')?.addEventListener('click',()=>{delete state.classroom;save();render(false);});
   $('#class-invite')?.addEventListener('change',async e=>{
     try {
       const file=e.target.files[0];if(!file||file.size>10000)throw Error('Invitación demasiado grande.');
       const link=readInvitation(JSON.parse(await file.text()),activeProfile.role);
-      if(!confirm(`¿Vincular este perfil con ${new URL(link.endpoint).origin}? Se compartirán los informes completos y los datos escolares registrados con ese servidor. La invitación es privada.`))return;
+      if(!confirm(`¿Vincular este perfil con ${new URL(link.endpoint).origin}? Se compartirán los informes completos, las notas opcionales de las tareas asignadas y los datos escolares registrados con ese servidor. El control de talleres libres no detiene las entregas asignadas. La invitación es privada.`))return;
       if(state.classroom?.endpoint!==link.endpoint||state.classroom?.token!==link.token)state.cloudRevision=0;
       state.classroom=link;save();render(false);syncClassroom();
     }catch(err){$('#class-status').textContent=err.message;}
   });
   main.querySelectorAll('#class-task,#class-task-legacy').forEach(form=>form.addEventListener('submit',async e=>{
-    e.preventDefault();const b=e.currentTarget.querySelector('button');b.disabled=true;
+    e.preventDefault();const b=e.currentTarget.querySelector('button[type=submit],button:not([type])');b.disabled=true;
     const f=new FormData(e.currentTarget),id=state.profile,link=structuredClone(state.classroom);
-    try {const tasks=validateTasks([...(link.tasks||[]),(e.currentTarget.id==='class-task-legacy'?legacyTaskFromForm(f,uid):taskFromForm(f,link,uid))]);const result=await classroomRequest(link,'/tasks',{tasks,expectedRevision:link.taskRevision});if(state.profile===id&&state.classroom?.token===link.token){state.classroom.tasks=validateTasks(result.tasks);state.classroom.taskRevision=result.revision;save();render(false);}}
+    try {const tasks=validateTasks([...(link.tasks||[]),(e.currentTarget.id==='class-task-legacy'?legacyTaskFromForm(f,uid):taskPreview.taskForPublish(f,link))]);const result=await classroomRequest(link,'/tasks',{tasks,expectedRevision:link.taskRevision});if(state.profile===id&&state.classroom?.token===link.token){state.classroom.tasks=validateTasks(result.tasks);state.classroom.taskRevision=result.revision;save();render(false);}}
     catch(err){if(state.profile===id){state.classroom.error=err.message;save();render(false);}}
     finally{b.disabled=false;}
   }));
@@ -1181,9 +1181,9 @@ async function offline() {
   }
   const cached = async () => {
     if (!("caches" in window)) return false;
-    const cache = await caches.open(`sendero-${VERSION}-contracts-c8-v6`);
+    const cache = await caches.open(`sendero-${VERSION}-contracts-c9-v1`);
     const files = [
-      "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js",
+      "./assigned-workshop.js", "./assigned-workshop-view.js", "./workshop-catalog.js", "./workshop-model-v1.js", "./reasoning-c8.js", "./reasoning-c9.js", "./task-preview.js", "./teacher-c9.css",
       "./index.html",
       "./app.js",
       "./core.js",

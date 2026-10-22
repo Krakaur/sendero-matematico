@@ -1,3 +1,15 @@
+# Continuidad C9: razonamiento, vista previa y docencia móvil
+
+C9 añade `reasoning-fixed-pack@2`: 48 problemas nuevos en seis familias y doce paquetes. Conserva `@1`. Las bandas de requisitos no son dificultad calibrada ni equivalencia de grado. Toda tarea nueva debe previsualizarse; publicar conserva el mismo contrato, ID, fecha y destinatarios. Modificar el formulario obliga a revisar otra vez.
+
+El seguimiento usa tarjetas por perfil con procedencia y evidencia desplegable. El aviso 2026-10-21.2 distingue entregas asignadas (incluidas notas) de talleres libres opcionales. C9 no cambia el esquema D1 ni activa servicios de pago. Backend debe publicarse antes de frontend; capability `assignments-reasoning-expanded-v2`, aplicación 0.14.0, caché `contracts-c9-v1`.
+
+Registro de revisión y métricas: `qa-private/ciclo-c9-20261021/loop/`. La publicación sólo se acredita en el manifiesto de despliegue; un candidato local no la demuestra. Auditoría de 97 compromisos y contrato de los siguientes C10–C12: `qa-private/campana-c9-c12-20261021/`. Los perfiles sintéticos C9 usan prefijo 0009. No se prueban eficacia, preferencia infantil ni superioridad global con simulaciones.
+
+La continuidad pendiente autorizada comprende C10 (retroalimentación, análisis y exportación), C11 (cuatro participantes y autoridad persistente de sala) y C12 (recorrido integral, recursos y cierre de auditoría). No iniciar un estudio con participantes reales para cerrar esta campaña.
+
+---
+
 # C8 y diseño gráfico · candidata verificada, 22 de octubre de 2026 UTC
 
 Los ocho talleres tienen contrato de tarea versionado: 64 configuraciones congeladas, dos construcciones y una elección de explicación. Los informes conservan estímulos, revisiones, pistas por fase y nota opcional. Seis paquetes añaden 24 ítems seleccionados del banco existente en dos familias de razonamiento; no constituyen cobertura curricular amplia ni una dificultad calibrada. Se mantienen los talleres libres anteriores.

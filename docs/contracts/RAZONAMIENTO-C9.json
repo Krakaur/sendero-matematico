@@ -1,0 +1,60 @@
+{
+  "schema": "sendero.cycle-contract.v1",
+  "cycle": "C9",
+  "content": {
+    "id": "reasoning-fixed-pack",
+    "version": 2,
+    "authoredItems": 48,
+    "families": 6,
+    "variantsPerFamily": 2,
+    "itemsPerVariant": 4,
+    "structures": "Al menos dos estructuras matemáticas distintas por familia. Diversidad no equivale a número de relatos.",
+    "familiesDeclared": [
+      "comparacion_inversa",
+      "patrones",
+      "medida_espacio",
+      "datos_decisiones",
+      "planificacion",
+      "proporcionalidad"
+    ],
+    "levelMeaning": "Banda fija de requisitos declarados por familia, no escala empírica de dificultad, grado escolar ni equivalencia curricular.",
+    "legacy": "reasoning-fixed-pack@1 y los estímulos previos permanecen inmutables.",
+    "protocol": 3,
+    "support": "Pista y solución solicitadas explícitamente; reflexión opcional. Las alternativas y su orden se conservan.",
+    "researchLimit": "Selección correcta, nota escrita y tiempo no prueban por sí mismos comprensión, autoría ni transferencia."
+  },
+  "preview": {
+    "beforePublishing": true,
+    "sameTaskIdTimestampRecipients": true,
+    "editInvalidates": true,
+    "comparison": "Conserva versión anterior; muestra cambios antes de publicar.",
+    "questions": "Reproduce literal los paquetes congelados. multiply-fixed-table@1 conserva factores, pero declara opciones/orden variables históricos.",
+    "workshop": "Mismos modelos iniciales, condiciones, alternativas y segunda construcción; controles desactivados.",
+    "answers": "Sólo se despliegan mediante control docente explícito; el código público no es un entorno de examen seguro.",
+    "sideEffects": "Ninguna partida, escritura de estado ni petición de red desde la vista previa."
+  },
+  "teacherMobile": {
+    "widths": [
+      320,
+      360,
+      390
+    ],
+    "structure": "Una tarjeta por perfil con estado y procedencia persistentes, evidencia y cronología plegables.",
+    "missing": "Sin informe no significa que el alumno no trabajó.",
+    "units": "Preguntas, construcciones, elecciones y participaciones conservan denominadores independientes."
+  },
+  "dataChannels": {
+    "assigned": "Vincular un aula envía tareas completas, incluidas notas opcionales, por el canal de informes.",
+    "freeWorkshops": "Control adicional sólo para talleres libres; no desactiva entregas asignadas.",
+    "multiplayer": "Control propio.",
+    "disconnect": "Detiene nuevos envíos, no retira registros previos.",
+    "notice": "2026-10-21.2; información, no consentimiento de investigación."
+  },
+  "compatibility": {
+    "appVersion": "0.14.0",
+    "cache": "contracts-c9-v1",
+    "capability": "assignments-reasoning-expanded-v2",
+    "deployment": "Backend compatible antes de frontend; sin migración D1 en C9."
+  },
+  "evidenceClass": "Pruebas sintéticas y revisión experta; sin participantes reales ni afirmación de superioridad global."
+}

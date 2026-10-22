@@ -1,0 +1,46 @@
+/* C9: a single evidence structure at every width; no duplicated mobile report. */
+.teacher-task-form{max-width:960px;min-width:0}
+.teacher-task-form>*{min-width:0}
+.teacher-task-form input,.teacher-task-form select{max-width:100%;min-width:0}
+.teacher-task-form .task-recipients{min-inline-size:0;display:grid;gap:8px}
+.teacher-task-form .task-recipients label{display:flex;align-items:center;gap:12px;min-height:48px;font-weight:600;overflow-wrap:anywhere}
+.teacher-task-form .task-recipients input[type=checkbox]{width:22px;height:22px;min-height:22px;flex:0 0 22px;margin:0;padding:0}
+.task-publish-actions{display:flex;flex-wrap:wrap;gap:12px}
+.task-publish-actions button{min-height:48px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.task-publish-actions button:disabled{background:#e4e9e1;color:#465547;border:2px solid #778773;cursor:not-allowed;opacity:1}
+.legacy-task-orientation{margin-block:24px;padding:16px;border:1px solid #9fb59e;border-radius:12px}
+.legacy-task-orientation>summary{cursor:pointer;min-height:48px;align-content:center;font-weight:700}
+#task-preview{margin-block:16px;padding:20px;border:2px solid #47775a;border-radius:16px;background:#fbfcf7;min-width:0;overflow-wrap:anywhere}
+#task-preview[hidden]{display:none}
+#task-preview:focus-visible,.assignment-report-c9 summary:focus-visible,.legacy-task-orientation summary:focus-visible{outline:3px solid #174438;outline-offset:4px}
+.task-preview-body h4{font-size:1.3rem;margin:0 0 12px}
+.task-preview-body h5{font-size:1.12rem;margin:0 0 12px}
+.task-preview-facts{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,3fr);gap:6px 16px;margin:16px 0}
+.task-preview-facts dt,.task-version-comparison dt{font-weight:750}
+.task-preview-facts dd,.task-version-comparison dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.task-preview-body details{padding:12px;margin-block:16px;border:1px solid #afc1a8;border-radius:10px;background:white;min-width:0}
+.task-preview-body summary{cursor:pointer;font-weight:700;min-height:48px;align-content:center;overflow-wrap:anywhere}
+.task-preview-items,.task-preview-choices{padding-inline-start:24px}
+.task-preview-item{padding:16px;margin-block:16px;border:1px solid #c4d2bc;border-radius:12px;background:white;min-width:0;overflow-wrap:anywhere}
+.task-preview-item .project-model{min-inline-size:0;max-width:100%;overflow-x:auto}
+.task-preview-item .project-model button{pointer-events:none}
+.task-preview-contract pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.6 ui-monospace,monospace;max-width:100%;margin-bottom:0}
+.assigned-data-notice{padding:12px 14px;border-left:4px solid #557f61;background:#eaf0e3;font-size:.95rem;line-height:1.6;overflow-wrap:anywhere}
+.session-row:has(.assigned-data-notice){flex-wrap:wrap}
+.session-row>.assigned-data-notice{flex-basis:100%;margin-bottom:0}
+.assignment-report-c9,.assignment-task-group,.assignment-profile-card,.assignment-profile-detail,.assignment-profile-grid{min-width:0;max-width:100%}
+.assignment-report-c9 summary{cursor:pointer;min-height:48px;align-content:center;overflow-wrap:anywhere}
+.assignment-task-group{margin-block:18px;padding:14px;border:1px solid #a7bea1;border-radius:14px}
+.assignment-task-group>summary{font-weight:750}
+.assignment-profile-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}
+.assignment-profile-card{border:1px solid #b6c9ae;background:#fffefa;border-radius:12px;padding:16px;overflow-wrap:anywhere}
+.assignment-profile-card h4{margin:0 0 10px;font-size:1.12rem}
+.assignment-profile-status{font-weight:700;margin-bottom:8px}
+.assignment-profile-card>p{margin-block:8px}
+.assignment-profile-detail{border-top:1px solid #c6d5bf;padding-top:8px;margin-top:12px}
+.assignment-profile-detail summary{font-weight:650}
+.assignment-profile-detail details{margin-block:14px;border-left:3px solid #b2c8aa;padding-left:12px}
+.assignment-profile-detail ol,.assignment-profile-detail ul{padding-inline-start:24px;min-width:0}
+.assignment-profile-detail li,.assignment-profile-detail p,.assignment-report-c9 .unmatched-assignments article{overflow-wrap:anywhere}
+@media(min-width:1000px){.assignment-profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#task-preview{padding:12px}.task-preview-facts{grid-template-columns:minmax(0,1fr);gap:4px}.task-preview-facts dd{margin-bottom:10px}.task-preview-item{padding:12px}.task-publish-actions{display:grid;grid-template-columns:minmax(0,1fr)}.task-publish-actions button{width:100%}.assignment-task-group{padding:10px}.assignment-profile-card{padding:12px}.assignment-profile-detail details{padding-left:8px}.task-preview-body details{padding:10px}}
